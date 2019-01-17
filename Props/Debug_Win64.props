@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ImportGroup Label="PropertySheets" />
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <OutDir>$(SolutionDir)Binaries\Win64\Debug\</OutDir>
+    <IntDir>$(SolutionDir)Binaries\Win64\Debug\Temp\</IntDir>
+    <IncludePath>$(ProjectDir)Source\Public;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)Binaries\Win64\Debug\Libraries;$(LibraryPath)</LibraryPath>
+    <TargetName>IOUI-Win64-$(ProjectName)</TargetName>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <PreprocessorDefinitions>IOUI_EXPORTS;WIN_64;_WINDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <ModuleDefinitionFile>
+      </ModuleDefinitionFile>
+    </Link>
+    <PostBuildEvent>
+      <Command>call $(ProjectDir)Source\debug.cmd Win64</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemGroup />
+</Project>
