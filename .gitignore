@@ -13,7 +13,6 @@
 # Build results
 !/Binaries/Win64/Debug
 
-IOToolkit/
 
 Debug/
 [Rr]elease/

@@ -17,7 +17,7 @@
       <ModuleDefinitionFile>$(ProjectDir)Source\Module.def</ModuleDefinitionFile>
     </Link>
     <PostBuildEvent>
-      <Command>call $(ProjectDir)Source\debug.cmd Win32</Command>
+      <Command>call $(SolutionDir)IOUIENV.bat Win32 Debug $(ProjectDir)</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup />

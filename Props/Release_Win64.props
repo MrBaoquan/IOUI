@@ -14,7 +14,7 @@
       <PreprocessorDefinitions>WIN_64;IOUI_EXPORTS;_WINDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <PostBuildEvent>
-      <Command>call $(ProjectDir)Source\release.cmd Win64</Command>
+      <Command>call $(SolutionDir)IOUIENV.bat Win64 Release $(ProjectDir)</Command>
     </PostBuildEvent>
     <Link>
       <ModuleDefinitionFile>

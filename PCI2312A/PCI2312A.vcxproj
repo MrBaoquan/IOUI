@@ -130,6 +130,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <DelayLoadDLLs>PCI2312A_32.dll</DelayLoadDLLs>
     </Link>
+    <PostBuildEvent />
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -162,6 +163,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\..\template.licenseheader" />
+    <None Include="Source\Module.def" />
+    <None Include="Source\release.cmd" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="PCI2312A.rc" />

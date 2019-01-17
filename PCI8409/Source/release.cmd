@@ -1,17 +1,19 @@
-@echo off
+goto start
 
-set param1=%1%
+rem PLATFORM:					Win32 |	Win64
+rem CONFIGURE:					Debug | Release
 
-if "%param1%" neq "Win64" (
-	if "%param1%" neq "Win32" exit
-)
+rem	IOUI_SRC_PATH				IOUI-WIN[36][24]-*.dll	源目录
+rem IOUI_DST_PATH				IOUI-WIN[36][24]-*.dll	目标目录
 
-set src_root_path=E:\VisualStudioProjects\2015\IOUI\
-set dst_root_path=G:\DevelopHelper\IOToolkit\
+rem IOUI_SRC_CORE_PATH			PCI*.dll			源目录
+rem IOUI_DST_CORE_PATH			PCI*.dll			目标目录
 
-set src_binaries_path=%src_root_path%Binaries\%param1%\Release\
-set dst_binaries_path=%dst_root_path%binaries\%param1%\
+rem start execute command
+:start
+@rem	Note: Write your command below this line
 
-if not exist %dst_binaries_path% md %dst_binaries_path%
-copy %src_binaries_path%IOUI-%param1%-PCI8409.dll %dst_binaries_path%ExternalLibraries\ /y
-copy %src_binaries_path%Libraries\pci8409.dll %dst_binaries_path% /y
+
+
+copy %IOUI_SRC_PATH%IOUI-%PLATFORM%-PCI8409.dll %IOUI_DST_PATH% /y
+copy %IOUI_SRC_CORE_PATH%pci8409.dll %IOUI_DST_CORE_PATH% /y

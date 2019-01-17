@@ -1,22 +1,24 @@
-@echo off
+goto start
 
-set param1=%1%
+rem PLATFORM:					Win32 |	Win64
+rem CONFIGURE:					Debug | Release
 
-if "%param1%" neq "Win64" (
-	if "%param1%" neq "Win32" exit
+rem	IOUI_SRC_PATH				IOUI-WIN[36][24]-*.dll	源目录
+rem IOUI_DST_PATH				IOUI-WIN[36][24]-*.dll	目标目录
+
+rem IOUI_SRC_CORE_PATH			PCI*.dll			源目录
+rem IOUI_DST_CORE_PATH			PCI*.dll			目标目录
+
+rem start execute command
+:start
+@rem	Note: Write your command below this line
+
+
+
+copy %IOUI_SRC_PATH%IOUI-%PLATFORM%-PCI8408.dll %IOUI_DST_PATH% /y
+
+if %PLATFORM% equ Win64 (
+ copy %IOUI_SRC_CORE_PATH%pci8408.dll %IOUI_DST_CORE_PATH% /y
+) else (
+ copy %IOUI_SRC_CORE_PATH%pci8408.dll %IOUI_DST_CORE_PATH%	/y
 )
-
-
-cd ..
-set src_root_path=%cd%\
-set dst_root_path=%src_root_path%IOUIDebug\IOToolkit\
-
-set src_binaries_path=%src_root_path%Binaries\%param1%\Release\
-set dst_binaries_path=%dst_root_path%binaries\%param1%\
-
-if not exist %dst_binaries_path% md %dst_binaries_path%
-copy %src_binaries_path%IOUI-%param1%-PCI8408.dll %dst_binaries_path%ExternalLibraries\ /y
-
-set core_path=%dst_binaries_path%ExternalLibraries\Core\
-if not exist %core_path% md %core_path%
-copy %src_binaries_path%Libraries\pci8408.dll %core_path% /y

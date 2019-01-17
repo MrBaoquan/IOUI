@@ -8,7 +8,7 @@
 <IORoot>
 
   <Device Name="Standard" Type="Standard"></Device>
-  <Device Name="ExternalDev_0" Type="External" DllName="ExternalTest" Index="0">
+  <Device Name="ExternalDev_0" Type="External" DllName="PCI2312A" Index="0">
     <Action Name="KeyDown">
       <Key Name="AnyKey"></Key>
     </Action>
