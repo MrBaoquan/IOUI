@@ -13,7 +13,7 @@ set SOLUTION_ROOT_PATH=%cd%\
 if %CONFIGURE% equ Debug (
 	set dst_root_path=%SOLUTION_ROOT_PATH%IOUIDebug\Binaries\%PLATFORM%\Debug\
 ) else (
-	set dst_root_path=%SOLUTION_ROOT_PATH%IOUIDebug\%VERSION%\IOToolkit\
+	set dst_root_path=%SOLUTION_ROOT_PATH%\%VERSION%\IOToolkit\
 )
 if not exist %dst_root_path% md %dst_root_path%
 
