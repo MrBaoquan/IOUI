@@ -164,6 +164,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\..\template.licenseheader" />
+    <None Include="Source\Module.def" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
