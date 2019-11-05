@@ -35,5 +35,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\..\template.licenseheader" />
+    <None Include="Source\Module.def">
+      <Filter>源文件</Filter>
+    </None>
   </ItemGroup>
 </Project>

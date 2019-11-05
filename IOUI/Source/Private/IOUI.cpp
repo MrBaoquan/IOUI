@@ -30,6 +30,7 @@ IOUI_API int __stdcall SetDeviceDO(uint8 deviceIndex, BYTE* InDOStatus)
 
 IOUI_API int __stdcall GetDeviceDO(uint8 deviceIndex, BYTE* OutDOStatus)
 {
+	OutDOStatus[0] = 1;
     return 0;
 }
 

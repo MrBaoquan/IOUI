@@ -20,11 +20,11 @@ BOOL WINAPI DllMain(
         {
             std::string dllPath = DevelopHelper::Paths::Instance().GetModuleDir() + "Core\\";
             SetDllDirectoryA(dllPath.data());
-            OutputDebugStringA("============== Attched external dll for IODevice.dll ... ================ \n");
+            OutputDebugStringA("============== Attched external dll IOUI-Win64-PCI8408.dll for IODevice.dll ... ================ \n");
         }        
         break;
     case DLL_PROCESS_DETACH:
-        OutputDebugStringA("============== Detached external dll for IODevice.dll ... ================ \n");
+        OutputDebugStringA("============== Detached external dll IOUI-Win64-PCI8408.dll for IODevice.dll ... ================ \n");
         break;
     case DLL_THREAD_ATTACH:
         break;

@@ -51,14 +51,16 @@ IOUI_API int __stdcall SetDeviceDO(uint8 deviceIndex, BYTE* InDOStatus)
 }
 
 IOUI_API int __stdcall GetDeviceDO(uint8 deviceIndex, BYTE* OutDOStatus)
-{
+{	
     HANDLE hHandle = PCIManager::Instance().GetHandle(deviceIndex);
+	ZeroMemory(OutDOStatus, g_DeviceInfo.OutputCount);
     return PCI2312A_GetDeviceDO(hHandle, OutDOStatus) ? 1 : 0;
 }
 
 IOUI_API int __stdcall GetDeviceDI(uint8 deviceIndex, BYTE* OutDIStatus)
 {
     HANDLE hHandle = PCIManager::Instance().GetHandle(deviceIndex);
+	ZeroMemory(OutDIStatus, g_DeviceInfo.InputCount);
     return PCI2312A_GetDeviceDI(hHandle, OutDIStatus) ? 1 : 0;
 }
 
