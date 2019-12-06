@@ -154,8 +154,6 @@
     <ClInclude Include="resource.h" />
     <ClInclude Include="Source\Public\EM9703.h" />
     <ClInclude Include="Source\Public\IOUI.h" />
-    <ClInclude Include="Source\Public\Paths.hpp" />
-    <ClInclude Include="Source\Public\PCIManager.hpp" />
     <ClInclude Include="Source\Public\ZT_Type.h" />
   </ItemGroup>
   <ItemGroup>

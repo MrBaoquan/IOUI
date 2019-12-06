@@ -15,16 +15,19 @@
 #endif
 
 DeviceInfo devInfo;
-const uint8 AxisCount = 32;
 long nRetSizeWords;
 long nReadSizeWords;
+const short axisCount = 32;
+
+DeviceInfo g_DeviceInfo;
 
 IOUI_API DeviceInfo* __stdcall Initialize()
 {
-    devInfo.InputCount = 0;
-    devInfo.OutputCount = 0;
-    devInfo.AxisCount = AxisCount;
-    return &devInfo;
+	g_DeviceInfo.InputCount = 0;
+	g_DeviceInfo.OutputCount = 0;
+	g_DeviceInfo.AxisCount = 32;
+
+	return &g_DeviceInfo;
 }
 
 IOUI_API int __stdcall OpenDevice(uint8 deviceIndex)
@@ -32,16 +35,16 @@ IOUI_API int __stdcall OpenDevice(uint8 deviceIndex)
     HANDLE hHandle = PCI8735_CreateDevice(deviceIndex);
     if (hHandle != INVALID_HANDLE_VALUE)
     {
-        PCIManager::Instance().AddHandle(deviceIndex, hHandle);
+        PCIManager::Instance().AddDevice(deviceIndex, DeviceData(hHandle,g_DeviceInfo));
         PCI8735_PARA_AD param=
         {
             0,
             31,
-            PCI8735_INPUT_N10000_P10000mV,
+			PCI8735_INPUT_N5000_P5000mV,
             PCI8735_GNDMODE_SE,
             PCI8735_GAINS_1MULT
         };
-        nReadSizeWords = 512 - 512 % AxisCount;
+        nReadSizeWords = 512 - 512 % g_DeviceInfo.AxisCount;
         return PCI8735_InitDeviceAD(hHandle, &param) ? 1 : 0;
     }
     return 0;
@@ -49,7 +52,8 @@ IOUI_API int __stdcall OpenDevice(uint8 deviceIndex)
 
 IOUI_API int __stdcall CloseDevice(uint8 deviceIndex)
 {
-    return 0;
+	HANDLE _handle = PCIManager::Instance().GetHandle(deviceIndex);
+	return PCI8735_ReleaseDevice(_handle) ? 1 : 0;
 }
 
 IOUI_API int __stdcall SetDeviceDO(uint8 deviceIndex, BYTE* InDOStatus)
@@ -67,15 +71,18 @@ IOUI_API int __stdcall GetDeviceDI(uint8 deviceIndex, BYTE* OutDIStatus)
     return 0;
 }
 
+
 IOUI_API int __stdcall GetDeviceAD(uint8 deviceIndex, short* OutADStatus)
 {
     HANDLE hHandle = PCIManager::Instance().GetHandle(deviceIndex);
-    unsigned short realADStatus[AxisCount] = {};
+	unsigned short realADStatus[1024 * 8];// = {};
     if(PCI8735_ReadDeviceAD(hHandle, realADStatus, nReadSizeWords, &nRetSizeWords))
     {
-        for (uint8 index = 0;index < AxisCount;++index)
+        for (uint8 index = 0;index < g_DeviceInfo.AxisCount;++index)
         {
-            OutADStatus[index] = static_cast<short>(realADStatus[index]) / 10;
+			unsigned short ADData = realADStatus[index] & 0x1FFF;
+			float _result = (float)((10000.00 / 8192) * ADData - 5000.00);
+           OutADStatus[index] = static_cast<short>(_result);
         }
         return 1;
     }

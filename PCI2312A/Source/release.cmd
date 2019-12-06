@@ -13,8 +13,6 @@ rem start execute command
 :start
 @rem	Note: Write your command below this line
 
-
-
 copy %IOUI_SRC_PATH%IOUI-%PLATFORM%-PCI2312A.dll %IOUI_DST_PATH% /y
 
 if %PLATFORM% equ Win64 (

@@ -20,11 +20,11 @@ BOOL WINAPI DllMain(
     {
         std::string dllPath = DevelopHelper::Paths::Instance().GetModuleDir() + "Core\\";
         SetDllDirectoryA(dllPath.data());
-        OutputDebugStringA("============== Attched external dll for IODevice.dll ... ================ \n");
+        OutputDebugStringA("============== Attched PCI8735.dll for IOToolkit ... ================ \n");
     }
     break;
     case DLL_PROCESS_DETACH:
-        OutputDebugStringA("============== Detached external dll for IODevice.dll ... ================ \n");
+        OutputDebugStringA("============== Detached PCI8735.dll in IOToolkit ... ================ \n");
         break;
     case DLL_THREAD_ATTACH:
         break;

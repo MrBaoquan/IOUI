@@ -13,6 +13,19 @@
 #pragma comment(lib,"EM9703.lib")
 
 namespace dh = DevelopHelper;
+
+/** 设备基本信息 */
+DeviceInfo g_DeviceInfo;
+
+IOUI_API DeviceInfo* __stdcall Initialize()
+{
+	g_DeviceInfo.InputCount = 32;
+	g_DeviceInfo.OutputCount = 32;
+	g_DeviceInfo.AxisCount = 0;
+
+	return &g_DeviceInfo;
+}
+
 IOUI_API int __stdcall OpenDevice(uint8 deviceIndex)
 {
 	std::string path = dh::Paths::Instance().GetModuleDir();
@@ -20,11 +33,11 @@ IOUI_API int __stdcall OpenDevice(uint8 deviceIndex)
 	HANDLE handle = EM9703_CreateDevice();
     if (handle != INVALID_HANDLE_VALUE)
     {
-        PCIManager::Instance().AddHandle(deviceIndex, handle);
+        PCIManager::Instance().AddDevice(deviceIndex, DeviceData(handle,g_DeviceInfo));
         char ip[MAX_PATH] = "";
         int port;
-        char* app_name = "BasicSetting";
-        GetPrivateProfileStringA(app_name, "Ip", "127.0.0.1", ip, MAX_PATH, config_file_path.data());
+        char* app_name = "/PCISettings";
+        GetPrivateProfileStringA(app_name, "IP", "127.0.0.1", ip, MAX_PATH, config_file_path.data());
         port = GetPrivateProfileIntA(app_name, "Port", 0, config_file_path.data());
         return EM9703_CmdConnect(handle, ip, port) == 0? 1 : 0;
     }
@@ -38,7 +51,7 @@ IOUI_API int __stdcall CloseDevice(uint8 deviceIndex)
     return 1;
 }
 
-IOUI_API int __stdcall SetDeviceDO(uint8 deviceIndex, BYTE* InDOStatus)
+IOUI_API int __stdcall SetDeviceDO(uint8 deviceIndex, short* InDOStatus)
 {
     HANDLE hHandle = PCIManager::Instance().GetHandle(deviceIndex);
     char all_status[64];
@@ -46,7 +59,7 @@ IOUI_API int __stdcall SetDeviceDO(uint8 deviceIndex, BYTE* InDOStatus)
     {
         for (size_t chIndex = 32; chIndex < 64; chIndex++)
         {
-            all_status[chIndex] = InDOStatus[chIndex - 32];
+            all_status[chIndex] = static_cast<char>(InDOStatus[chIndex - 32]);
         }
         if(EM9703_IoSetAll(hHandle, all_status)==0)
         {
@@ -57,7 +70,7 @@ IOUI_API int __stdcall SetDeviceDO(uint8 deviceIndex, BYTE* InDOStatus)
     return 0;
 }
 
-IOUI_API int __stdcall GetDeviceDO(uint8 deviceIndex, BYTE* OutDOStatus)
+IOUI_API int __stdcall GetDeviceDO(uint8 deviceIndex, short* OutDOStatus)
 {
     HANDLE hHandle = PCIManager::Instance().GetHandle(deviceIndex);
     char all_status[64];

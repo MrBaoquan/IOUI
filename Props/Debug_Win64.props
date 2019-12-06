@@ -5,7 +5,7 @@
   <PropertyGroup>
     <OutDir>$(SolutionDir)Binaries\Win64\Debug\</OutDir>
     <IntDir>$(SolutionDir)Binaries\Win64\Debug\Temp\</IntDir>
-    <IncludePath>$(ProjectDir)Source\Public;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)vendor\includes;$(ProjectDir)Source\Public;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)Binaries\Win64\Debug\Libraries;$(LibraryPath)</LibraryPath>
     <TargetName>IOUI-Win64-$(ProjectName)</TargetName>
   </PropertyGroup>

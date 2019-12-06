@@ -154,8 +154,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Public\IOUI.h" />
-    <ClInclude Include="Source\Public\Paths.hpp" />
-    <ClInclude Include="Source\Public\PCIManager.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

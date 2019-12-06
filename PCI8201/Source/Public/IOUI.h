@@ -1,8 +1,8 @@
 /** Copyright (c) 2018 Hefei And Technology Co.,Ltd
- *  Author: MrBaoquan
- *  CreateTime: 2018-506 10:44
- *  Email: mrma617@gmail.com
- */
+*  Author: MrBaoquan
+*  CreateTime: 2018-506 10:44
+*  Email: mrma617@gmail.com
+*/
 
 #pragma once
 
@@ -17,24 +17,25 @@ typedef unsigned   char BYTE;
 
 struct IOUI_API DeviceInfo
 {
-	/** 输入通道数量 */
-	BYTE InputCount = 16;
-	/** 输出通道数量 */
-	BYTE OutputCount = 16;
-	/** 模拟量通道数量 */
-	BYTE AxisCount = 0;
+    /** 输入通道数量 */
+    BYTE InputCount = 16;
+    /** 输出通道数量 */
+    BYTE OutputCount = 16;
+    /** 模拟量通道数量 */
+    BYTE AxisCount = 16;
 };
 
 extern "C"
 {
-	IOUI_API DeviceInfo* __stdcall Initialize();
+    IOUI_API DeviceInfo* __stdcall Initialize();
+
     /**
-     * 打开 External 设备
-     * @param deviceIndex : 设备索引
-     * @return 成功返回1 否则返回 0
-     */
+    * 打开 External 设备
+    * @param deviceIndex : 设备索引
+    * @return 成功返回1 否则返回 0
+    */
     IOUI_API int __stdcall OpenDevice(uint8 deviceIndex);
-    
+
     /**
     * 关闭 External 设备
     * @param deviceIndex : 设备索引
@@ -49,7 +50,7 @@ extern "C"
     * @return 成功返回1 否则返回 0
     */
     IOUI_API int __stdcall SetDeviceDO(uint8 deviceIndex, short* InDOStatus);
-    
+
     /**
     * 获取 External 设备输出状态
     * @param deviceIndex : 设备索引

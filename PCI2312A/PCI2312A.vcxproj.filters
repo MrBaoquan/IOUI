@@ -29,13 +29,7 @@
     <ClInclude Include="Source\Public\PCI2312A.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Public\PCIManager.hpp">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="resource.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Public\Paths.hpp">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

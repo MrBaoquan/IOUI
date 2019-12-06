@@ -157,9 +157,7 @@
   <ItemGroup>
     <ClInclude Include="resource.h" />
     <ClInclude Include="Source\Public\IOUI.h" />
-    <ClInclude Include="Source\Public\Paths.hpp" />
     <ClInclude Include="Source\Public\PCI2312A.h" />
-    <ClInclude Include="Source\Public\PCIManager.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\..\template.licenseheader" />

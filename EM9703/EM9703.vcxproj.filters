@@ -26,12 +26,6 @@
     <ClInclude Include="Source\Public\IOUI.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Public\Paths.hpp">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Public\PCIManager.hpp">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Public\EM9703.h">
       <Filter>头文件</Filter>
     </ClInclude>

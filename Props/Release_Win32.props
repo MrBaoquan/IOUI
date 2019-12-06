@@ -6,7 +6,7 @@
     <OutDir>$(SolutionDir)Binaries\Win32\Release\</OutDir>
     <IntDir>$(SolutionDir)Binaries\Win32\Release\Temp\</IntDir>
     <TargetName>IOUI-Win32-$(ProjectName)</TargetName>
-    <IncludePath>$(ProjectDir)Source\Public;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)vendor\includes;$(ProjectDir)Source\Public;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)Binaries\Win32\Release\Libraries;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup>

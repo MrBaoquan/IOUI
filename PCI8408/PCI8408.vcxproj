@@ -159,7 +159,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Public\IOUI.h" />
-    <ClInclude Include="Source\Public\Paths.hpp" />
     <ClInclude Include="Source\Public\PCI8408.h" />
   </ItemGroup>
   <ItemGroup>

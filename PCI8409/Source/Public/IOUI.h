@@ -14,8 +14,21 @@
 
 typedef unsigned __int8 uint8;
 typedef unsigned   char BYTE;
+
+struct IOUI_API DeviceInfo
+{
+	/** 输入通道数量 */
+	BYTE InputCount = 16;
+	/** 输出通道数量 */
+	BYTE OutputCount = 16;
+	/** 模拟量通道数量 */
+	BYTE AxisCount = 0;
+};
+
 extern "C"
 {
+
+	IOUI_API DeviceInfo* __stdcall Initialize();
     /**
      * 打开 External 设备
      * @param deviceIndex : 设备索引
@@ -36,7 +49,7 @@ extern "C"
     * @param InDOStatus : 输入开关量状态 BYTE[32]
     * @return 成功返回1 否则返回 0
     */
-    IOUI_API int __stdcall SetDeviceDO(uint8 deviceIndex, BYTE* InDOStatus);
+    IOUI_API int __stdcall SetDeviceDO(uint8 deviceIndex, short* InDOStatus);
     
     /**
     * 获取 External 设备输出状态
@@ -44,7 +57,7 @@ extern "C"
     * @param InDOStatus : 输出开关量状态 BYTE[32]
     * @return 成功返回1 否则返回 0
     */
-    IOUI_API int __stdcall GetDeviceDO(uint8 deviceIndex, BYTE* OutDOStatus);
+    IOUI_API int __stdcall GetDeviceDO(uint8 deviceIndex, short* OutDOStatus);
 
     /**
     * 获取 External 设备输入状态

@@ -6,6 +6,7 @@
 
 #include "IOUI.h"
 #include <bitset>
+#include "Util.hpp"
 #include "PCI8409.h"
 
 #pragma comment(lib,"pci8409.lib")
@@ -63,6 +64,19 @@ long SetDeviceDOByGroup(uint8 deviceIndex, uint8 groupIndex, BYTE* InDOStatus)
 
 }
 
+
+DeviceInfo g_DeviceInfo;
+
+IOUI_API DeviceInfo* __stdcall Initialize()
+{
+	g_DeviceInfo.InputCount = 0;
+	g_DeviceInfo.OutputCount = 144;
+	g_DeviceInfo.AxisCount = 0;
+
+	return &g_DeviceInfo;
+}
+
+
 IOUI_API int __stdcall OpenDevice(uint8 deviceIndex)
 {
     return ZT8409_OpenDevice(deviceIndex) == 0 ? 1 : 0;
@@ -73,11 +87,13 @@ IOUI_API int __stdcall CloseDevice(uint8 deviceIndex)
     return ZT8409_CloseDevice(deviceIndex) == 0 ? 1 : 0;
 }
 
-IOUI_API int __stdcall SetDeviceDO(uint8 deviceIndex, BYTE* InDOStatus)
+BYTE DOStatus[144];
+IOUI_API int __stdcall SetDeviceDO(uint8 deviceIndex, short* InDOStatus)
 {
+	CopyTo(InDOStatus, DOStatus, g_DeviceInfo.OutputCount);
     for (uint8 index = 1;index <= 10;++index)
     {
-        if(!SetDeviceDOByGroup(deviceIndex, index, InDOStatus))
+        if(!SetDeviceDOByGroup(deviceIndex, index, DOStatus))
         {
             return 0;
         }
@@ -85,7 +101,7 @@ IOUI_API int __stdcall SetDeviceDO(uint8 deviceIndex, BYTE* InDOStatus)
     return 1;
 }
 
-IOUI_API int __stdcall GetDeviceDO(uint8 deviceIndex, BYTE* OutDOStatus)
+IOUI_API int __stdcall GetDeviceDO(uint8 deviceIndex, short* OutDOStatus)
 {
     uint8 accumulator = 0;
     for (uint8 group_index = 1;group_index <= 10;group_index++)
