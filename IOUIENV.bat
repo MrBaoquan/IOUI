@@ -1,5 +1,5 @@
 @echo off
-set VERSION=v1.0.0
+set VERSION=v2.0.0
 set PLATFORM=%1%
 set CONFIGURE=%2%
 
