@@ -13,7 +13,7 @@
 # Build results
 !/Binaries/Win64/Debug
 
-
+v[0-9].0.0/
 Debug/
 [Rr]elease/
 !/**/[Rr]elease/
