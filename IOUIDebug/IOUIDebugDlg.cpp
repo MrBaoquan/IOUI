@@ -68,6 +68,7 @@ void CIOUIDebugDlg::OnKeyDown(dh::FKey InKey)
 {
     OutputDebugStringA(InKey.GetName());
     OutputDebugStringA("\n");
+	
 }
 
 BEGIN_MESSAGE_MAP(CIOUIDebugDlg, CDialogEx)

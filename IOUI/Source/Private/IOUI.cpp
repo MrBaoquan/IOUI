@@ -7,8 +7,11 @@
 #include <stdlib.h>
 #include "IOUI.h"
 #include "PCIManager.hpp"
+#include "TISocket.hpp"
+
 DeviceInfo devInfo;
 
+TISocket sockets[5];
 IOUI_API DeviceInfo* __stdcall Initialize()
 {
 	devInfo.InputCount = 32;
@@ -19,17 +22,26 @@ IOUI_API DeviceInfo* __stdcall Initialize()
 
 IOUI_API int __stdcall OpenDevice(uint8 deviceIndex)
 {
-    return 1;
+	for (int i = 10000; i < 10020; i++)
+	{
+		if (sockets[deviceIndex].Initialize(TIType::UDP, i) >= 0) {
+			return 1;
+		};
+	}
+    return 0;
 }
 
 IOUI_API int __stdcall CloseDevice(uint8 deviceIndex)
 {
+	sockets[deviceIndex].Exit();
     return 1;
 }
 
 IOUI_API int __stdcall SetDeviceDO(uint8 deviceIndex, short* InDOStatus)
 {
-	OutputDebugStringA(ToString(InDOStatus,devInfo.OutputCount).data());
+	sockets[deviceIndex].SetRemoteAddr(std::string("127.0.0.1"), 7001);
+	std::string _message = ToString(InDOStatus, devInfo.OutputCount);
+	sockets[deviceIndex].Send(_message.data(), _message.length());
     return 1;
 }
 
