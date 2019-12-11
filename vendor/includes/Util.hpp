@@ -28,7 +28,7 @@ bool CopyTo(short* Src, BYTE* Dst, size_t Count)
 	ZeroMemory(Dst, sizeof(BYTE)*Count);
 	for (size_t _index = 0; _index < Count; ++_index)
 	{
-		Dst[_index] = static_cast<BYTE>(Src[_index]);
+		Dst[_index] = static_cast<BYTE>(Src[_index] > 0 ? 1 : 0);
 	}
 	return true;
 }

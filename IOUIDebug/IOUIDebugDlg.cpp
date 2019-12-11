@@ -7,7 +7,7 @@
 #include "IOUIDebugDlg.h"
 #include "afxdialogex.h"
 #include <string>
-#include "IOSettings.h"
+#include "IODeviceController.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -110,8 +110,8 @@ BOOL CIOUIDebugDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// 设置小图标
 
 	// TODO: 在此添加额外的初始化代码
-
-    dh::IOSettings::Instance().SetIOConfigPath("./Config/IODevice.xml");
+	dh::IODeviceController::Instance().Load();
+    //dh::IOSettings::Instance().SetIOConfigPath("./Config/IODevice.xml");
     dh::IODeviceController::Instance().GetIODevice("ExternalDev_0").
         BindAction("KeyDown", dh::IE_Pressed, this, &CIOUIDebugDlg::OnKeyDown);
 

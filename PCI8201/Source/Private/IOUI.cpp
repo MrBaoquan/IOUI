@@ -31,7 +31,7 @@ IOUI_API int __stdcall OpenDevice(uint8 deviceIndex)
 	if (_handle == INVALID_HANDLE_VALUE) {
 		return 0;
 	}
-	PCIManager::Instance().AddHandle(deviceIndex, _handle);
+	PCIManager::Instance().AddDevice(deviceIndex, DeviceData(_handle,devInfo));
     return 1;
 }
 

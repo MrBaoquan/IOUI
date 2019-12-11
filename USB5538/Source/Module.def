@@ -1,0 +1,10 @@
+LIBRARY
+EXPORTS
+
+Initialize = _Initialize@0
+OpenDevice = _OpenDevice@4
+CloseDevice = _CloseDevice@4
+SetDeviceDO = _SetDeviceDO@8
+GetDeviceDO = _GetDeviceDO@8
+GetDeviceDI = _GetDeviceDI@8
+GetDeviceAD = _GetDeviceAD@8

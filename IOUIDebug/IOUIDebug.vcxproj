@@ -77,22 +77,22 @@
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(SolutionDir)Binaries\Win32\Debug\</OutDir>
     <IntDir>$(SolutionDIr)Binaries\Win32\Debug\Temp\</IntDir>
-    <IncludePath>$(SolutionDir)v1.0.0\IOToolkit\include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)v1.0.0\IOToolkit\binaries\Win32;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)..\v2.0.0\IOToolkit\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)Binaries\Win32\release;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <IntDir>$(SolutionDir)Binaries\Win64\Debug\Temp\</IntDir>
-    <IncludePath>$(SolutionDir)v1.0.0\IOToolkit\include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)v1.0.0\IOToolkit\binaries\Win64;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)..\IODevice\v2.0.0\IOToolkit\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)Binaries\Win64\Debug;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)Binaries\Win64\Debug\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(ProjectDir)Binaries\Win64\Release\</OutDir>
     <IntDir>$(ProjectDir)Binaries\Win64\Release\Temp\</IntDir>
-    <IncludePath>$(SolutionDir)v1.0.0\IOToolkit\include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)v1.0.0\IOToolkit\binaries\Win32;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)..\v2.0.0\IOToolkit\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)Binaries\Win32\release;$(LibraryPath)</LibraryPath>
     <ExecutablePath>
     </ExecutablePath>
   </PropertyGroup>
@@ -100,8 +100,8 @@
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(ProjectDir)Binaries\Win64\Release\</OutDir>
     <IntDir>$(ProjectDir)Binaries\Win64\Release\Temp\</IntDir>
-    <IncludePath>$(SolutionDir)v1.0.0\IOToolkit\include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)v1.0.0\IOToolkit\binaries\Win64;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)..\IODevice\v2.0.0\IOToolkit\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)Binaries\Win64\Release;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>

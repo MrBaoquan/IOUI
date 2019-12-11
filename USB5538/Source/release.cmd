@@ -13,10 +13,10 @@ rem start execute command
 :start
 @rem	Note: Write your command below this line
 
-copy %IOUI_SRC_PATH%IOUI-%PLATFORM%-PCI8201.dll %IOUI_DST_PATH% /y
+copy %IOUI_SRC_PATH%IOUI-%PLATFORM%-USB5538.dll %IOUI_DST_PATH% /y
 
 if %PLATFORM% equ Win64 (
- copy %IOUI_SRC_CORE_PATH%PCI8201_64.dll %IOUI_DST_CORE_PATH% /y
+ copy %IOUI_SRC_CORE_PATH%USB5538_64.dll %IOUI_DST_CORE_PATH% /y
 ) else (
- copy %IOUI_SRC_CORE_PATH%PCI8201_32.dll %IOUI_DST_CORE_PATH%	/y
+ copy %IOUI_SRC_CORE_PATH%USB5538_32.dll %IOUI_DST_CORE_PATH%	/y
 )
