@@ -64,10 +64,16 @@ void CIOUIDebugDlg::DoDataExchange(CDataExchange* pDX)
 }
 
 
-void CIOUIDebugDlg::OnKeyDown(dh::FKey InKey)
+void CIOUIDebugDlg::OnKeyDown(const dh::FKey InKey)
 {
     OutputDebugStringA(InKey.GetName());
     OutputDebugStringA("\n");
+	if (InKey.GetName() == std::string("A")) {
+		dh::IODeviceController::Instance().GetIODevice("ExternalDev_0").SetDO("OAxis_00", 1);
+	}
+	else {
+		dh::IODeviceController::Instance().GetIODevice("ExternalDev_0").SetDO("OAxis_00", 0);
+	}
 	
 }
 

@@ -40,7 +40,7 @@ IOUI_API int __stdcall SetDeviceDO(uint8 deviceIndex, short* InDOStatus)
     std::bitset<ChannelCount> DOStatus;
     for (uint8 index = 0;index < ChannelCount;index++)
     {
-        DOStatus[index] = InDOStatus[index] == 1 ? true : false;
+        DOStatus[index] = InDOStatus[index] >= 1 ? true : false;
     }
 
     return ZT8408_DOAll(deviceIndex, DOStatus.to_ulong()) == 0 ? 1 : 0;

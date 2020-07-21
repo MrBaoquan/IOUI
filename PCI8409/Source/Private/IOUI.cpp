@@ -6,10 +6,15 @@
 
 #include "IOUI.h"
 #include <bitset>
+#include <vector>
+#include <algorithm>
 #include "Util.hpp"
+#include "Paths.hpp"
 #include "PCI8409.h"
 
 #pragma comment(lib,"pci8409.lib")
+
+namespace dh = DevelopHelper;
 
 uint8 GetGroupLength(uint8 groupIndex)
 {
@@ -61,7 +66,6 @@ long SetDeviceDOByGroup(uint8 deviceIndex, uint8 groupIndex, BYTE* InDOStatus)
         bits[index] = currentPos[index] ? true : false;
     }
     return ZT8409_DOAll(deviceIndex, groupIndex, bits.to_ulong()) == 0 ? 1 : 0;
-
 }
 
 
@@ -69,17 +73,32 @@ DeviceInfo g_DeviceInfo;
 
 IOUI_API DeviceInfo* __stdcall Initialize()
 {
-	g_DeviceInfo.InputCount = 0;
+	g_DeviceInfo.InputCount = 144;
 	g_DeviceInfo.OutputCount = 144;
 	g_DeviceInfo.AxisCount = 0;
-
+	
 	return &g_DeviceInfo;
 }
 
 
 IOUI_API int __stdcall OpenDevice(uint8 deviceIndex)
 {
-    return ZT8409_OpenDevice(deviceIndex) == 0 ? 1 : 0;
+	int _retCode = ZT8409_OpenDevice(deviceIndex) == 0 ? 1 : 0;
+
+	std::string path = dh::Paths::Instance().GetModuleDir();
+	std::string config_file_path = path + "Config\\PCI8409\\config.ini";
+	const char* app = "/PCISettings";
+	for (uint8 _groupIndex = 1; _groupIndex <= 10; ++_groupIndex) {
+		int _ioMode = 0;
+		char data[MAX_PATH];
+		std::string _key = "group_" + std::to_string(_groupIndex) + "_mode";
+		GetPrivateProfileStringA(app, _key.data(), "input", data, MAX_PATH, config_file_path.data());
+		if (std::string(data) == "output") {
+			_ioMode = 1;
+		}
+		ZT8409_SetIOMode(deviceIndex, _groupIndex, _ioMode);
+	}
+	return _retCode;
 }
 
 IOUI_API int __stdcall CloseDevice(uint8 deviceIndex)
@@ -107,9 +126,14 @@ IOUI_API int __stdcall GetDeviceDO(uint8 deviceIndex, short* OutDOStatus)
     for (uint8 group_index = 1;group_index <= 10;group_index++)
     {
         uint8 group_length = GetGroupLength(group_index);
-        long doStatus = ZT8409_GetLastDO(deviceIndex, group_index);
-        if (doStatus == -1) { return 0; }
-        std::bitset<16> bits(doStatus);
+        long _doStatus = ZT8409_GetLastDO(deviceIndex, group_index);
+		if (_doStatus == -1) {
+			int _error = ZT8409_GetLastErr();
+			ZT8409_ClearLastErr();
+		}
+		_doStatus = _doStatus == -1 ? 0 : _doStatus;
+
+        std::bitset<16> bits(_doStatus);
         for (uint8 ch_index = 0;ch_index < group_length;++ch_index)
         {
             OutDOStatus[accumulator++] = bits[ch_index] ? 1 : 0;
@@ -121,7 +145,23 @@ IOUI_API int __stdcall GetDeviceDO(uint8 deviceIndex, short* OutDOStatus)
 
 IOUI_API int __stdcall GetDeviceDI(uint8 deviceIndex, BYTE* OutDIStatus)
 {
-    return 0;
+	uint8 _accumulator = 0;
+	for (uint8 _groupIndex = 0; _groupIndex <= 10; ++_groupIndex) {
+		uint8 _group_length = GetGroupLength(_groupIndex);
+		long _diStatus = ZT8409_DIAll(deviceIndex, _groupIndex);
+		if (_diStatus == -1) {
+			int _error = ZT8409_GetLastErr();
+			ZT8409_ClearLastErr();
+		}
+		_diStatus = _diStatus == -1 ? 0 : _diStatus;
+
+		std::bitset<16> bits(_diStatus);
+		for (uint8 _chIndex = 0; _chIndex < _groupIndex; ++_chIndex) {
+			OutDIStatus[_accumulator++] = bits[_chIndex] ? 1 : 0;
+		}
+	}
+	
+    return 1;
 }
 
 IOUI_API int __stdcall GetDeviceAD(uint8 deviceIndex, short* OutADStatus)

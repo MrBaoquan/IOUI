@@ -3,17 +3,28 @@
  *  CreateTime: 2018-5-16 10:44
  *  Email: mrma617@gmail.com
  */
-
+#define WIN32_LEAN_AND_MEAN
 #include <stdlib.h>
 #include "IOUI.h"
 #include "PCIManager.hpp"
 #include "TISocket.hpp"
+#include "Paths.hpp"
+namespace dh = DevelopHelper;
 
 DeviceInfo devInfo;
 
 TISocket sockets[5];
 IOUI_API DeviceInfo* __stdcall Initialize()
 {
+	std::string path = dh::Paths::Instance().GetModuleDir();
+	std::string config_file_path = path + "Config\\PCI8409\\config.ini";
+
+	char* app_name = "/PCISettings";
+	char ip[MAX_PATH] = "";
+	GetPrivateProfileStringA(app_name, "input_1_", "127.0.0.1", ip, MAX_PATH, config_file_path.data());
+
+
+	OutputDebugStringA(config_file_path.c_str());
 	devInfo.InputCount = 32;
 	devInfo.OutputCount = 32;
 	devInfo.AxisCount = 32;

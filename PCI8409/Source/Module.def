@@ -1,6 +1,7 @@
 LIBRARY
 EXPORTS
 
+Initialize = _Initialize@0
 OpenDevice = _OpenDevice@4
 CloseDevice = _CloseDevice@4
 SetDeviceDO = _SetDeviceDO@8
