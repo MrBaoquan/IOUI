@@ -23,6 +23,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PCI8201", "PCI8201\PCI8201.
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "USB5538", "USB5538\USB5538.vcxproj", "{9AD272BB-7B2B-40E3-8872-C7498BCA0667}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "COMDEV", "COMDEV\COMDEV.vcxproj", "{A19AA41B-3E7C-4254-BE07-F546E2C77F95}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -111,6 +113,14 @@ Global
 		{9AD272BB-7B2B-40E3-8872-C7498BCA0667}.Release|x64.Build.0 = Release|x64
 		{9AD272BB-7B2B-40E3-8872-C7498BCA0667}.Release|x86.ActiveCfg = Release|Win32
 		{9AD272BB-7B2B-40E3-8872-C7498BCA0667}.Release|x86.Build.0 = Release|Win32
+		{A19AA41B-3E7C-4254-BE07-F546E2C77F95}.Debug|x64.ActiveCfg = Debug|x64
+		{A19AA41B-3E7C-4254-BE07-F546E2C77F95}.Debug|x64.Build.0 = Debug|x64
+		{A19AA41B-3E7C-4254-BE07-F546E2C77F95}.Debug|x86.ActiveCfg = Debug|Win32
+		{A19AA41B-3E7C-4254-BE07-F546E2C77F95}.Debug|x86.Build.0 = Debug|Win32
+		{A19AA41B-3E7C-4254-BE07-F546E2C77F95}.Release|x64.ActiveCfg = Release|x64
+		{A19AA41B-3E7C-4254-BE07-F546E2C77F95}.Release|x64.Build.0 = Release|x64
+		{A19AA41B-3E7C-4254-BE07-F546E2C77F95}.Release|x86.ActiveCfg = Release|Win32
+		{A19AA41B-3E7C-4254-BE07-F546E2C77F95}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
