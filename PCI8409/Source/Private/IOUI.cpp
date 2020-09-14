@@ -146,7 +146,7 @@ IOUI_API int __stdcall GetDeviceDO(uint8 deviceIndex, short* OutDOStatus)
 IOUI_API int __stdcall GetDeviceDI(uint8 deviceIndex, BYTE* OutDIStatus)
 {
 	uint8 _accumulator = 0;
-	for (uint8 _groupIndex = 0; _groupIndex <= 10; ++_groupIndex) {
+	for (uint8 _groupIndex = 1; _groupIndex <= 10; ++_groupIndex) {
 		uint8 _group_length = GetGroupLength(_groupIndex);
 		long _diStatus = ZT8409_DIAll(deviceIndex, _groupIndex);
 		if (_diStatus == -1) {
@@ -156,7 +156,7 @@ IOUI_API int __stdcall GetDeviceDI(uint8 deviceIndex, BYTE* OutDIStatus)
 		_diStatus = _diStatus == -1 ? 0 : _diStatus;
 
 		std::bitset<16> bits(_diStatus);
-		for (uint8 _chIndex = 0; _chIndex < _groupIndex; ++_chIndex) {
+		for (uint8 _chIndex = 0; _chIndex < _group_length; ++_chIndex) {
 			OutDIStatus[_accumulator++] = bits[_chIndex] ? 1 : 0;
 		}
 	}
