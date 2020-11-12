@@ -14,18 +14,17 @@ BOOL WINAPI DllMain(
 )
 {
 
-	DevelopHelper::Paths::Instance().SetModule(hinstDLL);
     switch (fdwReason)
     {
     case DLL_PROCESS_ATTACH:
         {
             std::string dllPath = DevelopHelper::Paths::Instance().GetModuleDir() + "Core\\";
             SetDllDirectoryA(dllPath.data());
-            OutputDebugStringA("============== Attched external dll COMDEV for IODevice.dll ... ================ \n");
+            OutputDebugStringA("============== Attched external dll PCI2394 for IOToolkit ... ================ \n");
         }        
         break;
     case DLL_PROCESS_DETACH:
-        OutputDebugStringA("============== Detached external dll COMDEV for IODevice.dll ... ================ \n");
+        OutputDebugStringA("============== Detached external dll PCI2394 in IOToolkit ... ================ \n");
         break;
     case DLL_THREAD_ATTACH:
         break;

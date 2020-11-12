@@ -13,11 +13,10 @@ rem start execute command
 :start
 @rem	Note: Write your command below this line
 
-copy %IOUI_SRC_PATH%IOUI-%PLATFORM%-COMDEV.dll %IOUI_DST_PATH% /y
-copy %IOUI_SRC_PATH%IOUI-%PLATFORM%-COMDEV.dll %IOUI_SRC_PATH%ExternalLibraries\ /y
+copy %IOUI_SRC_PATH%IOUI-%PLATFORM%-PCI2310.dll %IOUI_DST_PATH% /y
 
-if %CONFIGURE% equ Debug (
-	xcopy %IOUI_SRC_PATH%Config\COMDEV %IOUI_SRC_PATH%ExternalLibraries\Config\ /E /F /Y
+if %PLATFORM% equ Win64 (
+ copy %IOUI_SRC_CORE_PATH%PCI2310_64.dll %IOUI_DST_CORE_PATH% /y
 ) else (
-	xcopy %IOUI_SRC_PATH%Config\COMDEV %IOUI_DST_PATH%Config\COMDEV\ /E /F /Y
+ copy %IOUI_SRC_CORE_PATH%PCI2310_32.dll %IOUI_DST_CORE_PATH%	/y
 )

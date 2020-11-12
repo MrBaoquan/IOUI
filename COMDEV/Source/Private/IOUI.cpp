@@ -16,14 +16,18 @@ Comm g_Comm;
 IOUI_API DeviceInfo* __stdcall Initialize()
 {
 	devInfo.InputCount = 16;
-	devInfo.OutputCount = 0;
-	devInfo.AxisCount = 0;
+	devInfo.OutputCount = 255;
+	devInfo.AxisCount = 255;
     return &devInfo;
 }
 
 IOUI_API int __stdcall OpenDevice(uint8 deviceIndex)
 {
-	g_Comm.Init(deviceIndex,115200);
+	std::string path = dh::Paths::Instance().GetModuleDir();
+	std::string config_file_path = path + "Config\\COMDEV\\config.ini";
+	const char* app = "/PCISettings";
+	DWORD _baudRate = GetPrivateProfileIntA(app, "BaudRate", 9600, config_file_path.data());
+	g_Comm.Init(deviceIndex,_baudRate);
     return 1;
 }
 

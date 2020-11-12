@@ -6,26 +6,25 @@
 
 #include <windows.h>
 #include "Paths.hpp"
-
+ 
 BOOL WINAPI DllMain(
     _In_ HINSTANCE hinstDLL,
     _In_ DWORD     fdwReason,
     _In_ LPVOID    lpvReserved
 )
 {
-
-	DevelopHelper::Paths::Instance().SetModule(hinstDLL);
+    DevelopHelper::Paths::Instance().SetModule(hinstDLL);
     switch (fdwReason)
     {
     case DLL_PROCESS_ATTACH:
         {
             std::string dllPath = DevelopHelper::Paths::Instance().GetModuleDir() + "Core\\";
             SetDllDirectoryA(dllPath.data());
-            OutputDebugStringA("============== Attched external dll COMDEV for IODevice.dll ... ================ \n");
+            OutputDebugStringA("============== Attched external dll PCI2310 for IOToolkit ... ================ \n");
         }        
         break;
     case DLL_PROCESS_DETACH:
-        OutputDebugStringA("============== Detached external dll COMDEV for IODevice.dll ... ================ \n");
+        OutputDebugStringA("============== Detached external dll PCI2310 in IOToolkit ... ================ \n");
         break;
     case DLL_THREAD_ATTACH:
         break;

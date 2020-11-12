@@ -13,11 +13,6 @@ rem start execute command
 :start
 @rem	Note: Write your command below this line
 
-copy %IOUI_SRC_PATH%IOUI-%PLATFORM%-COMDEV.dll %IOUI_DST_PATH% /y
-copy %IOUI_SRC_PATH%IOUI-%PLATFORM%-COMDEV.dll %IOUI_SRC_PATH%ExternalLibraries\ /y
+@rem copy %src_binaries_path%IOUI-%platform%-IOUI.dll %dst_binaries_path% /y
 
-if %CONFIGURE% equ Debug (
-	xcopy %IOUI_SRC_PATH%Config\COMDEV %IOUI_SRC_PATH%ExternalLibraries\Config\ /E /F /Y
-) else (
-	xcopy %IOUI_SRC_PATH%Config\COMDEV %IOUI_DST_PATH%Config\COMDEV\ /E /F /Y
-)
+copy %IOUI_SRC_PATH%IOUI-%PLATFORM%-RPLIDAR.dll %IOUI_DST_PATH% /y
