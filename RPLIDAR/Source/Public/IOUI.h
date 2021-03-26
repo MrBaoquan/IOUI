@@ -5,7 +5,7 @@
 */
 
 #pragma once
-
+#include <windows.h>
 #ifdef IOUI_EXPORTS
 #define IOUI_API __declspec(dllexport)
 #else

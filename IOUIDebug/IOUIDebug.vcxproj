@@ -36,7 +36,7 @@
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v140</PlatformToolset>
-    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <WholeProgramOptimization>false</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
     <UseOfMfc>Dynamic</UseOfMfc>
   </PropertyGroup>
@@ -83,14 +83,14 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <IntDir>$(SolutionDir)Binaries\Win64\Debug\Temp\</IntDir>
-    <IncludePath>$(SolutionDir)..\IODevice\v2.0.0\IOToolkit\include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)Binaries\Win64\Debug;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(SolutionDir)opencv\lib;$(SolutionDir)Binaries\Win64\Debug;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)Binaries\Win64\Debug\</OutDir>
+    <IncludePath>$(SolutionDir)opencv\include;$(SolutionDir)..\IODevice\v2.0.0\IOToolkit\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>$(ProjectDir)Binaries\Win64\Release\</OutDir>
-    <IntDir>$(ProjectDir)Binaries\Win64\Release\Temp\</IntDir>
+    <OutDir>$(SolutionDir)Binaries\Win32\Release\</OutDir>
+    <IntDir>$(SolutionDir)Binaries\Win32\Release\Temp\</IntDir>
     <IncludePath>$(SolutionDir)..\v2.0.0\IOToolkit\include;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)Binaries\Win32\release;$(LibraryPath)</LibraryPath>
     <ExecutablePath>
@@ -98,10 +98,10 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>$(ProjectDir)Binaries\Win64\Release\</OutDir>
-    <IntDir>$(ProjectDir)Binaries\Win64\Release\Temp\</IntDir>
-    <IncludePath>$(SolutionDir)..\IODevice\v2.0.0\IOToolkit\include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)Binaries\Win64\Release;$(LibraryPath)</LibraryPath>
+    <OutDir>$(SolutionDir)Binaries\Win64\Release\</OutDir>
+    <IntDir>$(SolutionDir)Binaries\Win64\Release\Temp\</IntDir>
+    <IncludePath>$(SolutionDir)opencv\include;$(SolutionDir)..\IODevice\v2.0.0\IOToolkit\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)opencv\lib;$(SolutionDir)Binaries\Win64\Release;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -233,4 +233,9 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
+  <ProjectExtensions>
+    <VisualStudio>
+      <UserProperties RESOURCE_FILE="IOUIDebug.rc" />
+    </VisualStudio>
+  </ProjectExtensions>
 </Project>

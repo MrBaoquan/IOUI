@@ -6,74 +6,88 @@
 
 #include "IOUI.h"
 #include <windows.h>
-#include "opencv2/opencv.hpp"
-#include "PCIManager.hpp"
-#include "rplidar.h"
+#include "RPLidarWrapper.h"
+#include <mutex>
+#include <thread>
+#include "Paths.hpp"
 
-#pragma  comment(lib,"rplidar_driver.lib")
-#ifdef _DEBUG
-#pragma comment(lib,"opencv_world440d.lib")
-#else
-#pragma comment(lib,"opencv_world440.lib")
-#endif // WIN_64
-
-using namespace rp::standalone::rplidar;
+RPLidarWrapper* rpLidar;
 
 DeviceInfo devInfo;
-RPlidarDriver* rpDriver = nullptr;
 
 IOUI_API DeviceInfo* __stdcall Initialize()
 {
 	devInfo.InputCount = 16;
 	devInfo.OutputCount = 16;
-	devInfo.AxisCount = 16;
+	devInfo.AxisCount = 64;
     return &devInfo;
 }
 
+std::mutex g_mutex;
+bool bExit = false;
+short doStatus[64];
+int debugStatus=-1000;
+void Update() {
+	rpLidar = new RPLidarWrapper();
+	///////// 非常重要 !!! Opencv imshow 窗口  destroyWindow 窗口控制必须在同一个线程中进行
+	rpLidar->OpenLidar();
+	while (!bExit)
+	{
+		{
+			std::lock_guard<std::mutex> lock(g_mutex);
+			rpLidar->Update();
+			auto _newTouchPoints = rpLidar->getTouchPoints();
+			memcpy(doStatus, _newTouchPoints, sizeof(short) * 64);
+			if(debugStatus!=-1000)
+				rpLidar->SetDebugMode(debugStatus);
+		}
+		std::this_thread::sleep_for(std::chrono::duration<int,std::milli>(20));
+	}
+	rpLidar->CloseLidar();
+	delete rpLidar;
+}
+
+std::thread rplidarThread;
 IOUI_API int __stdcall OpenDevice(uint8 deviceIndex)
 {
-	rpDriver = RPlidarDriver::CreateDriver(DRIVER_TYPE_SERIALPORT);
-	if (!rpDriver) {
-		return 0;
-	}
-	rplidar_response_device_info_t _deviceInfo;
-	if (IS_OK(rpDriver->connect("COM3", 115200))) {
-		if (IS_OK(rpDriver->getDeviceInfo(_deviceInfo))) {
-			rpDriver->startMotor();
-			rpDriver->startScan(0, 1);
-			return 1;
-		}
-		else {
-			delete rpDriver;
-			rpDriver = nullptr;
-		}
-	};
-	
-	return 0;
+#ifdef _DEBUG
+	std::string _path = DevelopHelper::Paths::Instance().GetModuleDir() + "Core\\opencv_world440d.dll";
+#else
+	std::string _path = DevelopHelper::Paths::Instance().GetModuleDir() + "Core\\opencv_world440.dll";
+#endif // WIN_64
+	auto _module = LoadLibraryA(_path.data());
+	rplidarThread = std::thread(Update);
+	return 1;
 }
 
 IOUI_API int __stdcall CloseDevice(uint8 deviceIndex)
 {
-	if (rpDriver) {
-		rpDriver->stop();
-		rpDriver->stopMotor();
-		RPlidarDriver::DisposeDriver(rpDriver);
-		return 1;
+	if (rplidarThread.joinable()) {
+		bExit = true;
+		rplidarThread.join();
 	}
-	
-	return 0;
+	return 1;
 }
 
 IOUI_API int __stdcall SetDeviceDO(uint8 deviceIndex, short* InDOStatus)
 {
+	if (InDOStatus[0] != -1000) {
+		debugStatus = InDOStatus[0];
+		return 1;
+	}
     return 0;
 }
 
 IOUI_API int __stdcall GetDeviceDO(uint8 deviceIndex, short* OutDOStatus)
 {
+	if (rpLidar && rpLidar->rpConfig.config.debugMode != -1000) {
+		OutDOStatus[0] = rpLidar->rpConfig.config.debugMode;
+		return 1;
+	}
+	OutDOStatus[0] = -1000;
     return 0;
 }
-
+// 
 IOUI_API int __stdcall GetDeviceDI(uint8 deviceIndex, BYTE* OutDIStatus)
 {
 	return 0;
@@ -81,33 +95,10 @@ IOUI_API int __stdcall GetDeviceDI(uint8 deviceIndex, BYTE* OutDIStatus)
 
 IOUI_API int __stdcall GetDeviceAD(uint8 deviceIndex, short* OutADStatus)
 {
-	rplidar_response_measurement_node_t nodes[8192];
-	size_t   count = _countof(nodes);
-
-	auto _result = rpDriver->grabScanData(nodes, count);
-
-	if (IS_OK(_result)) {
-		rpDriver->ascendScanData(nodes, count);
-		for (int pos = 0; pos < (int)count; ++pos) {
-			printf("%s theta: %03.2f Dist: %08.2f Q: %d \n",
-				(nodes[pos].sync_quality & RPLIDAR_RESP_MEASUREMENT_SYNCBIT) ? "S " : "  ",
-				(nodes[pos].angle_q6_checkbit >> RPLIDAR_RESP_MEASUREMENT_ANGLE_SHIFT) / 64.0f,
-				nodes[pos].distance_q2 / 4.0f,
-				nodes[pos].sync_quality >> RPLIDAR_RESP_MEASUREMENT_QUALITY_SHIFT);
-
-			// 1. 极坐标转笛卡尔坐标
-			float _angle = (nodes[pos].angle_q6_checkbit >> RPLIDAR_RESP_MEASUREMENT_ANGLE_SHIFT) / 64.0f;
-			float _length = nodes[pos].distance_q2 / 4.0f;
-
-			float _x = _length * std::sin(_angle);
-			float _y = _length * std::sin(_angle);
-			
-			// 2. 获取透视变换矩阵
-		/*	cv::Point2f 
-			cv::getPerspectiveTransform()*/
-			// 3. 获取转换后的坐标
-			// 4. 映射点坐标到屏幕坐标
-		}
+	{
+		std::lock_guard<std::mutex> lock(g_mutex);
+		memcpy(OutADStatus, doStatus, sizeof(short) * 64);
 	}
-	return 0;
+	
+	return 1;
 }
