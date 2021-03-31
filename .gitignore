@@ -31,7 +31,7 @@ bld/
 
 /[Ll]ogs
 
-
+opencv/
 #**/Vendor/*
 
 # Visual Studio 2015 cache/options directory
