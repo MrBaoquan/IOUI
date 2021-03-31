@@ -32,7 +32,7 @@ void RPConfigMgr::Read()
 		auto _screenNode = root->first_node("Screen");
 		// IOToolkit 默认会 将值除以1000  以限制范围在 [-1,1]
 		config.Screen.x = std::atoi(_screenNode->first_attribute("Width")->value());
-		config.Screen.y = std::atoi(_screenNode->first_attribute("Width")->value());
+		config.Screen.y = std::atoi(_screenNode->first_attribute("Height")->value());
 		//xml_dock
 
 		auto _touchAreaNode = root->first_node("TouchArea");

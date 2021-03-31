@@ -64,6 +64,7 @@ IOUI_API int __stdcall CloseDevice(uint8 deviceIndex)
 {
 	if (rplidarThread.joinable()) {
 		bExit = true;
+
 		rplidarThread.join();
 	}
 	return 1;

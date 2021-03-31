@@ -75,10 +75,10 @@ void CIOUIDebugDlg::OnKeyDown(const dh::FKey InKey)
     OutputDebugStringA(InKey.GetName());
     OutputDebugStringA("\n");
 	if (InKey.GetName() == std::string("A")) {
-		dh::IODeviceController::Instance().GetIODevice("ExternalDev_0").SetDO(dh::FKey("OAxis_00"), 0);
+		dh::IODeviceController::Instance().GetIODevice("ExternalDev_0").SetDO(dh::FKey("OAxis_00"), 1);
 	}
 	else if (InKey.GetName() == std::string("B")) {
-		dh::IODeviceController::Instance().GetIODevice("ExternalDev_0").SetDO(dh::FKey("OAxis_00"), -1);
+		dh::IODeviceController::Instance().GetIODevice("ExternalDev_0").SetDO(dh::FKey("OAxis_00"), 0);
 	}
 	
 }
