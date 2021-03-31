@@ -29,6 +29,9 @@ bld/
 [Bb]in/
 [Oo]bj/
 
+opencv*.dll
+opencv*.lib
+
 /[Ll]ogs
 
 opencv/
