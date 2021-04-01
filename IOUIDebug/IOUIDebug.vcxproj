@@ -85,7 +85,7 @@
     <IntDir>$(SolutionDir)Binaries\Win64\Debug\Temp\</IntDir>
     <LibraryPath>$(SolutionDir)opencv\lib;$(SolutionDir)Binaries\Win64\Debug;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)Binaries\Win64\Debug\</OutDir>
-    <IncludePath>$(SolutionDir)opencv\include;$(SolutionDir)..\IODevice\v2.0.0\IOToolkit\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)..\v2.0.0\IOToolkit\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -100,7 +100,7 @@
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(SolutionDir)Binaries\Win64\Release\</OutDir>
     <IntDir>$(SolutionDir)Binaries\Win64\Release\Temp\</IntDir>
-    <IncludePath>$(SolutionDir)opencv\include;$(SolutionDir)..\IODevice\v2.0.0\IOToolkit\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)..\v2.0.0\IOToolkit\include;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)opencv\lib;$(SolutionDir)Binaries\Win64\Release;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">

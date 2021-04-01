@@ -34,8 +34,9 @@ opencv*.lib
 
 /[Ll]ogs
 
-opencv/
+!opencv/include/
 #**/Vendor/*
+v[0-9].[0-9].[0-9]/
 
 # Visual Studio 2015 cache/options directory
 .vs/

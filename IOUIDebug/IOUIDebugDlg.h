@@ -5,7 +5,7 @@
 #pragma once
 #include "IODeviceController.h"
 
-namespace dh = DevelopHelper;
+namespace dh = IOToolkit;
 
 // CIOUIDebugDlg ¶Ô»°¿ò
 class CIOUIDebugDlg : public CDialogEx
