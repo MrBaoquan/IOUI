@@ -31,7 +31,8 @@ bld/
 
 opencv*.dll
 opencv*.lib
-
+opencv/
+*.zip
 /[Ll]ogs
 
 !opencv/include/
