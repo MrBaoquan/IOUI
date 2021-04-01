@@ -35,18 +35,18 @@ IOUI_API int __stdcall CloseDevice(uint8 deviceIndex)
     return ZT8408_CloseDevice(static_cast<uint8>(deviceIndex)) == 0 ? 1 : 0;
 }
 
-IOUI_API int __stdcall SetDeviceDO(uint8 deviceIndex, BYTE* InDOStatus)
+IOUI_API int __stdcall SetDeviceDO(uint8 deviceIndex, short* InDOStatus)
 {
     std::bitset<ChannelCount> DOStatus;
     for (uint8 index = 0;index < ChannelCount;index++)
     {
-        DOStatus[index] = InDOStatus[index] == 1 ? true : false;
+        DOStatus[index] = InDOStatus[index] >= 1 ? true : false;
     }
 
     return ZT8408_DOAll(deviceIndex, DOStatus.to_ulong()) == 0 ? 1 : 0;
 }
 
-IOUI_API int __stdcall GetDeviceDO(uint8 deviceIndex, BYTE* OutDOStatus)
+IOUI_API int __stdcall GetDeviceDO(uint8 deviceIndex, short* OutDOStatus)
 {
     long doStatus = ZT8408_GetLastDO(deviceIndex);
     if (doStatus == -1) { return 0; }

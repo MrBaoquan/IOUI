@@ -13,4 +13,4 @@ rem start execute command
 :start
 @rem	Note: Write your command below this line
 
-@rem copy %src_binaries_path%IOUI-%platform%-IOUI.dll %dst_binaries_path% /y
+copy %IOUI_SRC_PATH%IOUI-%PLATFORM%-IOUI.dll %IOUI_DST_PATH% /y

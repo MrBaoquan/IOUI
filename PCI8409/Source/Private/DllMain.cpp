@@ -5,6 +5,7 @@
  */
 
 #include <windows.h>
+#include "Paths.hpp"
 
 BOOL WINAPI DllMain(
     _In_ HINSTANCE hinstDLL,
@@ -13,9 +14,13 @@ BOOL WINAPI DllMain(
 )
 {
 
+	DevelopHelper::Paths::Instance().SetModule(hinstDLL);
     switch (fdwReason)
     {
-    case DLL_PROCESS_ATTACH:
+	case DLL_PROCESS_ATTACH: {
+			std::string dllPath = DevelopHelper::Paths::Instance().GetModuleDir() + "Core\\";
+			SetDllDirectoryA(dllPath.data());
+		}
         OutputDebugStringA("============== Attched external dll PCI8409 for IODevice.dll ... ================ \n");
         break;
     case DLL_PROCESS_DETACH:

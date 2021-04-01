@@ -12,7 +12,7 @@
 
 # Build results
 !/Binaries/Win64/Debug
-
+v[0-9].0.0/
 
 Debug/
 [Rr]elease/
@@ -29,10 +29,15 @@ bld/
 [Bb]in/
 [Oo]bj/
 
+opencv*.dll
+opencv*.lib
+opencv/
+*.zip
 /[Ll]ogs
 
-
+!opencv/include/
 #**/Vendor/*
+v[0-9].[0-9].[0-9]/
 
 # Visual Studio 2015 cache/options directory
 .vs/

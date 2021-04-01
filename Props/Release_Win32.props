@@ -6,8 +6,8 @@
     <OutDir>$(SolutionDir)Binaries\Win32\Release\</OutDir>
     <IntDir>$(SolutionDir)Binaries\Win32\Release\Temp\</IntDir>
     <TargetName>IOUI-Win32-$(ProjectName)</TargetName>
-    <IncludePath>$(ProjectDir)Source\Public;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)Binaries\Win32\Release\Libraries;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)vendor\includes;$(ProjectDir)Source\Public;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)opencv\x86\lib;$(SolutionDir)Binaries\Win32\Release\Libraries;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup>
     <ClCompile>
@@ -18,6 +18,8 @@
     </PostBuildEvent>
     <Link>
       <ModuleDefinitionFile>$(ProjectDir)Source\Module.def</ModuleDefinitionFile>
+      <DelayLoadDLLs>opencv_world440.dll;opencv_world440d.dll</DelayLoadDLLs>
+      <SupportUnloadOfDelayLoadedDLL>true</SupportUnloadOfDelayLoadedDLL>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup />

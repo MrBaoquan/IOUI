@@ -49,7 +49,7 @@ extern "C"
     * @param InDOStatus : 输入开关量状态 BYTE[32]
     * @return 成功返回1 否则返回 0
     */
-    IOUI_API int __stdcall SetDeviceDO(uint8 deviceIndex, BYTE* InDOStatus);
+    IOUI_API int __stdcall SetDeviceDO(uint8 deviceIndex, short* InDOStatus);
 
     /**
     * 获取 External 设备输出状态
@@ -57,7 +57,7 @@ extern "C"
     * @param InDOStatus : 输出开关量状态 BYTE[32]
     * @return 成功返回1 否则返回 0
     */
-    IOUI_API int __stdcall GetDeviceDO(uint8 deviceIndex, BYTE* OutDOStatus);
+    IOUI_API int __stdcall GetDeviceDO(uint8 deviceIndex, short* OutDOStatus);
 
     /**
     * 获取 External 设备输入状态

@@ -151,8 +151,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Public\IOUI.h" />
-    <ClInclude Include="Source\Public\Paths.hpp" />
-    <ClInclude Include="Source\Public\PCIManager.hpp" />
+    <ClInclude Include="Source\Public\PCI2394.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Source\Module.def" />

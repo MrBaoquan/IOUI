@@ -3,34 +3,35 @@
  *  CreateTime: 2018-5-16 10:44
  *  Email: mrma617@gmail.com
  */
-
+#include <stdlib.h>
 #include "IOUI.h"
 
 DeviceInfo devInfo;
-
 IOUI_API DeviceInfo* __stdcall Initialize()
 {
+	devInfo.InputCount = 32;
+	devInfo.OutputCount = 32;
+	devInfo.AxisCount = 32;
     return &devInfo;
 }
 
 IOUI_API int __stdcall OpenDevice(uint8 deviceIndex)
 {
-    return 0;
+    return 1;
 }
 
 IOUI_API int __stdcall CloseDevice(uint8 deviceIndex)
 {
-    return 0;
+    return 1;
 }
 
-IOUI_API int __stdcall SetDeviceDO(uint8 deviceIndex, BYTE* InDOStatus)
+IOUI_API int __stdcall SetDeviceDO(uint8 deviceIndex, short* InDOStatus)
 {
-    return 0;
+    return 1;
 }
 
-IOUI_API int __stdcall GetDeviceDO(uint8 deviceIndex, BYTE* OutDOStatus)
+IOUI_API int __stdcall GetDeviceDO(uint8 deviceIndex, short* OutDOStatus)
 {
-	OutDOStatus[0] = 1;
     return 0;
 }
 

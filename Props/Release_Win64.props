@@ -5,8 +5,8 @@
   <PropertyGroup>
     <OutDir>$(SolutionDir)Binaries\Win64\Release\</OutDir>
     <IntDir>$(SolutionDir)Binaries\Win64\Release\Temp\</IntDir>
-    <IncludePath>$(ProjectDir)Source\Public;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)Binaries\Win64\Release\Libraries;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)opencv\include;$(SolutionDir)vendor\includes;$(ProjectDir)Source\Public;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)opencv\x64\lib;$(SolutionDir)Binaries\Win64\Release\Libraries;$(LibraryPath)</LibraryPath>
     <TargetName>IOUI-Win64-$(ProjectName)</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup>

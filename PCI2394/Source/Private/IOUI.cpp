@@ -37,15 +37,15 @@ IOUI_API int __stdcall OpenDevice(uint8 deviceIndex)
 
 			CNTPara[_index].lCNTMode = PCI2394_CNTMODE_1_PULSE;
 			CNTPara[_index].lResetMode = PCI2394_RESETMODE_ZERO; // 计数器复位到0x00000000
-			CNTPara[_index].bOverflowLock = TRUE; // 上溢锁定
-			CNTPara[_index].bUnderflowLock = TRUE; // 下溢锁定
+			CNTPara[_index].bOverflowLock = FALSE; // 上溢锁定
+			CNTPara[_index].bUnderflowLock = FALSE; // 下溢锁定
 			CNTPara[_index].bDigitFilter = TRUE; // 差分输入是否进行数字滤波(DF) TRUE=过滤
 			CNTPara[_index].lLatchMode = PCI2394_LATCHMODE_SOFT; // 软件锁存计数器数据 SoftWare
 
 			PCI2394_InitDeviceCNT(hHandle, &CNTPara[_index], _index);
 		}
 
-		PCIManager::Instance().AddHandle(deviceIndex, hHandle);
+		PCIManager::Instance().AddDevice(deviceIndex, DeviceData(hHandle, devInfo));
 		return 1;
 	}
 	return 0;
@@ -57,14 +57,13 @@ IOUI_API int __stdcall CloseDevice(uint8 deviceIndex)
 	return PCI2394_ReleaseDevice(hHandle) ? 1 : 0;
 }
 
-IOUI_API int __stdcall SetDeviceDO(uint8 deviceIndex, BYTE* InDOStatus)
+IOUI_API int __stdcall SetDeviceDO(uint8 deviceIndex, short* InDOStatus)
 {
     return 0;
 }
 
-IOUI_API int __stdcall GetDeviceDO(uint8 deviceIndex, BYTE* OutDOStatus)
+IOUI_API int __stdcall GetDeviceDO(uint8 deviceIndex, short* OutDOStatus)
 {
-	OutDOStatus[0] = 1;
     return 0;
 }
 

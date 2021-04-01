@@ -14,8 +14,8 @@ rem start execute command
 @rem	Note: Write your command below this line
 
 
-
 copy %IOUI_SRC_PATH%IOUI-%PLATFORM%-PCI8408.dll %IOUI_DST_PATH% /y
+copy %IOUI_SRC_PATH%IOUI-%PLATFORM%-PCI8408.dll %IOUI_SRC_PATH%ExternalLibraries\ /y
 
 if %PLATFORM% equ Win64 (
  copy %IOUI_SRC_CORE_PATH%pci8408.dll %IOUI_DST_CORE_PATH% /y

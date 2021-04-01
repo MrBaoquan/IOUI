@@ -5,7 +5,7 @@
 #pragma once
 #include "IODeviceController.h"
 
-namespace dh = DevelopHelper;
+namespace dh = IOToolkit;
 
 // CIOUIDebugDlg 对话框
 class CIOUIDebugDlg : public CDialogEx
@@ -25,7 +25,7 @@ public:
 public:
 
     void OnSampleAxis(float InValue);
-    void OnKeyDown(dh::FKey InKey);
+    void OnKeyDown(const dh::FKey InKey);
 // 实现
 protected:
 	HICON m_hIcon;
@@ -38,4 +38,5 @@ protected:
 	DECLARE_MESSAGE_MAP()
 public:
     afx_msg void OnTimer(UINT_PTR nIDEvent);
+	afx_msg void OnClose();
 };

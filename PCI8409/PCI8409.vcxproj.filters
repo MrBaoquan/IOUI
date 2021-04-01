@@ -29,9 +29,6 @@
     <ClInclude Include="Source\Public\PCI8409.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Public\PCIManager.hpp">
-      <Filter>头文件</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Source\release.cmd" />

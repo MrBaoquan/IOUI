@@ -7,7 +7,7 @@
 #include "IOUIDebugDlg.h"
 #include "afxdialogex.h"
 #include <string>
-#include "IOSettings.h"
+#include "IODeviceController.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -64,10 +64,23 @@ void CIOUIDebugDlg::DoDataExchange(CDataExchange* pDX)
 }
 
 
-void CIOUIDebugDlg::OnKeyDown(dh::FKey InKey)
+void CIOUIDebugDlg::OnSampleAxis(float InValue)
+{
+	OutputDebugStringA(std::to_string(InValue).data());
+	OutputDebugStringA("\r\n");
+}
+
+void CIOUIDebugDlg::OnKeyDown(const dh::FKey InKey)
 {
     OutputDebugStringA(InKey.GetName());
     OutputDebugStringA("\n");
+	if (InKey.GetName() == std::string("A")) {
+		dh::IODeviceController::Instance().GetIODevice("ExternalDev_0").SetDO(dh::FKey("OAxis_00"), 1);
+	}
+	else if (InKey.GetName() == std::string("B")) {
+		dh::IODeviceController::Instance().GetIODevice("ExternalDev_0").SetDO(dh::FKey("OAxis_00"), 0);
+	}
+	
 }
 
 BEGIN_MESSAGE_MAP(CIOUIDebugDlg, CDialogEx)
@@ -75,10 +88,12 @@ BEGIN_MESSAGE_MAP(CIOUIDebugDlg, CDialogEx)
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
     ON_WM_TIMER()
+	ON_WM_CLOSE()
 END_MESSAGE_MAP()
 
 // CIOUIDebugDlg 消息处理程序
 
+bool bExit = false;
 BOOL CIOUIDebugDlg::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
@@ -109,14 +124,21 @@ BOOL CIOUIDebugDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// 设置小图标
 
 	// TODO: 在此添加额外的初始化代码
+	dh::IODeviceController::Instance().Load();
 
-    dh::IOSettings::Instance().SetIOConfigPath("./Config/IODevice.xml");
+    //dh::IOSettings::Instance().SetIOConfigPath("./Config/IODevice.xml");
     dh::IODeviceController::Instance().GetIODevice("ExternalDev_0").
         BindAction("KeyDown", dh::IE_Pressed, this, &CIOUIDebugDlg::OnKeyDown);
 
-    struct __declspec(uuid("B372C9F6-1959-4650-960D-73F20CD479BB")) Interface{};
-    auto uid = __uuidof(Interface);
+	dh::IODeviceController::Instance().GetIODevice("ExternalDev_0")
+		.BindAxis("MoveLR", this, &CIOUIDebugDlg::OnSampleAxis);
 
+	
+		//BindAction("KeyDown", dh::IE_Pressed, this, &CIOUIDebugDlg::OnKeyDown);
+
+    //struct __declspec(uuid("B372C9F6-1959-4650-960D-73F20CD479BB")) Interface{};
+    //auto uid = __uuidof(Interface);
+	
     SetTimer(0, 0.02, nullptr);
 	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
 }
@@ -170,11 +192,17 @@ HCURSOR CIOUIDebugDlg::OnQueryDragIcon()
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
-
-
 void CIOUIDebugDlg::OnTimer(UINT_PTR nIDEvent)
 {
     // TODO: 在此添加消息处理程序代码和/或调用默认值
     dh::IODeviceController::Instance().Update();
+	
     CDialogEx::OnTimer(nIDEvent);
+}
+
+
+void CIOUIDebugDlg::OnClose()
+{
+	// TODO: 在此添加消息处理程序代码和/或调用默认值
+	CDialogEx::OnClose();
 }

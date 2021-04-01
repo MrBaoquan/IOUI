@@ -152,7 +152,6 @@
   <ItemGroup>
     <ClInclude Include="Source\Public\IOUI.h" />
     <ClInclude Include="Source\Public\PCI8409.h" />
-    <ClInclude Include="Source\Public\PCIManager.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Source\release.cmd" />
