@@ -12,7 +12,7 @@
 
 #pragma comment(lib,"EM9703.lib")
 
-namespace dh = DevelopHelper;
+namespace dh = IOToolkit;
 
 /** 设备基本信息 */
 DeviceInfo g_DeviceInfo;

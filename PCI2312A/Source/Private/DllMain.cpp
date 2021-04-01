@@ -24,7 +24,7 @@ BOOL WINAPI DllMain(
         }        
         break;
     case DLL_PROCESS_DETACH:
-        OutputDebugStringA("============== Detached external dll PCI2312A in IOToolkit ... ================ \n");
+        OutputDebugStringA("============== Detached external dll PCI2312A for IOToolkit ... ================ \n");
         break;
     case DLL_THREAD_ATTACH:
         break;
