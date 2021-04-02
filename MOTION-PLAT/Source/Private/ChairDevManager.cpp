@@ -1,0 +1,123 @@
+#include "ChairDevManager.h"
+#include <iostream>
+#include <math.h>
+#include "rapidxml/rapidxml.hpp"
+#include "rapidxml/rapidxml_utils.hpp"
+#include "TISocket.hpp"
+#include "ChairDevice.h"
+#include "Paths.hpp"
+
+#define clamp(val, lower, upper) (min(upper, max(val, lower)))
+
+ChairDevManager& ChairDevManager::Instance()
+{
+	static ChairDevManager instance;
+	return instance;
+}
+
+void ChairDevManager::BindFeedBack(OnUDPReceivedDelegate _callback)
+{
+	//udpSocket->BindOnUDPReveivedDelegate(_callback);
+}
+
+int ChairDevManager::InitDevice()
+{
+	using std::string;
+	using namespace rapidxml;
+	using namespace DevelopHelper;
+
+	//	获取远程 ip 和 port
+	string file_path = Paths::Instance().GetConfigDir() + "MOTION-PLAT/config.xml";
+
+	xml_document<> doc;
+	try
+	{
+		file<> fdoc(file_path.data());
+		doc.parse<0>(fdoc.data());
+		xml_node<>* root = doc.first_node("ChairDevice");
+
+		speed = static_cast<unsigned char>(std::atoi(root->first_attribute("speed")->value()));
+		chDevice->bSpeed = speed;
+		limitPitch = static_cast<float>(std::atof(root->first_attribute("lim_pitch")->value()));
+		limitRoll = static_cast<float>(std::atof(root->first_attribute("lim_roll")->value()));
+
+		xml_node<>* udpNode = root->first_node("UDP");
+		ip = udpNode->first_attribute("ip")->value();
+		port = std::atoi(udpNode->first_attribute("port")->value());
+		int localPort = std::atoi(udpNode->first_attribute("localPort")->value());
+		udpSocket->Initialize(TIType::UDP, localPort);
+		udpSocket->SetRemoteAddr(ip, port);
+
+		udpSocket->StartReceived();
+		return 1;
+	}
+	catch (const std::exception error)
+	{
+		MessageBoxA(nullptr, error.what(), "Error:确认文件是否存在", MB_OK);
+		exit(-1);
+	}
+	return 0;
+}
+
+int ChairDevManager::Reset()
+{
+	chDevice->Euler = EulerAngle::Zero();
+	return this->DoAction();
+}
+
+const float ChairDevManager::Pitch() const
+{
+	return chDevice->Euler.Pitch;
+}
+
+void ChairDevManager::Pitch(const float _pitch)
+{
+	chDevice->Euler.Pitch = clamp(_pitch, -limitPitch, limitPitch);;
+}
+
+const float ChairDevManager::Roll() const
+{
+	return chDevice->Euler.Roll;
+}
+
+void ChairDevManager::Roll(const float _roll)
+{
+	chDevice->Euler.Roll = clamp(_roll,-limitRoll,limitRoll);
+}
+
+const unsigned char ChairDevManager::Speed() const
+{
+	return chDevice->bSpeed;
+}
+
+void ChairDevManager::Speed(const unsigned char _speed)
+{
+	chDevice->bSpeed = clamp(_speed,-20,20);
+}
+
+int ChairDevManager::DoAction()
+{
+	return udpSocket->Send(reinterpret_cast<char*>(const_cast<unsigned char*>(chDevice->GetActionCommand())), bufferLength);
+}
+
+void ChairDevManager::Exit()
+{
+	udpSocket->Exit();
+}
+
+ChairDevManager::ChairDevManager()
+{
+	udpSocket = new TISocket();
+	chDevice = new ChairDevice();
+}
+
+ChairDevManager::ChairDevManager(ChairDevManager&)
+{
+
+}
+
+ChairDevManager::~ChairDevManager()
+{
+	delete udpSocket;
+	delete chDevice;
+}
