@@ -1,6 +1,8 @@
-#pragma once
+﻿#pragma once
 
 #include <string>
+#include <vector>
+#include <memory>
 
 struct RPPoint {
 	RPPoint() {
@@ -17,11 +19,12 @@ struct RPPoint {
 
 struct RPConfig {
 	std::string PortName;
-	RPPoint Screen;
 	int BaudRate;
 	int AngleOffset;
 	float DebugRadius = 1.5f;
-	RPPoint Corners[4];
+	float DebugUIScale = 0.5f;
+	std::vector<std::vector<RPPoint>> Areas;
+	std::vector<RPPoint> Screens;
 	int debugMode = -1000;
 };
 

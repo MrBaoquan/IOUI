@@ -19,7 +19,7 @@ copy %IOUI_SRC_PATH%IOUI-%PLATFORM%-RPLIDAR.dll %IOUI_DST_PATH% /y
 copy %IOUI_SRC_CORE_PATH%opencv_world440.dll %IOUI_DST_CORE_PATH% /y
 
 if %CONFIGURE% equ Debug (
-	xcopy %IOUI_SRC_PATH%Config\RPLIDAR %IOUI_SRC_PATH%ExternalLibraries\Config\ /E /F /Y
+	xcopy %IOUI_SRC_PATH%Config\RPLIDAR %IOUI_SRC_PATH%ExternalLibraries\Config\RPLIDAR\ /E /F /Y
 ) else (
 	xcopy %IOUI_SRC_PATH%Config\RPLIDAR %IOUI_DST_PATH%Config\RPLIDAR\ /E /F /Y
 )

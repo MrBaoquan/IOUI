@@ -1,4 +1,4 @@
-/** Copyright (c) 2018 Hefei And Technology Co.,Ltd
+ï»¿/** Copyright (c) 2018 Hefei And Technology Co.,Ltd
  *  Author: MrBaoquan
  *  CreateTime: 2018-5-16 10:44
  *  Email: mrma617@gmail.com
@@ -19,17 +19,17 @@ IOUI_API DeviceInfo* __stdcall Initialize()
 {
 	devInfo.InputCount = 16;
 	devInfo.OutputCount = 16;
-	devInfo.AxisCount = 64;
+	devInfo.AxisCount = 384;
     return &devInfo;
 }
 
 std::mutex g_mutex;
 bool bExit = false;
-short doStatus[64];
+short doStatus[384];
 int debugStatus=-1000;
 void Update() {
 	rpLidar = new RPLidarWrapper();
-	///////// ·Ç³£ÖØÒª !!! Opencv imshow ´°¿Ú  destroyWindow ´°¿Ú¿ØÖÆ±ØÐëÔÚÍ¬Ò»¸öÏß³ÌÖÐ½øÐÐ
+	///////// éžå¸¸é‡è¦ !!! Opencv imshow çª—å£  destroyWindow çª—å£æŽ§åˆ¶å¿…é¡»åœ¨åŒä¸€ä¸ªçº¿ç¨‹ä¸­è¿›è¡Œ
 	rpLidar->OpenLidar();
 	while (!bExit)
 	{
@@ -37,7 +37,7 @@ void Update() {
 			std::lock_guard<std::mutex> lock(g_mutex);
 			rpLidar->Update();
 			auto _newTouchPoints = rpLidar->getTouchPoints();
-			memcpy(doStatus, _newTouchPoints, sizeof(short) * 64);
+			memcpy(doStatus, _newTouchPoints, sizeof(short) * 384);
 			if(debugStatus!=-1000)
 				rpLidar->SetDebugMode(debugStatus);
 		}
@@ -98,7 +98,7 @@ IOUI_API int __stdcall GetDeviceAD(uint8 deviceIndex, short* OutADStatus)
 {
 	{
 		std::lock_guard<std::mutex> lock(g_mutex);
-		memcpy(OutADStatus, doStatus, sizeof(short) * 64);
+		memcpy(OutADStatus, doStatus, sizeof(short) * 384);
 	}
 	
 	return 1;

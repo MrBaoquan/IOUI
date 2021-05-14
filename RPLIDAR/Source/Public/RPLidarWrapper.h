@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 #include <windows.h>
 #include "opencv2/opencv.hpp"
@@ -38,19 +38,19 @@ public:
 
 	void SetDebugMode(int mode);
 
-	// ÊÇ·ñµã»÷µ½Í¸ÊÓ¾ØĞÎÇø
-	bool hitPerspectiveArea(Point2f position);
+	// æ˜¯å¦ç‚¹å‡»åˆ°é€è§†çŸ©å½¢åŒº
+	bool hitPerspectiveArea(Point2f position, int& areaIndex);
 	
-	int getHitCorner(Point2f position);
-	// ÅĞ¶ÏÊó±êÊÇ·ñµã»÷µ½Ä³¸ö½Çµã
+	int getHitCorner(Point2f position, int& areaIndex);
+	// åˆ¤æ–­é¼ æ ‡æ˜¯å¦ç‚¹å‡»åˆ°æŸä¸ªè§’ç‚¹
 	bool checkHitPoint(Point2f target, Point2f origin);
-	// ÉèÖÃ½ÇµãµÄÎ»ÖÃ
-	void SetCorner(int index, Point2f newPosition);
-	// ×Ô¶¯µ÷Õû½Çµã
-	void AdaptiveCorners();
+	// è®¾ç½®è§’ç‚¹çš„ä½ç½®
+	void SetCorner(int index, Point2f newPosition, int areaIndex);
+	// è‡ªåŠ¨è°ƒæ•´è§’ç‚¹
+	void AdaptiveCorners(int areaIndex=0);
 
-	// Ä¿±êÍ¸ÊÓ¾ØĞÎ
-	Rect targetPerspectiveRect();
+	// ç›®æ ‡é€è§†çŸ©å½¢
+	Rect targetPerspectiveRect(std::vector<Point2f> spts);
 	std::vector<Point2f> rect2Points(Rect rect);
 
 	void AddMouseSimulate(Point2f);
@@ -66,11 +66,11 @@ private:
 	void renderTouchPoints();
 	void syncCorners();
 	void fetchScanPoints();
-	// ÏÔÊ¾À×´ïµ÷ÊÔ´°¿Ú
+	// æ˜¾ç¤ºé›·è¾¾è°ƒè¯•çª—å£
 	void EnableDebugUI(bool bEnable);
-	// ÏÔÊ¾Ô¤ÀÀ´°¿Ú
+	// æ˜¾ç¤ºé¢„è§ˆçª—å£
 	void EnablePreviewUI(bool bEnable);
-	// ÏÔÊ¾ËùÓĞµ÷ÊÔ´°¿Ú
+	// æ˜¾ç¤ºæ‰€æœ‰è°ƒè¯•çª—å£
 	void EnableAll(bool bEnable);
 	void renderPlots();
 	void renderScanPoints();
@@ -79,13 +79,17 @@ private:
 	static void MouseEventHandler(int evt, int x, int y, int flags, void* param);
 	static void PreviewMouseEventHandler(int evt, int x, int y, int flags, void* param);
 
-	// ½«opencvÆÁÄ»×ø±êÓ³Éäµ½ÖĞĞÄ×ø±ê
+	void nextDebugIndex();
+
+	// å°†opencvå±å¹•åæ ‡æ˜ å°„åˆ°ä¸­å¿ƒåæ ‡
 	Point2f RPLidarWrapper::map2Screen(Point2f point);
-	// ½«ÖĞĞÄ×ø±êÓ³Éäµ½ÆÁÄ»×ø±ê
+	// å°†ä¸­å¿ƒåæ ‡æ˜ å°„åˆ°å±å¹•åæ ‡
 	Point2f RPLidarWrapper::map2Center(Point2f point);
 
 	Point2f RPLidarWrapper::mapPhysical2ScreenCenter(Point2f point);
 	Point2f mapScreenCenter2Physical(Point2f point);
+
+	void syncPreviewUISize();
 
 public:
 	RPConfigMgr rpConfig;
@@ -93,23 +97,24 @@ public:
 	int angleOffset = 0;
 	RPlidarDriver* rpDriver = nullptr;
 	Point DebugUISize = Point(800,800);
-	// À×´ïÉ¨ÃèÔ­Ê¼¼«×ø±êµã
+	// é›·è¾¾æ‰«æåŸå§‹æåæ ‡ç‚¹
 	std::vector<LidarScanPoint> lidarScanPoints;
-	// ÓÃÓÚÄ£ÄâµÄÆÁÄ»µã
+	// ç”¨äºæ¨¡æ‹Ÿçš„å±å¹•ç‚¹
 	std::vector<Point2f> simulatePoints;
 	
-	// ×îÖÕµÄ´¥Ãşµã	×ø±êÖµ·¶Î§ [0-1]
-	std::vector<Point2f> touchPoints;
-	// À×´ïµãÓ³Éäµ½ÆÁÄ»×ø±êµÄµã
+	// æœ€ç»ˆçš„è§¦æ‘¸ç‚¹	åæ ‡å€¼èŒƒå›´ [0-1]
+	//std::vector<Point2f> touchPoints;
+
+	int debugAreaIndex = 0;
+	std::vector<std::vector<Point2f>> allTouchPoints;
+	// é›·è¾¾ç‚¹æ˜ å°„åˆ°å±å¹•åæ ‡çš„ç‚¹
 	std::vector<Point2f> lidarScreenPoints;
-	//std::vector<Point2f> lidarPhysicalPoints;
+	
 	Mat screen = Mat::zeros(800,800,CV_8UC3);
 	Mat preview = Mat::zeros(720, 1280, CV_8UC3);
 
-	Point2f P1, P2, P3, P4;
-	Point2f SP1, SP2, SP3, SP4;
-
-	Point2f perspactiveOrigin[4];
+	std::vector<std::vector<Point2f>> Ps;
+	std::vector<std::vector<Point2f>> SPs;
 
 	bool bEnablePreviewUI = false;
 	bool bEnableDebugUI = false;

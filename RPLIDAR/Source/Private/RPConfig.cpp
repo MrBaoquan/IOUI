@@ -1,4 +1,4 @@
-#include "RPConfig.h"
+ï»¿#include "RPConfig.h"
 #include "Paths.hpp"
 #include <string>
 #include <locale>
@@ -14,6 +14,8 @@
 using namespace DevelopHelper;
 using namespace rapidxml;
 
+#define clamp(val, lower, upper) (min(upper, max(val, lower)))
+
 void RPConfigMgr::Read()
 {
 	std::string _filepath = Paths::Instance().GetConfigDir() + "RPLIDAR\\config.xml";
@@ -28,24 +30,32 @@ void RPConfigMgr::Read()
 		config.AngleOffset = std::atoi(root->first_attribute("AngleOffset")->value());
 		config.DebugRadius = std::atoi(root->first_attribute("DebugRadius")->value());
 		config.debugMode = std::atoi(root->first_attribute("DebugMode")->value());
-
-		auto _screenNode = root->first_node("Screen");
-		// IOToolkit Ä¬ÈÏ»á ½«Öµ³ıÒÔ1000  ÒÔÏŞÖÆ·¶Î§ÔÚ [-1,1]
-		config.Screen.x = std::atoi(_screenNode->first_attribute("Width")->value());
-		config.Screen.y = std::atoi(_screenNode->first_attribute("Height")->value());
-		//xml_dock
-
-		auto _touchAreaNode = root->first_node("TouchArea");
-		int index = 0;
-		for (auto _point = _touchAreaNode->first_node("Point"); _point; _point = _point->next_sibling("Point")) {
-			config.Corners[index].x = std::atof(_point->first_attribute("x")->value());
-			config.Corners[index].y = std::atof(_point->first_attribute("y")->value());
-			index++;
+		config.DebugUIScale = std::atof(root->first_attribute("DebugUIScale")->value());
+		config.DebugUIScale = clamp(config.DebugUIScale, 0.2f, 1.0f);
+		int _areaIndex = 0;
+		for (auto _touchAreaNode = root->first_node("TouchArea"); _touchAreaNode; _touchAreaNode = _touchAreaNode->next_sibling("TouchArea"))
+		{
+			// IOToolkit é»˜è®¤ä¼š å°†å€¼é™¤ä»¥1000  ä»¥é™åˆ¶èŒƒå›´åœ¨ [-1,1]
+			float _width = std::atoi(_touchAreaNode->first_attribute("Width")->value());
+			float _height = std::atoi(_touchAreaNode->first_attribute("Height")->value());
+			config.Screens.push_back(RPPoint(_width,_height));
+			int poinIndex = 0;
+			config.Areas.push_back(std::vector<RPPoint>());
+			for (auto _pointNode = _touchAreaNode->first_node("Point"); _pointNode; _pointNode = _pointNode->next_sibling("Point")) {
+				RPPoint _point;
+				_point.x = std::atof(_pointNode->first_attribute("x")->value());
+				_point.y = std::atof(_pointNode->first_attribute("y")->value());
+				config.Areas[_areaIndex].push_back(_point);
+				if (poinIndex++ >= 4) break;
+			}
+			_areaIndex++;
+			if (_areaIndex > 6) break;
 		}
+		
 	}
 	catch (const std::exception&)
 	{
-		MessageBoxA(NULL, "ÅäÖÃÎÄ¼şÓĞÎó", "ÌáÊ¾", MB_OK);
+		MessageBoxA(NULL, "é…ç½®æ–‡ä»¶æœ‰è¯¯", "æç¤º", MB_OK);
 	}
 }
 
@@ -65,14 +75,24 @@ void RPConfigMgr::Save()
 		xml_node<>* root = doc.first_node("Rplidar");
 		root->first_attribute("DebugRadius")->value(doc.allocate_string(nodeString(config.DebugRadius).data()));
 		root->first_attribute("AngleOffset")->value(doc.allocate_string(nodeString(config.AngleOffset).data()));
+
 		auto _touchAreaNode = root->first_node("TouchArea");
 		int index = 0;
 		std::string _val = nodeString(config.AngleOffset);
-		for (auto _point = _touchAreaNode->first_node("Point"); _point; _point = _point->next_sibling("Point")) {
-			_point->first_attribute("x")->value(doc.allocate_string(std::to_string(config.Corners[index].x).data()));
-			_point->first_attribute("y")->value(doc.allocate_string(std::to_string(config.Corners[index].y).data()));
-			index++;
+
+		int _areaIndex = 0;
+		for (auto _touchAreaNode = root->first_node("TouchArea"); _touchAreaNode; _touchAreaNode = _touchAreaNode->next_sibling("TouchArea"))
+		{
+			int poinIndex = 0;
+			config.Areas.push_back(std::vector<RPPoint>());
+			for (auto _pointNode = _touchAreaNode->first_node("Point"); _pointNode; _pointNode = _pointNode->next_sibling("Point")) {
+				_pointNode->first_attribute("x")->value(doc.allocate_string(std::to_string(config.Areas[_areaIndex][poinIndex].x).data()));
+				_pointNode->first_attribute("y")->value(doc.allocate_string(std::to_string(config.Areas[_areaIndex][poinIndex].y).data()));
+				if (poinIndex++ >= 4) break;
+			}
+			_areaIndex++;
 		}
+
 		std::string buffer;
 		rapidxml::print(std::back_inserter(buffer), doc, 0);
 		std::basic_ofstream<char> outFile(_filepath.data());

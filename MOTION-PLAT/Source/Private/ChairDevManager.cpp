@@ -1,4 +1,4 @@
-#include "ChairDevManager.h"
+ï»¿#include "ChairDevManager.h"
 #include <iostream>
 #include <math.h>
 #include "rapidxml/rapidxml.hpp"
@@ -26,7 +26,7 @@ int ChairDevManager::InitDevice()
 	using namespace rapidxml;
 	using namespace DevelopHelper;
 
-	//	»ñÈ¡Ô¶³Ì ip ºÍ port
+	//	ï¿½ï¿½È¡Ô¶ï¿½ï¿½ ip ï¿½ï¿½ port
 	string file_path = Paths::Instance().GetConfigDir() + "MOTION-PLAT/config.xml";
 
 	xml_document<> doc;
@@ -53,7 +53,7 @@ int ChairDevManager::InitDevice()
 	}
 	catch (const std::exception error)
 	{
-		MessageBoxA(nullptr, error.what(), "Error:È·ÈÏÎÄ¼þÊÇ·ñ´æÔÚ", MB_OK);
+		MessageBoxA(nullptr, error.what(), "Error:È·ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½Ç·ï¿½ï¿½ï¿½ï¿½", MB_OK);
 		exit(-1);
 	}
 	return 0;
