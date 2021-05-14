@@ -43,21 +43,16 @@ bool RPLidarWrapper::OpenLidar()
 	if (IS_OK(rpDriver->connect(rpConfig.config.PortName.data(), rpConfig.config.BaudRate))) {
 		if (IS_OK(rpDriver->getDeviceInfo(_deviceInfo))) {
 			rpDriver->startMotor();
-			rpDriver->startScan(0, 1);
+			rpDriver->startScan(false, true);
 			return true;
 		}
 		else {
-#ifdef WIN_64
 			delete rpDriver;
-#endif
-
 			rpDriver = nullptr;
 		}
 	}
 	else {
-#ifdef WIN_64
 		delete rpDriver;
-#endif
 		rpDriver = nullptr;
 	};
 	return false;
@@ -523,10 +518,10 @@ short* RPLidarWrapper::getTouchPoints()
 		});
 
 		std::fill(_cacheTouchPoints.begin()+64*_areaIndex, _cacheTouchPoints.begin()+64*(_areaIndex+1), 0);
-		int _maxCount = std::min(32, (int)_touchPoints.size());
+		int _maxCount = std::min(16, (int)_touchPoints.size());
 		for (int _index = 0; _index < _maxCount; ++_index) {
-			_cacheTouchPoints[_areaIndex * 64 + _index * 2] = static_cast<int>(_touchPoints[_index].x);
-			_cacheTouchPoints[_areaIndex * 64 + _index * 2 + 1] = static_cast<int>(_touchPoints[_index].y);
+			_cacheTouchPoints[_areaIndex * 32 + _index * 2] = static_cast<int>(_touchPoints[_index].x);
+			_cacheTouchPoints[_areaIndex * 32 + _index * 2 + 1] = static_cast<int>(_touchPoints[_index].y);
 		}
 	}
 	return _cacheTouchPoints.data();

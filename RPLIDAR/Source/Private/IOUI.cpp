@@ -19,15 +19,16 @@ IOUI_API DeviceInfo* __stdcall Initialize()
 {
 	devInfo.InputCount = 16;
 	devInfo.OutputCount = 16;
-	devInfo.AxisCount = 384;
+	devInfo.AxisCount = 192;
     return &devInfo;
 }
 
 std::mutex g_mutex;
 bool bExit = false;
-short doStatus[384];
+short doStatus[192];
 int debugStatus=-1000;
-void Update() {
+
+void __cdecl Update() {
 	rpLidar = new RPLidarWrapper();
 	///////// 非常重要 !!! Opencv imshow 窗口  destroyWindow 窗口控制必须在同一个线程中进行
 	rpLidar->OpenLidar();
@@ -37,7 +38,7 @@ void Update() {
 			std::lock_guard<std::mutex> lock(g_mutex);
 			rpLidar->Update();
 			auto _newTouchPoints = rpLidar->getTouchPoints();
-			memcpy(doStatus, _newTouchPoints, sizeof(short) * 384);
+			memcpy(doStatus, _newTouchPoints, sizeof(short) * 192);
 			if(debugStatus!=-1000)
 				rpLidar->SetDebugMode(debugStatus);
 		}
@@ -98,7 +99,7 @@ IOUI_API int __stdcall GetDeviceAD(uint8 deviceIndex, short* OutADStatus)
 {
 	{
 		std::lock_guard<std::mutex> lock(g_mutex);
-		memcpy(OutADStatus, doStatus, sizeof(short) * 384);
+		memcpy(OutADStatus, doStatus, sizeof(short) * 192);
 	}
 	
 	return 1;
