@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <functional>
 #ifdef CHAIRDEVICE_EXPORTS
 #define CHDEVAPI __declspec(dllexport)
@@ -32,7 +32,7 @@ public:
 	
 	void Roll(const float _roll);
 
-	void Speed(const unsigned char _speed);
+	void Speed(const float _speed);
 
 	int DoAction();
 
@@ -48,7 +48,7 @@ private:
 	int port = 5050;
 	unsigned int bufferLength = 32;
 
-	unsigned char speed = 0;
+	float speed = 0;
 
 	float limitPitch = 15.f;
 

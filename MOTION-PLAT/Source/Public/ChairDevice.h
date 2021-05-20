@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 struct EulerAngle
 {
@@ -31,13 +31,15 @@ public:
 
 public:
 	/*
-	 *	×ùÒÎµÄ·½Î»ĞÅÏ¢
-	 *  Euler.Pitch ·¶Î§ [-15,15]
-	 *	Euler.Yaw	·¶Î§ [-28,28]
-	 *	Euler.Roll	·¶Î§ [-18,18]
+	 *	åº§æ¤…çš„æ–¹ä½ä¿¡æ¯
+	 *  Euler.Pitch èŒƒå›´ [-15,15]
+	 *	Euler.Yaw	èŒƒå›´ [-28,28]
+	 *	Euler.Roll	èŒƒå›´ [-18,18]
 	 */
 	struct EulerAngle	Euler;
-	unsigned char bSpeed = 0x00;
+	float speed = 0x00;
 private:
 	unsigned char buffer[BUFFERSIZE];
+
+	unsigned char bufferSpeed[5];
 };

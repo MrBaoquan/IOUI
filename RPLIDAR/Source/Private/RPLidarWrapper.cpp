@@ -517,7 +517,7 @@ short* RPLidarWrapper::getTouchPoints()
 			return point;
 		});
 
-		std::fill(_cacheTouchPoints.begin()+64*_areaIndex, _cacheTouchPoints.begin()+64*(_areaIndex+1), 0);
+		std::fill(_cacheTouchPoints.begin()+64*_areaIndex, _cacheTouchPoints.begin()+64*(_areaIndex+1), -1);
 		int _maxCount = std::min(16, (int)_touchPoints.size());
 		for (int _index = 0; _index < _maxCount; ++_index) {
 			_cacheTouchPoints[_areaIndex * 32 + _index * 2] = static_cast<int>(_touchPoints[_index].x);

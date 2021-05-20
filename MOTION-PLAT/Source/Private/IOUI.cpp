@@ -1,4 +1,4 @@
-/** Copyright (c) 2018 Hefei And Technology Co.,Ltd
+﻿/** Copyright (c) 2018 Hefei And Technology Co.,Ltd
  *  Author: MrBaoquan
  *  CreateTime: 2018-5-16 10:44
  *  Email: mrma617@gmail.com
@@ -19,7 +19,9 @@ IOUI_API DeviceInfo* __stdcall Initialize()
 
 IOUI_API int __stdcall OpenDevice(uint8 deviceIndex)
 {
-	return ChairDevManager::Instance().InitDevice();
+	int _retCode = ChairDevManager::Instance().InitDevice();
+	ChairDevManager::Instance().Reset();
+	return _retCode;
 }
 
 IOUI_API int __stdcall CloseDevice(uint8 deviceIndex)

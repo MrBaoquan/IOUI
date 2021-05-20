@@ -1,4 +1,4 @@
-#include "ChairDevice.h"
+ï»¿#include "ChairDevice.h"
 #include "TISocket.hpp"
 
 ChairDevice::ChairDevice()
@@ -17,27 +17,29 @@ const unsigned char* ChairDevice::GetActionCommand()
 	float fRoll = this->Euler.Roll;
 
 	ZeroMemory(buffer, sizeof(unsigned char)*32);
-	//Ö¡Í·1¡¢2
+	//å¸§å¤´1ã€2
 	buffer[0] = 0xFB; buffer[1] = 0xFD;
-	//Ò»ºÅµç¸×Éì³¤Á¿£¬µ¥Î»Î»µç¸××ÜĞĞ³Ì/65535£¬×î´óÖµÎ»65535.
+	//ä¸€å·ç”µç¼¸ä¼¸é•¿é‡ï¼Œå•ä½ä½ç”µç¼¸æ€»è¡Œç¨‹/65535ï¼Œæœ€å¤§å€¼ä½65535.
 	buffer[2] = 0x00; buffer[3] = 0x00; buffer[4] = 0x00; buffer[5] = 0x00;
-	//¶şºÅµç¸×Éì³¤Á¿£¬µ¥Î»Î»µç¸××ÜĞĞ³Ì/65535£¬×î´óÖµÎ»65535.
+	//äºŒå·ç”µç¼¸ä¼¸é•¿é‡ï¼Œå•ä½ä½ç”µç¼¸æ€»è¡Œç¨‹/65535ï¼Œæœ€å¤§å€¼ä½65535.
 	buffer[6] = 0x00; buffer[7] = 0x00; buffer[8] = 0x00; buffer[9] = 0x00;
-	//ÈıºÅµç¸×Éì³¤Á¿£¬µ¥Î»Î»µç¸××ÜĞĞ³Ì/65535£¬×î´óÖµÎ»65535.
+	//ä¸‰å·ç”µç¼¸ä¼¸é•¿é‡ï¼Œå•ä½ä½ç”µç¼¸æ€»è¡Œç¨‹/65535ï¼Œæœ€å¤§å€¼ä½65535.
 	buffer[10] = 0x00; buffer[11] = 0x00; buffer[12] = 0x00; buffer[13] = 0x00;
-	//ËÄºÅµç¸×Éì³¤Á¿£¬µ¥Î»Î»µç¸××ÜĞĞ³Ì/65535£¬×î´óÖµÎ»65535. Pitch
+	//å››å·ç”µç¼¸ä¼¸é•¿é‡ï¼Œå•ä½ä½ç”µç¼¸æ€»è¡Œç¨‹/65535ï¼Œæœ€å¤§å€¼ä½65535. Pitch
 	buffer[14] = (int)((unsigned char *)(&fPitch))[0]; buffer[15] = (int)((unsigned char*)(&fPitch))[1]; buffer[16] = (int)((unsigned char *)(&fPitch))[2]; buffer[17] = (int)((unsigned char *)(&fPitch))[3];
-	//ÎåºÅµç¸×Éì³¤Á¿£¬µ¥Î»Î»µç¸××ÜĞĞ³Ì/65535£¬×î´óÖµÎ»65535. Row
+	//äº”å·ç”µç¼¸ä¼¸é•¿é‡ï¼Œå•ä½ä½ç”µç¼¸æ€»è¡Œç¨‹/65535ï¼Œæœ€å¤§å€¼ä½65535. Row
 	buffer[18] = ((unsigned char *)(&fRoll))[0]; buffer[19] = ((unsigned char *)(&fRoll))[1]; buffer[20] = ((unsigned char *)(&fRoll))[2]; buffer[21] = ((unsigned char *)(&fRoll))[3];
-	//ÁùºÅµç¸×Éì³¤Á¿£¬µ¥Î»Î»µç¸××ÜĞĞ³Ì/65535£¬×î´óÖµÎ»65535.
+	//å…­å·ç”µç¼¸ä¼¸é•¿é‡ï¼Œå•ä½ä½ç”µç¼¸æ€»è¡Œç¨‹/65535ï¼Œæœ€å¤§å€¼ä½65535.
 	buffer[22] = 0x00; buffer[23] = 0x00; buffer[24] = 0x00; buffer[25] = 0x00;
-	//±£Áô ËÙ¶È0x00-0x20
-	buffer[26] = bSpeed;
-	//Èí¼ş°æ±¾
-	buffer[27] = 0x00; buffer[28] = 0x00; buffer[29] = 0x00; buffer[30] = 0x00;
+	//ä¿ç•™ é€Ÿåº¦0x00-0x20
+	const char _speed = static_cast<const char>(speed);
+	buffer[26] = _speed;
+	//è½¯ä»¶ç‰ˆæœ¬
+	buffer[27] = _speed;
+	buffer[28] = 0x00; buffer[29] = 0x00; buffer[30] = 0x00;
 	for (int i = 1; i <= 30; i++)
 	{
-		//´ÓµÚ¶ş¸ö×Ö½Úµ½µ¹ÊıµÚ¶ş¸ö×Ö½ÚÀÛ¼ÓºÍµÄµÍ 8 Î»
+		//ä»ç¬¬äºŒä¸ªå­—èŠ‚åˆ°å€’æ•°ç¬¬äºŒä¸ªå­—èŠ‚ç´¯åŠ å’Œçš„ä½ 8 ä½
 		buffer[31] += buffer[i];
 	}
 	return buffer;

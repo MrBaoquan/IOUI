@@ -1,4 +1,4 @@
-/** Copyright (c) 2018 Hefei And Technology Co.,Ltd
+Ôªø/** Copyright (c) 2018 Hefei And Technology Co.,Ltd
  *  Author: MrBaoquan
  *  CreateTime: 2018-5-16 10:44
  *  Email: mrma617@gmail.com
@@ -12,9 +12,9 @@
 
 #pragma comment(lib,"EM9703.lib")
 
-namespace dh = IOToolkit;
+namespace dh = DevelopHelper;
 
-/** …Ë±∏ª˘±æ–≈œ¢ */
+/** ËÆæÂ§áÂü∫Êú¨‰ø°ÊÅØ */
 DeviceInfo g_DeviceInfo;
 
 IOUI_API DeviceInfo* __stdcall Initialize()
@@ -29,7 +29,12 @@ IOUI_API DeviceInfo* __stdcall Initialize()
 IOUI_API int __stdcall OpenDevice(uint8 deviceIndex)
 {
 	std::string path = dh::Paths::Instance().GetModuleDir();
-    std::string config_file_path = path + "EM9703\\config.ini";
+    std::string config_file_path = path + "Config\\EM9703\\config.ini";
+
+	// DLL Âª∂ËøüÂä†ËΩΩ
+	std::string _path = DevelopHelper::Paths::Instance().GetModuleDir() + "Core\\EM9703.dll";
+	auto _module = LoadLibraryA(_path.data());
+
 	HANDLE handle = EM9703_CreateDevice();
     if (handle != INVALID_HANDLE_VALUE)
     {
@@ -38,7 +43,7 @@ IOUI_API int __stdcall OpenDevice(uint8 deviceIndex)
         int port;
         char* app_name = "/PCISettings";
         GetPrivateProfileStringA(app_name, "IP", "127.0.0.1", ip, MAX_PATH, config_file_path.data());
-        port = GetPrivateProfileIntA(app_name, "Port", 0, config_file_path.data());
+        port = GetPrivateProfileIntA(app_name, "Port", 6000, config_file_path.data());
         return EM9703_CmdConnect(handle, ip, port) == 0? 1 : 0;
     }
     return 0;

@@ -36,8 +36,8 @@ int ChairDevManager::InitDevice()
 		doc.parse<0>(fdoc.data());
 		xml_node<>* root = doc.first_node("ChairDevice");
 
-		speed = static_cast<unsigned char>(std::atoi(root->first_attribute("speed")->value()));
-		chDevice->bSpeed = speed;
+		speed = static_cast<float>(std::atoi(root->first_attribute("speed")->value()));
+		chDevice->speed = speed;
 		limitPitch = static_cast<float>(std::atof(root->first_attribute("lim_pitch")->value()));
 		limitRoll = static_cast<float>(std::atof(root->first_attribute("lim_roll")->value()));
 
@@ -87,12 +87,12 @@ void ChairDevManager::Roll(const float _roll)
 
 const unsigned char ChairDevManager::Speed() const
 {
-	return chDevice->bSpeed;
+	return chDevice->speed;
 }
 
-void ChairDevManager::Speed(const unsigned char _speed)
+void ChairDevManager::Speed(const float _speed)
 {
-	chDevice->bSpeed = clamp(_speed,-20,20);
+	chDevice->speed = _speed;
 }
 
 int ChairDevManager::DoAction()
