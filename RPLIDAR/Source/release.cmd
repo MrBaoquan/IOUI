@@ -16,6 +16,8 @@ rem start execute command
 @rem copy %src_binaries_path%IOUI-%platform%-IOUI.dll %dst_binaries_path% /y
 
 copy %IOUI_SRC_PATH%IOUI-%PLATFORM%-RPLIDAR.dll %IOUI_DST_PATH% /y
+
+copy %IOUI_SRC_CORE_PATH%rplidar_driver.dll %IOUI_DST_CORE_PATH% /y
 copy %IOUI_SRC_CORE_PATH%opencv_world440.dll %IOUI_DST_CORE_PATH% /y
 
 if %CONFIGURE% equ Debug (

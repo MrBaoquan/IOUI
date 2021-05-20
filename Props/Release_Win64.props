@@ -19,6 +19,8 @@
     <Link>
       <ModuleDefinitionFile>
       </ModuleDefinitionFile>
+      <DelayLoadDLLs>opencv_world440.dll;opencv_world440d.dll</DelayLoadDLLs>
+      <SupportUnloadOfDelayLoadedDLL>false</SupportUnloadOfDelayLoadedDLL>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup />

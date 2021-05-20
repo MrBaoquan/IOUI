@@ -57,6 +57,9 @@ IOUI_API int __stdcall OpenDevice(uint8 deviceIndex)
 	std::string _path = DevelopHelper::Paths::Instance().GetModuleDir() + "Core\\opencv_world440.dll";
 #endif // WIN_64
 	auto _module = LoadLibraryA(_path.data());
+
+	std::string _rpLidarDll = DevelopHelper::Paths::Instance().GetModuleDir() + "Core\\rplidar_driver.dll";
+	auto _module_lidar = LoadLibraryA(_rpLidarDll.data());
 	rplidarThread = std::thread(Update);
 	return 1;
 }

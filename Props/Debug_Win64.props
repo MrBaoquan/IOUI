@@ -16,6 +16,8 @@
     <Link>
       <ModuleDefinitionFile>
       </ModuleDefinitionFile>
+      <SupportUnloadOfDelayLoadedDLL>true</SupportUnloadOfDelayLoadedDLL>
+      <DelayLoadDLLs>opencv_world440.dll;opencv_world440d.dll</DelayLoadDLLs>
     </Link>
     <PostBuildEvent>
       <Command>call $(SolutionDir)IOUIENV.bat Win64 Debug $(ProjectDir)</Command>

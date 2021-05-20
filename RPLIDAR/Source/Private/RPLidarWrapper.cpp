@@ -3,6 +3,7 @@
 #include <algorithm>
 
 #pragma  comment(lib,"rplidar_driver.lib")
+
 #ifdef _DEBUG
 #pragma comment(lib,"opencv_world440d.lib")
 #else
