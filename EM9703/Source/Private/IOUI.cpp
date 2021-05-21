@@ -42,8 +42,8 @@ IOUI_API int __stdcall OpenDevice(uint8 deviceIndex)
         char ip[MAX_PATH] = "";
         int port;
         char* app_name = "/PCISettings";
-        GetPrivateProfileStringA(app_name, "IP", "127.0.0.1", ip, MAX_PATH, config_file_path.data());
-        port = GetPrivateProfileIntA(app_name, "Port", 6000, config_file_path.data());
+        GetPrivateProfileStringA(app_name, "IP", "192.168.1.126", ip, MAX_PATH, config_file_path.data());
+        port = GetPrivateProfileIntA(app_name, "Port", 8000, config_file_path.data());
         return EM9703_CmdConnect(handle, ip, port) == 0? 1 : 0;
     }
     return 0;
