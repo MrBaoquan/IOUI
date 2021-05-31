@@ -14,13 +14,23 @@
 !/Binaries/Win64/Debug
 v[0-9].0.0/
 
+
+#!/**/Debug/*
 Debug/
 [Rr]elease/
+
+!/**/Debug/
+/**/Debug/*
+
 !/**/[Rr]elease/
 /**/[Rr]elease/*
-!/Binaries/Win32/Release/Libraries/
-!/Binaries/Win64/Release/Libraries/
-[Dd]ebugPublic/
+
+!/Binaries/Win[36][24]/Release/Libraries/
+!/Binaries/Win[36][24]/Debug/Libraries/
+#!/Binaries/Win64/Release/Libraries/
+!/Binaries/Win[36][24]/Debug/Config/
+!/Binaries/Win[36][24]/Release/Config/
+
 [Rr]eleases/
 [Xx]64/
 [Xx]86/

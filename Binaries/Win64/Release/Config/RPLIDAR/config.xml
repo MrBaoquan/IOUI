@@ -1,0 +1,9 @@
+<Rplidar PortName="COM7" BaudRate="115200" AngleOffset="0" DebugRadius="6.999998" DebugMode="0" DebugUIScale="0.5">
+	<TouchArea Width="1920" Height="1080">
+		<Point x="-4.901496" y="-4.749499"/>
+		<Point x="-1.460500" y="-4.749499"/>
+		<Point x="-1.460500" y="-2.873999"/>
+		<Point x="-4.901496" y="-2.873999"/>
+	</TouchArea>
+</Rplidar>
+

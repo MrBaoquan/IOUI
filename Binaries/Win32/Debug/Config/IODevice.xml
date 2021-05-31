@@ -1,0 +1,11 @@
+﻿<!--
+  Copyright (c) mrma617@gmail.com
+  Author: MrBaoquan
+  CreateTime: 2018-5-16 9:10
+-->
+
+<IORoot>
+  <Device Name="Standard" Type="Standard"></Device>
+  <Device Name="ExternalDev_0" Type="External" DllName="EM9703" Index="0"></Device>
+
+</IORoot>

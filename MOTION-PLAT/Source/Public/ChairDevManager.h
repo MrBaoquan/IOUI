@@ -1,17 +1,12 @@
 ﻿#pragma once
 #include <functional>
-#ifdef CHAIRDEVICE_EXPORTS
-#define CHDEVAPI __declspec(dllexport)
-#else
-#define CHDEVAPI __declspec(dllimport)
-#endif
 
 class TISocket;
 class ChairDevice;
 
 typedef std::function<void(const char*)> OnUDPReceivedDelegate;
 
-class CHDEVAPI  ChairDevManager
+class  ChairDevManager
 {
 public:
 	static ChairDevManager& Instance();
@@ -53,6 +48,8 @@ private:
 	float limitPitch = 15.f;
 
 	float limitRoll = 18.f;
+
+	float limitSpeed = 10.f;
 	
 	TISocket* udpSocket = nullptr;
 	ChairDevice* chDevice = nullptr;

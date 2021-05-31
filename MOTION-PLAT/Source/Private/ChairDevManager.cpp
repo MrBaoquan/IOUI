@@ -40,6 +40,7 @@ int ChairDevManager::InitDevice()
 		chDevice->speed = speed;
 		limitPitch = static_cast<float>(std::atof(root->first_attribute("lim_pitch")->value()));
 		limitRoll = static_cast<float>(std::atof(root->first_attribute("lim_roll")->value()));
+		limitSpeed = static_cast<float>(std::atof(root->first_attribute("lim_speed")->value()));
 
 		xml_node<>* udpNode = root->first_node("UDP");
 		ip = udpNode->first_attribute("ip")->value();
@@ -92,7 +93,7 @@ const unsigned char ChairDevManager::Speed() const
 
 void ChairDevManager::Speed(const float _speed)
 {
-	chDevice->speed = _speed;
+	chDevice->speed = clamp(_speed, -limitSpeed, limitSpeed);
 }
 
 int ChairDevManager::DoAction()
