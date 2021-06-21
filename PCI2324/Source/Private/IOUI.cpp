@@ -68,7 +68,7 @@ IOUI_API int __stdcall GetDeviceDO(uint8 deviceIndex, short* OutDOStatus)
 	if (!_devData) { return 0; }
     int _retCode = PCI2324_GetDeviceDO(_devData->handle, _devData->DOStatus()) ? 1 : 0;
 	CopyTo(_devData->DOStatus(), OutDOStatus, g_DeviceInfo.OutputCount);*/
-	return 1;
+	return 0;
 }
 
 IOUI_API int __stdcall GetDeviceDI(uint8 deviceIndex, BYTE* OutDIStatus)
