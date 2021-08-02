@@ -30,8 +30,12 @@ public:
 	}
 	DeviceData(){}
 
-	BYTE* DOStatus() const{
-		return const_cast<BYTE*>(_DOStatus.data());
+	BYTE* DOStatus_Byte() const{
+		return const_cast<BYTE*>((const BYTE*)(_DOStatus.data()));
+	}
+
+	short* DOStatus_Short() const {
+		return const_cast<short*>((const short*)_DOStatus.data());
 	}
 	
 public:
@@ -39,7 +43,7 @@ public:
 	DeviceInfo devInfo;
 
 private:
-	std::vector<BYTE> _DOStatus;
+	std::vector<int> _DOStatus;
 };
 
 class PCIManager

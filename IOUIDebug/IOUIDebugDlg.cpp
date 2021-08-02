@@ -66,22 +66,22 @@ void CIOUIDebugDlg::DoDataExchange(CDataExchange* pDX)
 
 void CIOUIDebugDlg::OnSampleAxis(float InValue)
 {
-	OutputDebugStringA(std::to_string(InValue).data());
-	OutputDebugStringA("\r\n");
+	/*OutputDebugStringA(std::to_string(InValue).data());
+	OutputDebugStringA("\r\n");*/
 }
 
 void CIOUIDebugDlg::OnKeyDown(const dh::FKey InKey)
 {
-	/*OutputDebugStringA(InKey.GetName());
-	OutputDebugStringA("\n");*/
+	OutputDebugStringA(InKey.GetName());
+	OutputDebugStringA("\n");
 	if (InKey.GetName() == std::string("A")) {
-		dh::IODeviceController::Instance().GetIODevice("ExternalDev_0").SetDO(dh::FKey("OAxis_00"), 30);
+		dh::IODeviceController::Instance().GetIODevice("ExternalDev_0").SetDO("DoAngle", 4000);
 	}
 	else if (InKey.GetName() == std::string("B")) {
-		dh::IODeviceController::Instance().GetIODevice("ExternalDev_0").SetDO(dh::FKey("OAxis_03"), 20);
+		dh::IODeviceController::Instance().GetIODevice("ExternalDev_0").SetDO(dh::FKey("OAxis_66"), 1);
 	}
 	else if (InKey.GetName() == std::string("C")) {
-		dh::IODeviceController::Instance().GetIODevice("ExternalDev_0").SetDO(dh::FKey("OAxis_01"), 10);
+		dh::IODeviceController::Instance().GetIODevice("ExternalDev_0").SetDO(dh::FKey("OAxis_66"), 0);
 		//dh::IODeviceController::Instance().GetIODevice("ExternalDev_0").SetDO(dh::FKey("OAxis_03"), 0);
 	}
 	
@@ -137,8 +137,8 @@ BOOL CIOUIDebugDlg::OnInitDialog()
 	dh::IODeviceController::Instance().GetIODevice("ExternalDev_0")
 		.BindAxis("MoveLR", this, &CIOUIDebugDlg::OnSampleAxis);
 
-	
-		//BindAction("KeyDown", dh::IE_Pressed, this, &CIOUIDebugDlg::OnKeyDown);
+	/*dh::IODeviceController::Instance().GetIODevice("ExternalDev_0")
+		.BindAction("KeyDown", dh::IE_Pressed, this, &CIOUIDebugDlg::OnKeyDown);*/
 
     //struct __declspec(uuid("B372C9F6-1959-4650-960D-73F20CD479BB")) Interface{};
     //auto uid = __uuidof(Interface);

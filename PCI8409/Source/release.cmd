@@ -20,7 +20,7 @@ copy %IOUI_SRC_CORE_PATH%pci8409.dll %IOUI_DST_CORE_PATH% /y
 
 echo %IOUI_SRC_PATH%Config\PCI8409 
 if %CONFIGURE% equ Debug (
-	xcopy %IOUI_SRC_PATH%Config\PCI8409 %IOUI_SRC_PATH%ExternalLibraries\Config\ /E /F /Y
+	xcopy %IOUI_SRC_PATH%Config\PCI8409 %IOUI_SRC_PATH%ExternalLibraries\Config\PCI8409\ /E /F /Y
 ) else (
 	xcopy %IOUI_SRC_PATH%Config\PCI8409 %IOUI_DST_PATH%Config\PCI8409\ /E /F /Y
 )

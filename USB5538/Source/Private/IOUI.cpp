@@ -47,16 +47,16 @@ IOUI_API int __stdcall SetDeviceDO(uint8 deviceIndex, short* InDOStatus)
 {
 	const DeviceData* _devData = PCIManager::Instance().GetDeviceData(deviceIndex);
 	if (!_devData) { return 0; }
-	CopyTo(InDOStatus, _devData->DOStatus(),g_DeviceInfo.OutputCount);
-    return USB5538_SetDeviceDO(_devData->handle, _devData->DOStatus()) ? 1 : 0;
+	CopyTo(InDOStatus, _devData->DOStatus_Byte(),g_DeviceInfo.OutputCount);
+    return USB5538_SetDeviceDO(_devData->handle, _devData->DOStatus_Byte()) ? 1 : 0;
 }
 
 IOUI_API int __stdcall GetDeviceDO(uint8 deviceIndex, short* OutDOStatus)
 {	
 	const DeviceData* _devData = PCIManager::Instance().GetDeviceData(deviceIndex);
 	if (!_devData) { return 0; }
-    int _retCode = USB5538_RetDeviceDO(_devData->handle, _devData->DOStatus()) ? 1 : 0;
-	CopyTo(_devData->DOStatus(), OutDOStatus, g_DeviceInfo.OutputCount);
+    int _retCode = USB5538_RetDeviceDO(_devData->handle, _devData->DOStatus_Byte()) ? 1 : 0;
+	CopyTo(_devData->DOStatus_Byte(), OutDOStatus, g_DeviceInfo.OutputCount);
 	return _retCode;
 }
 

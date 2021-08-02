@@ -8,7 +8,7 @@
 <IORoot>
 
   <Device Name="Standard" Type="Standard"></Device>
-  <Device Name="ExternalDev_0" Type="External" DllName="RPLIDAR" Index="0">
+  <Device Name="ExternalDev_0" Type="External" DllName="PCI1020" Index="0">
     <Properties>
       <Key Name="OAxis_01" Sensitivity="20.0"></Key>
     </Properties>
@@ -20,6 +20,10 @@
     <Axis Name="MoveLR">
       <Key Name="Axis_128" Scale="1000"></Key>
     </Axis>
+
+	  <OAction Name="DoAngle">
+		  <Key Name="OAxis_48"/>
+	  </OAction>
 
     
     <!-- Axis mapping end -->

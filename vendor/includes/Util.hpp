@@ -33,6 +33,16 @@ bool CopyTo(short* Src, BYTE* Dst, size_t Count)
 	return true;
 }
 
+bool CopyTo(short* Src, short* Dst, size_t Count)
+{
+	ZeroMemory(Dst, sizeof(short) * Count);
+	for (size_t _index = 0; _index < Count; ++_index)
+	{
+		Dst[_index] = Src[_index];
+	}
+	return true;
+}
+
 bool CopyTo(short* Src, const std::vector<BYTE>& Dst, size_t Count)
 {
 	BYTE* _DstPtr = const_cast<BYTE*>(Dst.data());

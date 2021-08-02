@@ -13,8 +13,8 @@ ChairDevice::~ChairDevice()
 
 const unsigned char* ChairDevice::GetActionCommand()
 {
-	float fPitch = this->Euler.Pitch;
-	float fRoll = this->Euler.Roll;
+	float fPitch = this->Pose.X;
+	float fRoll = this->Pose.Z;
 
 	ZeroMemory(buffer, sizeof(unsigned char)*32);
 	//帧头1、2
@@ -32,7 +32,7 @@ const unsigned char* ChairDevice::GetActionCommand()
 	//六号电缸伸长量，单位位电缸总行程/65535，最大值位65535.
 	buffer[22] = 0x00; buffer[23] = 0x00; buffer[24] = 0x00; buffer[25] = 0x00;
 	//保留 速度0x00-0x20
-	const char _speed = static_cast<const char>(speed);
+	const char _speed = static_cast<const char>(Speed);
 	buffer[26] = _speed;
 	//软件版本
 	buffer[27] = _speed;
