@@ -15,11 +15,14 @@ DeviceInfo devInfo;
 Comm g_Comm;
 IOUI_API DeviceInfo* __stdcall Initialize()
 {
-	devInfo.InputCount = 16;
-	devInfo.OutputCount = 255;
-	devInfo.AxisCount = 255;
+	devInfo.InputCount = 255;
+	devInfo.OutputCount = 0;
+	devInfo.AxisCount = 0;
     return &devInfo;
 }
+
+int channelIndex = 0;
+int valueIndex = 1;
 
 IOUI_API int __stdcall OpenDevice(uint8 deviceIndex)
 {
@@ -27,6 +30,10 @@ IOUI_API int __stdcall OpenDevice(uint8 deviceIndex)
 	std::string config_file_path = path + "Config\\COMDEV\\config.ini";
 	const char* app = "/PCISettings";
 	DWORD _baudRate = GetPrivateProfileIntA(app, "BaudRate", 9600, config_file_path.data());
+
+	channelIndex = GetPrivateProfileIntA(app, "channelIndex", 1, config_file_path.data());
+	valueIndex = GetPrivateProfileIntA(app, "valueIndex", 2, config_file_path.data());
+
 	g_Comm.Init(deviceIndex,_baudRate);
     return 1;
 }
@@ -38,7 +45,7 @@ IOUI_API int __stdcall CloseDevice(uint8 deviceIndex)
 
 IOUI_API int __stdcall SetDeviceDO(uint8 deviceIndex, short* InDOStatus)
 {	
-    return 1;
+    return 0;
 }
 
 IOUI_API int __stdcall GetDeviceDO(uint8 deviceIndex, short* OutDOStatus)
@@ -53,8 +60,8 @@ IOUI_API int __stdcall GetDeviceDI(uint8 deviceIndex, BYTE* OutDIStatus)
 	DWORD _count=0;
 	g_Comm.ReadCom(_data, MAX_PATH, &_count);
 	if (_count != 0) {
-		uint8 _channel = _data[4];
-		uint8 _status = _data[5];
+		uint8 _channel = _data[channelIndex];
+		uint8 _status = _data[valueIndex];
 		if (_status == 0x01) {
 			OutDIStatus[_channel] = 1;
 		}
@@ -67,6 +74,5 @@ IOUI_API int __stdcall GetDeviceDI(uint8 deviceIndex, BYTE* OutDIStatus)
 
 IOUI_API int __stdcall GetDeviceAD(uint8 deviceIndex, short* OutADStatus)
 {
-	
-    return 1;
+    return 0;
 }

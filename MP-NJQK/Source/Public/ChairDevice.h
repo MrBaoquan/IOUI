@@ -6,11 +6,11 @@ public:
 	MPVec3():X(0.f),Y(0.f),Z(0.f){}
 
 	float X=0.f, Y=0.f, Z=0.f;
-	const MPVec3& operator=(const EulerAngle& rhs)
+	const MPVec3& operator=(const MPVec3& rhs)
 	{
-		this->X = rhs.Pitch;
-		this->Z = rhs.Roll;
-		this->Y = rhs.Yaw;
+		this->X = rhs.X;
+		this->Z = rhs.Y;
+		this->Y = rhs.Z;
 		return *this;
 	}
 	static MPVec3 Zero()

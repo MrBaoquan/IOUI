@@ -13,19 +13,18 @@ BOOL WINAPI DllMain(
     _In_ LPVOID    lpvReserved
 )
 {
-
+    DevelopHelper::Paths::Instance().SetModule(hinstDLL);
     switch (fdwReason)
     {
     case DLL_PROCESS_ATTACH:
         {
-			DevelopHelper::Paths::Instance().SetModule(hinstDLL);
             std::string dllPath = DevelopHelper::Paths::Instance().GetModuleDir() + "Core\\";
             SetDllDirectoryA(dllPath.data());
-            OutputDebugStringA("============== Attched external dll for MP-NJLJ.dll ... ================ \n");
+            OutputDebugStringA("============== Attched external dll PCI8407.dll for IODevice.dll ... ================ \n");
         }        
         break;
     case DLL_PROCESS_DETACH:
-        OutputDebugStringA("============== Detached external dll for MP-NJLJ.dll ... ================ \n");
+        OutputDebugStringA("============== Detached external dll PCI8408.dll for IODevice.dll ... ================ \n");
         break;
     case DLL_THREAD_ATTACH:
         break;

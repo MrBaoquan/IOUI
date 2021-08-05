@@ -13,11 +13,10 @@ rem start execute command
 :start
 @rem	Note: Write your command below this line
 
-copy %IOUI_SRC_PATH%IOUI-%PLATFORM%-COMDEV.dll %IOUI_DST_PATH% /y
-copy %IOUI_SRC_PATH%IOUI-%PLATFORM%-COMDEV.dll %IOUI_SRC_PATH%ExternalLibraries\ /y
 
-if %CONFIGURE% equ Debug (
-	xcopy %IOUI_SRC_PATH%Config\COMDEV %IOUI_SRC_PATH%ExternalLibraries\Config\ /E /F /Y
-) else (
-	xcopy %IOUI_SRC_PATH%Config\COMDEV %IOUI_DST_PATH%Config\COMDEV\ /E /F /Y
+copy %IOUI_SRC_PATH%IOUI-%PLATFORM%-PCI8407.dll %IOUI_DST_PATH% /y
+copy %IOUI_SRC_CORE_PATH%pci8407.dll %IOUI_DST_CORE_PATH% /y
+
+if %PLATFORM% equ Win32 (
+	copy %IOUI_SRC_CORE_PATH%PCI8KP.dll %IOUI_DST_CORE_PATH% /y
 )

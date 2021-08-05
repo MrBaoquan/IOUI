@@ -13,10 +13,10 @@ rem start execute command
 :start
 @rem	Note: Write your command below this line
 
-copy %IOUI_SRC_PATH%IOUI-%PLATFORM%-MOTION-PLAT.dll %IOUI_DST_PATH% /y
+copy %IOUI_SRC_PATH%IOUI-%PLATFORM%-MP-NJQK.dll %IOUI_DST_PATH% /y
 
 if %CONFIGURE% equ Debug (
-	xcopy %IOUI_SRC_PATH%Config\MOTION-PLAT %IOUI_SRC_PATH%ExternalLibraries\Config\MOTION-PLAT\ /E /F /Y
+	xcopy %IOUI_SRC_PATH%Config\MP-NJQK %IOUI_SRC_PATH%ExternalLibraries\Config\MP-NJQK\ /E /F /Y
 ) else (
-	xcopy %IOUI_SRC_PATH%Config\MOTION-PLAT %IOUI_DST_PATH%Config\MOTION-PLAT\ /E /F /Y
+	xcopy %IOUI_SRC_PATH%Config\MP-NJQK %IOUI_DST_PATH%Config\MP-NJQK\ /E /F /Y
 )
