@@ -19,11 +19,12 @@ public:
 	int Reset();
 
 	const float Pitch() const;
-
+	const float Yaw() const;
 	const float Roll() const;
+	
 
 	void Pitch(const float _pitch);
-	
+	void Yaw(const float _yaw);
 	void Roll(const float _roll);
 
 	void X(const float _x);
@@ -53,6 +54,7 @@ private:
 	float speed = 0;
 
 	float limitPitch = 15.f;
+	float limitYaw = 15.f;
 	float limitRoll = 18.f;
 	float limitSpeed = 10.f;
 

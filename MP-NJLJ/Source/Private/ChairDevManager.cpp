@@ -12,9 +12,9 @@
 #define clamp(val, lower, upper) (min(upper, max(val, lower)))
 
 
-std::string float2string(float InVal) {
+std::string float2string(float InVal,int precNum=1) {
 	std::stringstream stream;
-	stream << std::fixed << std::setprecision(1) << InVal;
+	stream << std::fixed << std::setprecision(precNum) << InVal;
 	return stream.str();
 }
 
@@ -51,12 +51,13 @@ int ChairDevManager::InitDevice(int DevID)
 		}
 		
 
-		speed = static_cast<float>(std::atoi(root->first_attribute("speed")->value()));
+		speed = static_cast<float>(std::atoi(root->first_attribute("time")->value()));
 		chDevice->Speed = speed;
 		
 		limitPitch = static_cast<float>(std::atof(root->first_attribute("lim_pitch")->value()));
 		limitRoll = static_cast<float>(std::atof(root->first_attribute("lim_roll")->value()));
-		limitSpeed = static_cast<float>(std::atof(root->first_attribute("lim_speed")->value()));
+		limitYaw = static_cast<float>(std::atof(root->first_attribute("lim_yaw")->value()));
+		limitSpeed = static_cast<float>(std::atof(root->first_attribute("lim_time")->value()));
 
 		limitX = static_cast<float>(std::atof(root->first_attribute("lim_x")->value()));
 		limitY = static_cast<float>(std::atof(root->first_attribute("lim_y")->value()));
@@ -96,9 +97,20 @@ const float ChairDevManager::Pitch() const
 	return chDevice->Pose.X;
 }
 
+
 void ChairDevManager::Pitch(const float _pitch)
 {
 	chDevice->Pose.X = clamp(_pitch, -limitPitch, limitPitch);;
+}
+
+void ChairDevManager::Yaw(const float _yaw)
+{
+	chDevice->Pose.Y = clamp(_yaw, -limitYaw, limitYaw);
+}
+
+const float ChairDevManager::Yaw() const
+{
+	return chDevice->Pose.Y;
 }
 
 const float ChairDevManager::Roll() const
@@ -145,7 +157,46 @@ int ChairDevManager::DoAction()
 {
 	std::string _actionData = "";
 	if (command == "A3") {
-		_actionData = "@" + command + ":" + float2string(chDevice->Pose.X) + "," + float2string(chDevice->Pose.Y) + "," + float2string(chDevice->Pose.Z) + ",00#";
+		_actionData = "@" + command + ":" + float2string(chDevice->Pose.Z) + "," + float2string(chDevice->Pose.X) + "," + float2string(chDevice->Offset.Z) + ",00#";
+	}
+	else if (command == "A3T") {
+		_actionData = "@" + command + ":" + float2string(chDevice->Pose.Z) + "," + float2string(chDevice->Pose.X) + "," + float2string(chDevice->Offset.Z) + ","
+			+float2string(chDevice->Speed,0)
+			+"#";
+	}
+	else if (command == "A4") {
+		_actionData = "@" + command + ":" + float2string(chDevice->Pose.Z) + "," + float2string(chDevice->Pose.X) + "," + float2string(chDevice->Offset.Z) + "," 
+			+float2string(chDevice->Angle,0)+","
+			+ "00#";
+	}
+	else if (command == "A4T") {
+		_actionData = "@" + command + ":" + float2string(chDevice->Pose.Z) + "," + float2string(chDevice->Pose.X) + "," + float2string(chDevice->Offset.Z) + ","
+			+ float2string(chDevice->Angle, 0) + "," + float2string(chDevice->Speed, 0)
+			+ "#";
+	}
+	else if (command == "A6") {
+		_actionData = "@" + command + ":" + float2string(chDevice->Pose.Z) + "," + float2string(chDevice->Pose.X) + "," + float2string(chDevice->Pose.Y) + ","
+			+ float2string(chDevice->Offset.X) + "," + float2string(chDevice->Offset.Y) + "," + float2string(chDevice->Offset.Z) + ","
+			+ "00#";
+	}
+	else if (command == "A6T") {
+		_actionData = "@" + command + ":" + float2string(chDevice->Pose.Z) + "," + float2string(chDevice->Pose.X) + "," + float2string(chDevice->Pose.Y) + ","
+			+ float2string(chDevice->Offset.X) + "," + float2string(chDevice->Offset.Y) + "," + float2string(chDevice->Offset.Z) + "," 
+			+ float2string(chDevice->Speed, 0)
+			+ "#";
+	}
+	else if (command == "A7") {
+		_actionData = "@" + command + ":" + float2string(chDevice->Pose.Z) + "," + float2string(chDevice->Pose.X) + "," + float2string(chDevice->Pose.Y) + ","
+			+ float2string(chDevice->Offset.X) + "," + float2string(chDevice->Offset.Y) + "," + float2string(chDevice->Offset.Z) + ","
+			+ float2string(chDevice->Angle, 0)
+			+ "00#";
+	}
+	else if (command == "A7T") {
+		_actionData = "@" + command + ":" + float2string(chDevice->Pose.Z) + "," + float2string(chDevice->Pose.X) + "," + float2string(chDevice->Pose.Y) + ","
+			+ float2string(chDevice->Offset.X) + "," + float2string(chDevice->Offset.Y) + "," + float2string(chDevice->Offset.Z) + ","
+			+ float2string(chDevice->Angle, 0) + ","
+			+ float2string(chDevice->Speed, 0)
+			+ "#";
 	}
 	return udpSocket->Send(_actionData.data(),_actionData.size());
 }

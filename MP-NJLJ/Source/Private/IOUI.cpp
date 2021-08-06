@@ -33,9 +33,21 @@ IOUI_API int __stdcall CloseDevice(uint8 deviceIndex)
 
 IOUI_API int __stdcall SetDeviceDO(uint8 deviceIndex, short* InDOStatus)
 {
-	ChairDevManager::Instance().Speed(static_cast<unsigned char>(InDOStatus[0]));
+	static short defaultTime = -1;
+	if (InDOStatus[0] != 0) {
+		ChairDevManager::Instance().Speed(InDOStatus[0]);
+	}
+	
 	ChairDevManager::Instance().Pitch(InDOStatus[1]);
+	ChairDevManager::Instance().Yaw(InDOStatus[2]);
 	ChairDevManager::Instance().Roll(InDOStatus[3]);
+
+	ChairDevManager::Instance().X(InDOStatus[4]);
+	ChairDevManager::Instance().Y(InDOStatus[5]);
+	ChairDevManager::Instance().Z(InDOStatus[6]);
+
+	ChairDevManager::Instance().Angle(InDOStatus[6]);
+
 	ChairDevManager::Instance().DoAction();
     return 1;
 }

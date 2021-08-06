@@ -1,13 +1,14 @@
 ﻿<MPRoot>
 	<ChairDevice
-		command="A3"
+		command="A3T"
 	
-		speed="5" 
-		lim_speed="10" 
-		lim_pitch="25" 
-		lim_roll="25" 
-		lim_x="255" 
-		lim_y="255" 
+		time="1000"
+		lim_time="5000"
+		lim_pitch="25"
+		lim_yaw="25"
+		lim_roll="25"
+		lim_x="255"
+		lim_y="255"
 		lim_z="255"
 		lim_angle="360"
 	>

@@ -78,7 +78,7 @@ void CIOUIDebugDlg::OnKeyDown(const dh::FKey InKey)
 		dh::IODeviceController::Instance().GetIODevice("ExternalDev_0").SetDO("DoAngle", 4000);
 	}
 	else if (InKey.GetName() == std::string("B")) {
-		dh::IODeviceController::Instance().GetIODevice("ExternalDev_0").SetDO(dh::FKey("OAxis_01"), 1);
+		dh::IODeviceController::Instance().GetIODevice("ExternalDev_0").SetDO(dh::FKey("OAxis_01"), 15);
 	}
 	else if (InKey.GetName() == std::string("C")) {
 		dh::IODeviceController::Instance().GetIODevice("ExternalDev_0").SetDO(dh::FKey("OAxis_03"), 15);
