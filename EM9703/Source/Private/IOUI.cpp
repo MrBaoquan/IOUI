@@ -63,7 +63,7 @@ IOUI_API int __stdcall SetDeviceDO(uint8 deviceIndex, short* InDOStatus)
     if (EM9703_IoGetAll(hHandle, all_status)==0)
     {
         for (size_t chIndex = 32; chIndex < 64; chIndex++)
-        {
+        { 
             all_status[chIndex] = static_cast<char>(InDOStatus[chIndex - 32]);
         }
         if(EM9703_IoSetAll(hHandle, all_status)==0)

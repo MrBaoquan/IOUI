@@ -56,17 +56,17 @@ IOUI_API int __stdcall GetDeviceDO(uint8 deviceIndex, short* OutDOStatus)
 
 IOUI_API int __stdcall GetDeviceDI(uint8 deviceIndex, BYTE* OutDIStatus)
 {
-	char _data[MAX_PATH];
+	static char _data[MAX_PATH];
 	DWORD _count=0;
 	g_Comm.ReadCom(_data, MAX_PATH, &_count);
 	if (_count != 0) {
 		uint8 _channel = _data[channelIndex];
 		uint8 _status = _data[valueIndex];
-		if (_status == 0x01) {
-			OutDIStatus[_channel] = 1;
+		if (_status == 0x00) {
+			OutDIStatus[_channel] = 0;
 		}
 		else {
-			OutDIStatus[_channel] = 0;
+			OutDIStatus[_channel] = 1;
 		}
 	}
     return 1;
