@@ -6,7 +6,6 @@
 
 #include <windows.h>
 #include "Paths.hpp"
-namespace dh = DevelopHelper;
 
 BOOL WINAPI DllMain(
     _In_ HINSTANCE hinstDLL,
@@ -14,21 +13,19 @@ BOOL WINAPI DllMain(
     _In_ LPVOID    lpvReserved
 )
 {
-    DevelopHelper::Paths::Instance().SetModule(hinstDLL);
+
+	DevelopHelper::Paths::Instance().SetModule(hinstDLL);
     switch (fdwReason)
     {
     case DLL_PROCESS_ATTACH:
         {
-            dh::Paths::Instance().SetModule(hinstDLL);
-
             std::string dllPath = DevelopHelper::Paths::Instance().GetModuleDir() + "Core\\";
             SetDllDirectoryA(dllPath.data());
-
-            OutputDebugStringA("============== Attched external dll SERIALPORT for IOToolkit ... ================ \n");
+            OutputDebugStringA("============== Attched external dll DAM3000M for IODevice.dll ... ================ \n");
         }        
         break;
     case DLL_PROCESS_DETACH:
-        OutputDebugStringA("============== Detached external dll SERIALPORT for IOToolkit ... ================ \n");
+        OutputDebugStringA("============== Detached external dll DAM3000M for IODevice.dll ... ================ \n");
         break;
     case DLL_THREAD_ATTACH:
         break;

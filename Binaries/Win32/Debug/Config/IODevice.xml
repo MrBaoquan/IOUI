@@ -6,7 +6,7 @@
 
 <IORoot>
   <Device Name="Standard" Type="Standard"></Device>
-  <Device Name="ExternalDev_0" Type="External" DllName="MP-NJLJ" Index="0">
+  <Device Name="ExternalDev_0" Type="External" DllName="DAM3000M" Index="0">
 	  <Action Name="KeyDown">
 		  <Key Name="AnyKey"/>
 	  </Action>

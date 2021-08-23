@@ -54,6 +54,16 @@ bool CopyTo(short* Src, const std::vector<BYTE>& Dst, size_t Count)
 	return true;
 }
 
+bool CopyTo(LONG* Src, short* Dst, size_t Count)
+{
+	ZeroMemory(Dst, sizeof(short) * Count);
+	for (size_t _index = 0; _index < Count; ++_index)
+	{
+		Dst[_index] = static_cast<short>(Src[_index]);
+	}
+	return true;
+}
+
 std::string ToString(short* Arr, size_t Count) {
 	std::string _str = "";
 	for (size_t _index = 0; _index < Count; ++_index)
