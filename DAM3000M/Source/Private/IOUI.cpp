@@ -44,13 +44,14 @@ IOUI_API int __stdcall OpenDevice(uint8 deviceIndex)
 	std::string path = dh::Paths::Instance().GetModuleDir();
 	std::string config_file_path = path + "Config\\DAM3000M\\config.ini";
 	const char* app = "/PCISettings";
-	DWORD _baudRate = GetPrivateProfileIntA(app, "BaudRate", 9600, config_file_path.data());
+	DWORD _baudRate = GetPrivateProfileIntA(app, "BaudRate", 3, config_file_path.data());
 
 	lDeviceID = GetPrivateProfileIntA(app, "lDeviceID", 1, config_file_path.data());
 	AD_lMode = GetPrivateProfileIntA(app, "AD_lMode", 0, config_file_path.data());
+	auto Init_Timeout = GetPrivateProfileIntA(app, "Init_Timeout", 50, config_file_path.data());
 
 	auto hDevice = DAM3000M_CreateDevice(deviceIndex);
-	auto bRet = DAM3000M_InitDevice(hDevice, _baudRate, DAM3000M_PARITY_NONE, 100);
+	auto bRet = DAM3000M_InitDevice(hDevice, _baudRate, DAM3000M_PARITY_NONE, Init_Timeout);
 
 	if (bRet) {
 		PCIManager::Instance().AddDevice(deviceIndex, DeviceData(hDevice, devInfo));

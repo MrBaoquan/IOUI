@@ -29,6 +29,9 @@
     <ClInclude Include="Source\Public\PCI8408.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="Source\Public\PCI8407.H">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Source\Module.def">

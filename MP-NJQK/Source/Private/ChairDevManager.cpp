@@ -27,7 +27,7 @@ int ChairDevManager::InitDevice()
 	using namespace DevelopHelper;
 
 	//	��ȡԶ�� ip �� port
-	string file_path = Paths::Instance().GetConfigDir() + "MOTION-PLAT/config.xml";
+	string file_path = Paths::Instance().GetConfigDir() + "MP-NJQK/config.xml";
 
 	xml_document<> doc;
 	try
