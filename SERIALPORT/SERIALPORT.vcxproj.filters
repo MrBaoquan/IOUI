@@ -21,7 +21,7 @@
     <ClCompile Include="Source\Private\IOUI.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Private\Comm.cpp">
+    <ClCompile Include="Source\Private\Serial.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
@@ -29,7 +29,7 @@
     <ClInclude Include="Source\Public\IOUI.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Public\Comm.h">
+    <ClInclude Include="Source\Public\Serial.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

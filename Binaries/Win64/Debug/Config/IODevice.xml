@@ -8,9 +8,9 @@
 <IORoot>
 
   <Device Name="Standard" Type="Standard"></Device>
-  <Device Name="ExternalDev_0" Type="External" DllName="SERIALPORT" Index="2">
+  <Device Name="ExternalDev_0" Type="External" DllName="SERIALPORT" Index="9">
     <Properties>
-      <Key Name="OAxis_01" Sensitivity="20.0"></Key>
+      <Key Name="OAxis_01" Sensitivity="1.0"></Key>
     </Properties>
     <Action Name="KeyDown">
       <Key Name="AnyKey"></Key>
@@ -21,9 +21,9 @@
       <Key Name="Axis_128" Scale="1000"></Key>
     </Axis>
 
-	  <OAction Name="DoAngle">
-		  <Key Name="OAxis_48"/>
-	  </OAction>
+	<OAction Name="DoAngle">
+		<Key Name="OAxis_03"/>
+	</OAction>
 
     
     <!-- Axis mapping end -->
