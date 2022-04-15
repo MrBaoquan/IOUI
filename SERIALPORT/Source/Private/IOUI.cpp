@@ -21,8 +21,8 @@ IOUI_API DeviceInfo* __stdcall Initialize()
     return &devInfo;
 }
 
-int channelIndex = 0;
-int valueIndex = 1;
+int channelIndex = 1;
+int valueIndex = 2;
 
 IOUI_API int __stdcall OpenDevice(uint8 deviceIndex)
 {
@@ -58,10 +58,12 @@ IOUI_API int __stdcall SetDeviceDO(uint8 deviceIndex, short* InDOStatus)
 	static char _data[MAX_PATH] = { 0xFE,0x00,0x00,0xFF };
 	for (auto _idx=0; _idx<devInfo.OutputCount;++_idx)
 	{
-		_data[channelIndex] = _idx;
-		_data[valueIndex] = InDOStatus[_idx];
+		_data[_idx * 4] = 0xFE;
+		_data[_idx * 4 + 1] = _idx;
+		_data[_idx * 4 + 2] = InDOStatus[_idx];
+		_data[_idx * 4 + 3] = 0xFF;
 	}
-	return g_serialPort->write(_data, 4)==4;
+	return g_serialPort->write(_data, 4 * devInfo.OutputCount)==4 * devInfo.OutputCount;
 }
 
 IOUI_API int __stdcall GetDeviceDO(uint8 deviceIndex, short* OutDOStatus)
@@ -90,8 +92,8 @@ IOUI_API int __stdcall GetDeviceDI(uint8 deviceIndex, BYTE* OutDIStatus)
 		std::vector<uint8> _content(_recvDatas.begin(), _recvDatas.begin() + 4);
 		auto _removed = _recvDatas.erase(_recvDatas.begin(), _recvDatas.begin() + 4);
 
-		uint8 _channel = _content[channelIndex];
-		uint8 _status = _content[valueIndex];
+		uint8 _channel = _content[1];
+		uint8 _status = _content[2];
 		if (_status == 0x00) {
 			OutDIStatus[_channel] = 0;
 		}

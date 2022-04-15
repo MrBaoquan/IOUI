@@ -8,7 +8,7 @@
 <IORoot>
 
   <Device Name="Standard" Type="Standard"></Device>
-  <Device Name="ExternalDev_0" Type="External" DllName="SERIALPORT" Index="9">
+  <Device Name="ExternalDev_0" Type="External" DllName="SERIALPORT" Index="6">
     <Properties>
       <Key Name="OAxis_01" Sensitivity="1.0"></Key>
     </Properties>
@@ -22,7 +22,7 @@
     </Axis>
 
 	<OAction Name="DoAngle">
-		<Key Name="OAxis_03"/>
+		<Key Name="OAxis_16" Scale="1"/>
 	</OAction>
 
     
