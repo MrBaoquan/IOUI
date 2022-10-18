@@ -74,15 +74,11 @@ void CIOUIDebugDlg::OnKeyDown(const dh::FKey InKey)
 {
 	OutputDebugStringA(InKey.GetName());
 	OutputDebugStringA("\n");
-	if (InKey.GetName() == std::string("A")) {
-		dh::IODeviceController::Instance().GetIODevice("ExternalDev_0").SetDO("DoAngle", 5);
-	}
-	else if (InKey.GetName() == std::string("B")) {
-		dh::IODeviceController::Instance().GetIODevice("ExternalDev_0").SetDO(dh::FKey("OAxis_01"), 8);
-	}
-	else if (InKey.GetName() == std::string("C")) {
-		dh::IODeviceController::Instance().GetIODevice("ExternalDev_0").SetDO(dh::FKey("OAxis_03"), 10);
-		//dh::IODeviceController::Instance().GetIODevice("ExternalDev_0").SetDO(dh::FKey("OAxis_03"), 0);
+
+	if (InKey.GetName() == std::string("B")) {
+		dh::IODeviceController::Instance().GetIODevice("ExternalDev_0").SetDO(dh::FKey("OAxis_00"), 1);
+		dh::IODeviceController::Instance().GetIODevice("ExternalDev_0").SetDO(dh::FKey("OAxis_01"), 1);
+		dh::IODeviceController::Instance().GetIODevice("ExternalDev_0").SetDO(dh::FKey("OAxis_02"), 1);
 	}
 	
 }
@@ -209,4 +205,5 @@ void CIOUIDebugDlg::OnClose()
 {
 	// TODO: 在此添加消息处理程序代码和/或调用默认值
 	CDialogEx::OnClose();
+	dh::IODeviceController::Instance().Unload();
 }

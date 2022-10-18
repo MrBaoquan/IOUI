@@ -21,8 +21,8 @@ IOUI_API DeviceInfo* __stdcall Initialize()
     return &devInfo;
 }
 
-int channelIndex = 1;
-int valueIndex = 2;
+//int channelIndex = 1;
+//int valueIndex = 2;
 
 IOUI_API int __stdcall OpenDevice(uint8 deviceIndex)
 {
@@ -31,8 +31,8 @@ IOUI_API int __stdcall OpenDevice(uint8 deviceIndex)
 	const char* app = "/PCISettings";
 	DWORD _baudRate = GetPrivateProfileIntA(app, "BaudRate", 115200, config_file_path.data());
 
-	channelIndex = GetPrivateProfileIntA(app, "channelIndex", 1, config_file_path.data());
-	valueIndex = GetPrivateProfileIntA(app, "valueIndex", 2, config_file_path.data());
+	/*channelIndex = GetPrivateProfileIntA(app, "channelIndex", 1, config_file_path.data());
+	valueIndex = GetPrivateProfileIntA(app, "valueIndex", 2, config_file_path.data());*/
 	try
 	{
 		g_serialPort = new Serial("COM" + std::to_string(deviceIndex));
@@ -52,18 +52,28 @@ IOUI_API int __stdcall CloseDevice(uint8 deviceIndex)
     return 1;
 }
 
-
 IOUI_API int __stdcall SetDeviceDO(uint8 deviceIndex, short* InDOStatus)
 {	
-	static char _data[MAX_PATH] = { 0xFE,0x00,0x00,0xFF };
-	for (auto _idx=0; _idx<devInfo.OutputCount;++_idx)
+	static std::vector<short> _lastDOStatus(devInfo.OutputCount,0);
+	std::map<int,short> _dirtyDOStatus;
+	for (auto _idx = 0; _idx < _lastDOStatus.size();++_idx) {
+		if (_lastDOStatus[_idx] != InDOStatus[_idx]) {
+			_dirtyDOStatus.insert(std::pair<int,short> (_idx, InDOStatus[_idx]));
+			_lastDOStatus[_idx] = InDOStatus[_idx];
+		}
+	}
+
+
+	static char _data[MAX_PATH] = { };
+	for each (auto _doItem in _dirtyDOStatus)
 	{
+		auto _idx = std::distance(_dirtyDOStatus.begin(), _dirtyDOStatus.find(_doItem.first));
 		_data[_idx * 4] = 0xFE;
-		_data[_idx * 4 + 1] = _idx;
-		_data[_idx * 4 + 2] = InDOStatus[_idx];
+		_data[_idx * 4 + 1] = _doItem.first;
+		_data[_idx * 4 + 2] = _doItem.second;
 		_data[_idx * 4 + 3] = 0xFF;
 	}
-	return g_serialPort->write(_data, 4 * devInfo.OutputCount)==4 * devInfo.OutputCount;
+	return g_serialPort->write(_data, 4 * _dirtyDOStatus.size())==(4 * _dirtyDOStatus.size());
 }
 
 IOUI_API int __stdcall GetDeviceDO(uint8 deviceIndex, short* OutDOStatus)
