@@ -91,17 +91,12 @@ IOUI_API int __stdcall GetDeviceDI(uint8 deviceIndex, BYTE* OutDIStatus)
 	for (int _idx = 0;_idx < _recevCount;++_idx) {
 		_recvDatas.push_back(_data[_idx]);
 	}
-	while (_recvDatas.size()>0&&_recvDatas[0] != 0xFE) {
-		_recvDatas.erase(_recvDatas.begin());
-	}
-	if (_recvDatas.size() > 0&&_recvDatas[0] == 0xFE && _recvDatas.size() < 4) {
-		_recvDatas.clear();
-	}
-
-	if (_recvDatas.size()>=4) {
+	while (_recvDatas.size()>=4) {
+		if (_recvDatas[0] != 0xFE) {
+			_recvDatas.erase(_recvDatas.begin());
+			continue;
+		}
 		std::vector<uint8> _content(_recvDatas.begin(), _recvDatas.begin() + 4);
-		auto _removed = _recvDatas.erase(_recvDatas.begin(), _recvDatas.begin() + 4);
-
 		uint8 _channel = _content[1];
 		uint8 _status = _content[2];
 		if (_status == 0x00) {
@@ -110,6 +105,7 @@ IOUI_API int __stdcall GetDeviceDI(uint8 deviceIndex, BYTE* OutDIStatus)
 		else {
 			OutDIStatus[_channel] = 1;
 		}
+		_recvDatas.erase(_recvDatas.begin(), _recvDatas.begin() + 4);
 	}
     return 1;
 }
