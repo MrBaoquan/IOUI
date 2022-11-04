@@ -85,3 +85,7 @@ std::string ToString(BYTE* Arr, size_t Count)
 	return _str.append("\n");
 }
 
+std::string BuildDeviceAttribute(const char* Attribute, uint8 DeviceIndex) {
+	return std::string(Attribute) +"_" + std::to_string(DeviceIndex);
+}
+

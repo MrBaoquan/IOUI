@@ -8,7 +8,7 @@
 <IORoot>
 
   <Device Name="Standard" Type="Standard"></Device>
-  <Device Name="ExternalDev_0" Type="External" DllName="SERIALPORT" Index="2">
+  <Device Name="ExternalDev_0" Type="External" DllName="ENCODER-BH38" Index="4">
     <Properties>
       <Key Name="OAxis_01" Sensitivity="1.0"></Key>
     </Properties>
@@ -29,4 +29,5 @@
     
     <!-- Axis mapping end -->
   </Device>
+    <Device Name="ExternalDev_1" Type="External" DllName="ENCODER-BH38" Index="3"></Device>
 </IORoot>

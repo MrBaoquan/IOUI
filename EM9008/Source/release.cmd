@@ -19,7 +19,7 @@ copy %IOUI_SRC_CORE_PATH%msvcr120.dll %IOUI_DST_CORE_PATH% /y
 copy %IOUI_SRC_CORE_PATH%ZTLC_TCP.dll %IOUI_DST_CORE_PATH% /y
 
 if %CONFIGURE% equ Debug (
-	xcopy %IOUI_SRC_PATH%Config\EM9008 %IOUI_SRC_PATH%ExternalLibraries\Config\EM9008\ /E /F /Y
+	xcopy %ProjectDir%Config\EM9008 %IOUI_SRC_PATH%ExternalLibraries\Config\EM9008\ /E /F /Y
 ) else (
-	xcopy %IOUI_SRC_PATH%Config\EM9008 %IOUI_DST_PATH%Config\EM9008\ /E /F /Y
+	xcopy %ProjectDir%Config\EM9008 %IOUI_DST_PATH%Config\EM9008\ /E /F /Y
 )

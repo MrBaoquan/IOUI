@@ -4,10 +4,10 @@ rem PLATFORM:					Win32 |	Win64
 rem CONFIGURE:					Debug | Release
 
 rem	IOUI_SRC_PATH				IOUI-WIN[36][24]-*.dll	源目录
-rem IOUI_DST_PATH				IOUI-WIN[36][24]-*.dll	目标目录
+rem IOUI_DST_PATH				IOUI-WIN[36][24]-*.dll	目锟斤拷目录
 
 rem IOUI_SRC_CORE_PATH			PCI*.dll			源目录
-rem IOUI_DST_CORE_PATH			PCI*.dll			目标目录
+rem IOUI_DST_CORE_PATH			PCI*.dll			目锟斤拷目录
 
 rem start execute command
 :start
@@ -16,9 +16,9 @@ rem start execute command
 copy %IOUI_SRC_PATH%IOUI-%PLATFORM%-DAM3000M.dll %IOUI_DST_PATH% /y
 
 if %CONFIGURE% equ Debug (
-	xcopy %IOUI_SRC_PATH%Config\DAM3000M %IOUI_SRC_PATH%ExternalLibraries\Config\DAM3000M\ /E /F /Y
+	xcopy %ProjectDir%Config\DAM3000M %IOUI_SRC_PATH%ExternalLibraries\Config\DAM3000M\ /E /F /Y
 ) else (
-	xcopy %IOUI_SRC_PATH%Config\DAM3000M %IOUI_DST_PATH%Config\DAM3000M\ /E /F /Y
+	xcopy %ProjectDir%Config\DAM3000M %IOUI_DST_PATH%Config\DAM3000M\ /E /F /Y
 )
 
 if %PLATFORM% equ Win64 (

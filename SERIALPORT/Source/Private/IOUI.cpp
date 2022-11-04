@@ -8,7 +8,7 @@
 #include "IOUI.h"
 #include "PCIManager.hpp"
 #include "Paths.hpp"
-#include "Serial.h"
+#include "Serial.hpp"
 namespace dh = DevelopHelper;
 
 DeviceInfo devInfo;
