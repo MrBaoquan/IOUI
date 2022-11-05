@@ -139,7 +139,7 @@ BOOL CIOUIDebugDlg::OnInitDialog()
     //struct __declspec(uuid("B372C9F6-1959-4650-960D-73F20CD479BB")) Interface{};
     //auto uid = __uuidof(Interface);
 	
-    SetTimer(0, 0.01, nullptr);
+    SetTimer(0, 0.02, nullptr);
 	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
 }
 

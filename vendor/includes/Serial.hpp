@@ -27,7 +27,7 @@ private:
 	HANDLE commHandle;
 
 public:
-	Serial(const std::string &commPortName, int bitRate = 115200)
+	Serial(const std::string &commPortName, int bitRate = 115200, BYTE StopBits=ONESTOPBIT)
 	{
 		commHandle = CreateFileA(("\\\\.\\" + commPortName).c_str(), GENERIC_READ | GENERIC_WRITE, 0, NULL, OPEN_EXISTING,
 			0, NULL);

@@ -21,8 +21,6 @@ std::map<uint8, std::shared_ptr<Serial>> g_serialPorts;
 // 单圈分辨率
 std::map<uint8, int> g_sResolutions;
 
-std::map<uint8, short> g_lastAngles;
-
 IOUI_API DeviceInfo* __stdcall Initialize()
 {
 	devInfo.InputCount = 0;
@@ -34,17 +32,24 @@ IOUI_API DeviceInfo* __stdcall Initialize()
 IOUI_API int __stdcall OpenDevice(uint8 deviceIndex)
 {
 	std::string path = dh::Paths::Instance().GetModuleDir();
-	std::string config_file_path = path + "Config\\ENCODER-BH38\\config.ini";
+	std::string config_file_path = path + "Config\\SLDS-D10\\config.ini";
 	const char* app = "/Settings";
 	DWORD _baudRate = GetPrivateProfileIntA(app, BuildDeviceAttribute("BaudRate",deviceIndex).data(), 19200, config_file_path.data());
-	int _sResolution = GetPrivateProfileIntA(app, BuildDeviceAttribute("SR",deviceIndex).data(), 16384, config_file_path.data());
-	g_sResolutions.insert(std::pair<uint8,int>(deviceIndex, _sResolution));
 	
 	try
 	{
-		auto _serialPort = new Serial("COM" + std::to_string(deviceIndex),_baudRate);
+		auto _serialPort = new Serial("COM" + std::to_string(deviceIndex),_baudRate, TWOSTOPBITS);
+		// 上电测量模式
+		const char _powerOn[8] = { 0x01,0x06,0x01,0x8C,0x00,0x01,0x88,0x1D };
+		_serialPort->write(_powerOn, sizeof(_powerOn));
+		// 连续测量模式
+		const char _continueMesure[8]{ 0x01,0x06,0x01,0x90,0x00,0x02,0x09,0xDA };
+		_serialPort->write(_continueMesure, sizeof(_continueMesure));
+
+		const char _refreshInterval[13]{ 0x01,0x10,0x01,0x70 ,0x00 ,0x02 ,0x04 ,0x00 ,0x00 ,0x00 ,0x32 ,0x78, 0xCE };
+		_serialPort->write(_refreshInterval, sizeof(_refreshInterval));
+		
 		g_serialPorts.insert(std::pair<uint8, std::shared_ptr<Serial>>(deviceIndex, _serialPort));	
-		g_lastAngles.insert(std::pair<uint8, short>(deviceIndex, SHORT_MAX));
 	}
 	catch (const char* _err)
 	{
@@ -79,37 +84,30 @@ IOUI_API int __stdcall GetDeviceDI(uint8 deviceIndex, BYTE* OutDIStatus)
 
 IOUI_API int __stdcall GetDeviceAD(uint8 deviceIndex, short* OutADStatus)
 {
+	static const char _readData[8]{0x01,0x03,0x00,0x94,0x00,0x02,0x85,0xE7};
 	auto _serialPort = g_serialPorts[deviceIndex];
 	int _sResolution = g_sResolutions[deviceIndex];
+
+	_serialPort->write(_readData, sizeof(_readData));
 
 	static char _data[MAX_PATH];
 	DWORD _count = 0;
 	auto _recevCount = _serialPort->read(_data, MAX_PATH, false);
 	std::vector<uint8> _recvDatas(std::begin(_data), std::begin(_data) + _recevCount);
 
-	while (_recvDatas.size() >= 10) {
-		if (_recvDatas[0] != 0xAB || _recvDatas[1] != 0xCD) {
+	while (_recvDatas.size() >= 9) {
+		if (_recvDatas[0] != 0x01 || _recvDatas[1] != 0x03) {
 			_recvDatas.erase(_recvDatas.begin());
 			continue;
 		}
-
-		int _raw = _recvDatas[3] << 8 | _recvDatas[4];
-		int _angle = _raw * 360 / _sResolution;
-
-		short& _lastAngle = g_lastAngles[deviceIndex];
-		
-		if (_lastAngle == SHORT_MAX) {
-			_lastAngle = _angle;
-		}
-		
-		int _deltaAngel = _angle - _lastAngle;
-		if (abs(_deltaAngel) >= 180) {
-			_deltaAngel = 360 * (_deltaAngel > 0 ? -1 : 1) + _deltaAngel;
-		}
-		OutADStatus[0] = _angle;
-		OutADStatus[1] = _deltaAngel;
-		_lastAngle = _angle;
-		
+		/*	_recvDatas[3] = 0x00;
+			_recvDatas[4] = 0x00;
+			_recvDatas[5] = 0x0b;
+			_recvDatas[6] = 0x10;*/
+		unsigned int _raw =(_recvDatas[3]<<24)|(_recvDatas[4]<<16)|(_recvDatas[5]<<8)|(_recvDatas[6]);
+		OutADStatus[0] = _raw;
+		/*OutputDebugStringA(std::to_string(_raw).data());
+		OutputDebugStringA("\r\n");*/
 		break;
 		/*_recvDatas.erase(std::begin(_recvDatas), std::begin(_recvDatas) + 10);*/
 	}
