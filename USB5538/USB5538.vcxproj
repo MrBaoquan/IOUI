@@ -150,7 +150,6 @@
     <ClCompile Include="Source\Private\IOUI.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Source\Public\IOUI.h" />
     <ClInclude Include="Source\Public\USB5538.h" />
   </ItemGroup>
   <ItemGroup>

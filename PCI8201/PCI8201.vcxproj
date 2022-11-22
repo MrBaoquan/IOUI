@@ -150,7 +150,6 @@
     <ClCompile Include="Source\Private\IOUI.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Source\Public\IOUI.h" />
     <ClInclude Include="Source\Public\Paths.hpp" />
     <ClInclude Include="Source\Public\PCI8201.h" />
     <ClInclude Include="Source\Public\PCIManager.hpp" />

@@ -23,7 +23,6 @@
     <ClCompile Include="Source\Private\IOUI.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Source\Public\IOUI.h" />
     <ClInclude Include="Source\Public\PCI8407.H" />
     <ClInclude Include="Source\Public\PCI8408.h" />
   </ItemGroup>

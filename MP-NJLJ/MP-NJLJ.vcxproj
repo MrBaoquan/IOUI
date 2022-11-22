@@ -27,7 +27,6 @@
   <ItemGroup>
     <ClInclude Include="Source\Public\ChairDevice.h" />
     <ClInclude Include="Source\Public\ChairDevManager.h" />
-    <ClInclude Include="Source\Public\IOUI.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Source\Module.def" />

@@ -1,4 +1,4 @@
-/** Copyright (c) 2018 Hefei And Technology Co.,Ltd
+ï»¿/** Copyright (c) 2018 Hefei And Technology Co.,Ltd
  *  Author: MrBaoquan
  *  CreateTime: 2018-5-16 10:44
  *  Email: mrma617@gmail.com
@@ -16,9 +16,9 @@ namespace dh = DevelopHelper;
 
 DeviceInfo devInfo;
 
-// ´®¿ÚÊµÀıÖ¸Õë
+// ä¸²å£å®ä¾‹æŒ‡é’ˆ
 std::map<uint8, std::shared_ptr<Serial>> g_serialPorts;
-// µ¥È¦·Ö±æÂÊ
+// å•åœˆåˆ†è¾¨ç‡
 std::map<uint8, int> g_sResolutions;
 
 std::map<uint8, short> g_lastAngles;
@@ -114,4 +114,8 @@ IOUI_API int __stdcall GetDeviceAD(uint8 deviceIndex, short* OutADStatus)
 		/*_recvDatas.erase(std::begin(_recvDatas), std::begin(_recvDatas) + 10);*/
 	}
     return 1;
+}
+
+IOUI_API int __stdcall RefreshStreamingData(uint8 deviceIndex, BYTE* Data, unsigned int Size) {
+	return 0;
 }

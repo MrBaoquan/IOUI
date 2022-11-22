@@ -152,7 +152,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Public\DAM3000M.h" />
-    <ClInclude Include="Source\Public\IOUI.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Source\Module.def" />

@@ -4,6 +4,7 @@
  *  Email: mrma617@gmail.com
  */
 #include <stdlib.h>
+#include <algorithm>
 #include "IOUI.h"
 
 DeviceInfo devInfo;
@@ -43,4 +44,13 @@ IOUI_API int __stdcall GetDeviceDI(uint8 deviceIndex, BYTE* OutDIStatus)
 IOUI_API int __stdcall GetDeviceAD(uint8 deviceIndex, short* OutADStatus)
 {
     return 0;
+}
+
+IOUI_API int __stdcall RefreshStreamingData(uint8 deviceIndex, BYTE* Data, unsigned int Size)
+{
+    BYTE data[3]{ 0x00,0x01,0x02 };
+    Data[0] = data[0];
+    Data[1] = data[1];
+    Data[2] = data[2];
+    return 1;
 }

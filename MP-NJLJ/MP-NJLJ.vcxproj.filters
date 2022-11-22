@@ -35,9 +35,6 @@
     <ClInclude Include="Source\Public\ChairDevManager.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Public\IOUI.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Source\Module.def">

@@ -26,9 +26,6 @@
     <ClInclude Include="Source\Public\DAM3000M.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Public\IOUI.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Source\Module.def">

@@ -23,9 +23,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Source\Public\IOUI.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="Source\Public\PCI8735.h">
       <Filter>头文件</Filter>
     </ClInclude>

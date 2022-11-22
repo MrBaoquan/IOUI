@@ -153,7 +153,6 @@
     <ClCompile Include="Source\Private\IOUI.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Source\Public\IOUI.h" />
     <ClInclude Include="Source\Public\PCI8735.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -1,10 +1,10 @@
-/** Copyright (c) 2018 Hefei And Technology Co.,Ltd
+ï»¿/** Copyright (c) 2018 Hefei And Technology Co.,Ltd
 *  Author: MrBaoquan
 *  CreateTime: 2018-7-11 14:07
 *  Email: mrma617@gmail.com
 */
 
-// ÈôÓöµ½ winsock Ïà¹ØÖØ¶¨Òå È¡Ïû×¢ÊÍÏÂÃæºê¶¨Òå
+// è‹¥é‡åˆ° winsock ç›¸å…³é‡å®šä¹‰ å–æ¶ˆæ³¨é‡Šä¸‹é¢å®å®šä¹‰
 #pragma once
 
 #include <WinSock2.h>
@@ -81,7 +81,7 @@ public:
     TISocket() {}
     ~TISocket() {}
 
-    /** ¿ªÊ¼¼àÌıÊı¾İ */
+    /** å¼€å§‹ç›‘å¬æ•°æ® */
     void StartReceived()
     {
         this->bExit = false;
@@ -94,7 +94,7 @@ public:
         queryMsgThread = std::move(std::thread(&TISocket::UpdateMessage, this));
     }
 
-    /** ÍË³ö¼àÌı */
+    /** é€€å‡ºç›‘å¬ */
     void Exit()
     {
         this->bExit = true;
@@ -111,7 +111,7 @@ public:
     }
 
     /**
-    * ³õÊ¼»¯Ò»¸öUDP·şÎñÆ÷,²¢°ó¶¨Ò»¸öÔ¶³ÌÁ¬½Ó
+    * åˆå§‹åŒ–ä¸€ä¸ªUDPæœåŠ¡å™¨,å¹¶ç»‘å®šä¸€ä¸ªè¿œç¨‹è¿æ¥
     */
     int Initialize(TIType InType, unsigned short localPort)
     {
@@ -132,7 +132,7 @@ public:
         return bind(socketInstance, reinterpret_cast<sockaddr*>(&localAddr), sizeof(localAddr));
     }
 
-    /** ÉèÖÃÔ¶³ÌÁ¬½Ó */
+    /** è®¾ç½®è¿œç¨‹è¿æ¥ */
     void SetRemoteAddr(std::string remoteIP, unsigned short remotePort)
     {
         remoteAddr.sin_family = AF_INET;
@@ -141,7 +141,7 @@ public:
         InetPton(AF_INET, w_remoteIP.c_str(), &remoteAddr.sin_addr.S_un.S_addr);
     }
 
-    /** ÏòÔ¶³Ì·¢ËÍÊı¾İ */
+    /** å‘è¿œç¨‹å‘é€æ•°æ® */
     int Send(const char* sendBuf, int length = -1)
     {
         if (length == -1)
@@ -167,7 +167,7 @@ public:
         return sendto(netSocket, sendBuf, length, 0, reinterpret_cast<sockaddr*>(&remoteAddr), len);
     }
     
-    /** ¼àÊÓ¿Í»§¶ËÁ¬½Ó */
+    /** ç›‘è§†å®¢æˆ·ç«¯è¿æ¥ */
     void UpdateConnect()
     {
         int len = sizeof(SOCKADDR);
@@ -189,7 +189,7 @@ public:
         }
     }
 
-    /** ¼àÊÓÊı¾İ */
+    /** ç›‘è§†æ•°æ® */
     void UpdateMessage()
     {
         while (!this->bExit)
@@ -225,7 +225,7 @@ public:
         }
     }
 
-    /** »ñÈ¡½ÓÊÕµ½µÄÊı¾İ */
+    /** è·å–æ¥æ”¶åˆ°çš„æ•°æ® */
     TIMessage& GetMessage()
     {
         return tiMessage;

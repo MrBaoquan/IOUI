@@ -1,4 +1,4 @@
-// EM9008_Server.h: interface for the CEM9008 class.
+ï»¿// EM9008_Server.h: interface for the CEM9008 class.
 //
 //////////////////////////////////////////////////////////////////////
 
@@ -12,22 +12,22 @@
 #include "ZT_Type.h"
 
 #define EM9008_TIMOUT_MS                            1000
-#define EM9008_BASE_FREQ                            120000000.0//»ù´¡Ê±ÖÓ£¬120MHz
-#define EM9008_MAXADCHCNT                           8 //AD×î´óÍ¨µÀÊý
-#define EM9008_MAXDICHCNT                           8 //DI×î´óÍ¨µÀÊý
-#define EM9008_MAXDOCHCNT                           8 //DO×î´óÍ¨µÀÊý
-#define EM9008_MAXCTCHCNT                           6 //¼ÆÊýÆ÷×î´óÍ¨µÀÊý
-#define EM9008_MAXECCHCNT                           1 //±àÂëÆ÷×î´óÍ¨µÀÊý
-#define EM9008_MAXPWMCHCNT                          7 //PWM×î´óÍ¨µÀÊý
+#define EM9008_BASE_FREQ                            120000000.0//åŸºç¡€æ—¶é’Ÿï¼Œ120MHz
+#define EM9008_MAXADCHCNT                           8 //ADæœ€å¤§é€šé“æ•°
+#define EM9008_MAXDICHCNT                           8 //DIæœ€å¤§é€šé“æ•°
+#define EM9008_MAXDOCHCNT                           8 //DOæœ€å¤§é€šé“æ•°
+#define EM9008_MAXCTCHCNT                           6 //è®¡æ•°å™¨æœ€å¤§é€šé“æ•°
+#define EM9008_MAXECCHCNT                           1 //ç¼–ç å™¨æœ€å¤§é€šé“æ•°
+#define EM9008_MAXPWMCHCNT                          7 //PWMæœ€å¤§é€šé“æ•°
 
-//AD»ù´¡ÆµÂÊÉèÖÃ
+//ADåŸºç¡€é¢‘çŽ‡è®¾ç½®
 #define EM9008_AD_BASE_FREQ_1000K                          0
 #define EM9008_AD_BASE_FREQ_571K                           1
 #define EM9008_AD_BASE_FREQ_211K                           2
 #define EM9008_AD_BASE_FREQ_114K                           3
 #define EM9008_AD_BASE_FREQ_60K                            4
 
-//AD²É¼¯ÆµÂÊÉèÖÃ
+//ADé‡‡é›†é¢‘çŽ‡è®¾ç½®
 #define EM9008_AD_FREQ_7812                          0
 #define EM9008_AD_FREQ_3906                          1
 #define EM9008_AD_FREQ_1953                          2
@@ -37,525 +37,525 @@
 #define EM9008_AD_FREQ_122                           6
 #define EM9008_AD_FREQ_61                            7
 
-//AD²É¼¯·¶Î§
-#define EM9008_AD_RANGE_N10_10V                      0L //¡À10V
-#define	EM9008_AD_RANGE_N5_5V                        1L //¡À5V£¨Ó²¼þÔÝÊ±²»Ö§³Ö£©
-#define	EM9008_AD_RANGE_0_10V                        2L //0¡«10V
-#define	EM9008_AD_RANGE_0_5V                         3L //0¡«5V
-#define	EM9008_AD_RANGE_0_20mA                       4L //0¡«20mA
+//ADé‡‡é›†èŒƒå›´
+#define EM9008_AD_RANGE_N10_10V                      0L //Â±10V
+#define	EM9008_AD_RANGE_N5_5V                        1L //Â±5Vï¼ˆç¡¬ä»¶æš‚æ—¶ä¸æ”¯æŒï¼‰
+#define	EM9008_AD_RANGE_0_10V                        2L //0ï½ž10V
+#define	EM9008_AD_RANGE_0_5V                         3L //0ï½ž5V
+#define	EM9008_AD_RANGE_0_20mA                       4L //0ï½ž20mA
 
-//¼ÆÊý·½Ê½
-#define EM9008_CT_MODE_COUNT                         0 //¼ÆÊý
-#define EM9008_CT_MODE_LFREQ                         1 //²âÆµÂÊ
+//è®¡æ•°æ–¹å¼
+#define EM9008_CT_MODE_COUNT                         0 //è®¡æ•°
+#define EM9008_CT_MODE_LFREQ                         1 //æµ‹é¢‘çŽ‡
 
-//DI¹¦ÄÜ
+//DIåŠŸèƒ½
 #define EM9008_DI_FUN_DI                            0 //DI
-#define EM9008_DI_FUN_CT                            1 //¼ÆÊý
-#define EM9008_DI_FUN_ECA                           1 //±àÂëÆ÷A
-#define EM9008_DI_FUN_ECB                           1 //±àÂëÆ÷B
-#define EM9008_DI_FUN_ECZ                           3 //±àÂëÆ÷Z
+#define EM9008_DI_FUN_CT                            1 //è®¡æ•°
+#define EM9008_DI_FUN_ECA                           1 //ç¼–ç å™¨A
+#define EM9008_DI_FUN_ECB                           1 //ç¼–ç å™¨B
+#define EM9008_DI_FUN_ECZ                           3 //ç¼–ç å™¨Z
 
-//DOÊä³ö¹Ü½Å¹¦ÄÜ
-#define EM9008_DO_FUN_DO                             0 //±íÊ¾DO¹¦ÄÜ
-#define EM9008_DO_FUN_PWM                            1 //±íÊ¾Êä³öPWMÐÅºÅ
+//DOè¾“å‡ºç®¡è„šåŠŸèƒ½
+#define EM9008_DO_FUN_DO                             0 //è¡¨ç¤ºDOåŠŸèƒ½
+#define EM9008_DO_FUN_PWM                            1 //è¡¨ç¤ºè¾“å‡ºPWMä¿¡å·
 
-#define EM9008_SFIFO_SIZE                            16 * 1024 * 1024// »º³åÇø´óÐ¡Îª16MB
+#define EM9008_SFIFO_SIZE                            16 * 1024 * 1024// ç¼“å†²åŒºå¤§å°ä¸º16MB
 
 extern "C"
 {
 HANDLE _stdcall EM9008_DeviceCreate();
-//º¯Êý¹¦ÄÜ£º´´½¨Éè±¸
-//Èë¿Ú²ÎÊý£º
-//      ÎÞ
-//·µ»ØÖµ£º0£¬´´½¨Éè±¸Ê§°Ü
-//        ÆäËüÖµÎªÉè±¸¾ä±ú£¬ÔÚÒÔºóµÄÉè±¸Ïà¹Ø²Ù×÷ÖÐ¾ùÒªÊ¹ÓÃÆä·µ»ØÖµ
+//å‡½æ•°åŠŸèƒ½ï¼šåˆ›å»ºè®¾å¤‡
+//å…¥å£å‚æ•°ï¼š
+//      æ— 
+//è¿”å›žå€¼ï¼š0ï¼Œåˆ›å»ºè®¾å¤‡å¤±è´¥
+//        å…¶å®ƒå€¼ä¸ºè®¾å¤‡å¥æŸ„ï¼Œåœ¨ä»¥åŽçš„è®¾å¤‡ç›¸å…³æ“ä½œä¸­å‡è¦ä½¿ç”¨å…¶è¿”å›žå€¼
 
 void _stdcall EM9008_DeviceClose( HANDLE hDevice );
-//º¯Êý¹¦ÄÜ£º¹Ø±ÕÉè±¸£¬Í¬Ê±ÊÍ·ÅÉè±¸ËùÕ¼ÓÃ×ÊÔ´
-//Èë¿Ú²ÎÊý£º
-//           hDevice£ºÉè±¸¾ä±ú£¬EM9008_DeviceCreateº¯Êý·µ»ØÖµ
-//·µ»ØÖµ£ºÎÞ
+//å‡½æ•°åŠŸèƒ½ï¼šå…³é—­è®¾å¤‡ï¼ŒåŒæ—¶é‡Šæ”¾è®¾å¤‡æ‰€å ç”¨èµ„æº
+//å…¥å£å‚æ•°ï¼š
+//           hDeviceï¼šè®¾å¤‡å¥æŸ„ï¼ŒEM9008_DeviceCreateå‡½æ•°è¿”å›žå€¼
+//è¿”å›žå€¼ï¼šæ— 
 
 I32 _stdcall EM9008_CmdConnect( HANDLE hDevice, char* strIP, I32 ipBC, I32 cmdPort, I32 dataPort, I32 timeOutMS = EM9008_TIMOUT_MS );
-//º¯Êý¹¦ÄÜ£ºÁ¬½ÓÃüÁî¶Ë¿Ú
-//Èë¿Ú²ÎÊý£º
-//           hDevice£ºÉè±¸¾ä±ú£¬EM9008_DeviceCreateº¯Êý·µ»ØÖµ
-//             strIP£ºÉè±¸IP
-//              ipBC£ºstrIPµÄ³¤¶È£¬´Ë²ÎÊýÎª0Ê±±íÊ¾strIPÊÇÒÔ0Îª½áÊøµÄ×Ö·û´®¡£
-//           cmdPort£ºÃüÁî¶Ë¿ÚºÅ¡£
-//          dataPort£ºÊý¾Ý¶Ë¿ÚºÅ¡£
-//         timeOutMS£º³¬Ê±ºÁÃëÊý¡£
-//·µ»ØÖµ£º0±íÊ¾³É¹¦£¬<0±íÊ¾Ê§°Ü
+//å‡½æ•°åŠŸèƒ½ï¼šè¿žæŽ¥å‘½ä»¤ç«¯å£
+//å…¥å£å‚æ•°ï¼š
+//           hDeviceï¼šè®¾å¤‡å¥æŸ„ï¼ŒEM9008_DeviceCreateå‡½æ•°è¿”å›žå€¼
+//             strIPï¼šè®¾å¤‡IP
+//              ipBCï¼šstrIPçš„é•¿åº¦ï¼Œæ­¤å‚æ•°ä¸º0æ—¶è¡¨ç¤ºstrIPæ˜¯ä»¥0ä¸ºç»“æŸçš„å­—ç¬¦ä¸²ã€‚
+//           cmdPortï¼šå‘½ä»¤ç«¯å£å·ã€‚
+//          dataPortï¼šæ•°æ®ç«¯å£å·ã€‚
+//         timeOutMSï¼šè¶…æ—¶æ¯«ç§’æ•°ã€‚
+//è¿”å›žå€¼ï¼š0è¡¨ç¤ºæˆåŠŸï¼Œ<0è¡¨ç¤ºå¤±è´¥
 
 void _stdcall EM9008_CmdClose( HANDLE hDevice );
-//º¯Êý¹¦ÄÜ£º¹Ø±ÕÃüÁî¶Ë¿Ú
-//Èë¿Ú²ÎÊý£º
-//           hDevice£ºÉè±¸¾ä±ú£¬EM9008_DeviceCreateº¯Êý·µ»ØÖµ
-//·µ»ØÖµ£ºÎÞ
+//å‡½æ•°åŠŸèƒ½ï¼šå…³é—­å‘½ä»¤ç«¯å£
+//å…¥å£å‚æ•°ï¼š
+//           hDeviceï¼šè®¾å¤‡å¥æŸ„ï¼ŒEM9008_DeviceCreateå‡½æ•°è¿”å›žå€¼
+//è¿”å›žå€¼ï¼šæ— 
 
 I32 _stdcall EM9008_DataConnect( HANDLE hDevice, int port, I32 timeOutMS = EM9008_TIMOUT_MS );
-//º¯Êý¹¦ÄÜ£ºÁ¬½ÓÊý¾Ý¶Ë¿Ú
-//Èë¿Ú²ÎÊý£º
-//           hDevice£ºÉè±¸¾ä±ú£¬EM9008_DeviceCreateº¯Êý·µ»ØÖµ
-//              port£ºÊý¾Ý¶Ë¿ÚºÅ
-//·µ»ØÖµ£º>=0±íÊ¾³É¹¦£¬<0±íÊ¾Ê§°Ü
+//å‡½æ•°åŠŸèƒ½ï¼šè¿žæŽ¥æ•°æ®ç«¯å£
+//å…¥å£å‚æ•°ï¼š
+//           hDeviceï¼šè®¾å¤‡å¥æŸ„ï¼ŒEM9008_DeviceCreateå‡½æ•°è¿”å›žå€¼
+//              portï¼šæ•°æ®ç«¯å£å·
+//è¿”å›žå€¼ï¼š>=0è¡¨ç¤ºæˆåŠŸï¼Œ<0è¡¨ç¤ºå¤±è´¥
 
 void _stdcall EM9008_DataClose( HANDLE hDevice, I32 timeOutMS = EM9008_TIMOUT_MS );
-//º¯Êý¹¦ÄÜ£º¹Ø±ÕÊý¾Ý¶Ë¿Ú
-//Èë¿Ú²ÎÊý£º
-//           hDevice£ºÉè±¸¾ä±ú£¬EM9008_DeviceCreateº¯Êý·µ»ØÖµ
-//·µ»ØÖµ£ºÎÞ
+//å‡½æ•°åŠŸèƒ½ï¼šå…³é—­æ•°æ®ç«¯å£
+//å…¥å£å‚æ•°ï¼š
+//           hDeviceï¼šè®¾å¤‡å¥æŸ„ï¼ŒEM9008_DeviceCreateå‡½æ•°è¿”å›žå€¼
+//è¿”å›žå€¼ï¼šæ— 
 
-/////////////////ADÏà¹Øº¯Êý//////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////ADç›¸å…³å‡½æ•°//////////////////////////////////////////////////////////////////////////////////////////////////
 I32 _stdcall EM9008_AdSetRange( HANDLE hDevice, I32 chNo, I32 rangeInx, I32 timeOutMS = EM9008_TIMOUT_MS );
-//º¯Êý¹¦ÄÜ£ºÉèÖÃAD²É¼¯·¶Î§£¬×¢ÒâÒªÓëÉè±¸ÌøÏßÒ»ÖÂ
-//Èë¿Ú²ÎÊý£º
-//           hDevice£ºÉè±¸¾ä±ú£¬EM9008_DeviceCreateº¯Êý·µ»ØÖµ
-//              chNo£ºÍ¨µÀºÅ1¡«8
-//          rangeInx£º²É¼¯·¶Î§
-//                    0£¬¡À10V
-//                    1£¬¡À5V£¨Ó²¼þÔÝÊ±²»Ö§³Ö£©
-//                    2£¬0~10V
-//                    3£¬0~5V
-//·µ»ØÖµ£º0±íÊ¾³É¹¦£¬<0±íÊ¾Ê§°Ü
+//å‡½æ•°åŠŸèƒ½ï¼šè®¾ç½®ADé‡‡é›†èŒƒå›´ï¼Œæ³¨æ„è¦ä¸Žè®¾å¤‡è·³çº¿ä¸€è‡´
+//å…¥å£å‚æ•°ï¼š
+//           hDeviceï¼šè®¾å¤‡å¥æŸ„ï¼ŒEM9008_DeviceCreateå‡½æ•°è¿”å›žå€¼
+//              chNoï¼šé€šé“å·1ï½ž8
+//          rangeInxï¼šé‡‡é›†èŒƒå›´
+//                    0ï¼ŒÂ±10V
+//                    1ï¼ŒÂ±5Vï¼ˆç¡¬ä»¶æš‚æ—¶ä¸æ”¯æŒï¼‰
+//                    2ï¼Œ0~10V
+//                    3ï¼Œ0~5V
+//è¿”å›žå€¼ï¼š0è¡¨ç¤ºæˆåŠŸï¼Œ<0è¡¨ç¤ºå¤±è´¥
 
 I32 _stdcall EM9008_AdSetBeginEndCh( HANDLE hDevice, I32 beginCh, I32 endCh, I32 timeOutMS = EM9008_TIMOUT_MS );
-//º¯Êý¹¦ÄÜ£ºÉèÖÃADÍ¨µÀÊý¾ÝÊÇ·ñ½øÈë¸ßËÙ»º³åÇø£¬Ö»ÓÐÖ¸¶¨µÄÍ¨µÀ²ÅÄÜ¹»½øÈë»º³åÇø
-//Èë¿Ú²ÎÊý£º
-//           hDevice£ºÉè±¸¾ä±ú£¬EM9008_DeviceCreateº¯Êý·µ»ØÖµ
-//           beginCh£ºÆðÊ¼Í¨µÀ£¬1¡«endCh
-//             endCh£ºÖÕÖ¹Í¨µÀ£¬beginCh¡«8
-//·µ»ØÖµ£º0±íÊ¾³É¹¦£¬<0±íÊ¾Ê§°Ü
+//å‡½æ•°åŠŸèƒ½ï¼šè®¾ç½®ADé€šé“æ•°æ®æ˜¯å¦è¿›å…¥é«˜é€Ÿç¼“å†²åŒºï¼Œåªæœ‰æŒ‡å®šçš„é€šé“æ‰èƒ½å¤Ÿè¿›å…¥ç¼“å†²åŒº
+//å…¥å£å‚æ•°ï¼š
+//           hDeviceï¼šè®¾å¤‡å¥æŸ„ï¼ŒEM9008_DeviceCreateå‡½æ•°è¿”å›žå€¼
+//           beginChï¼šèµ·å§‹é€šé“ï¼Œ1ï½žendCh
+//             endChï¼šç»ˆæ­¢é€šé“ï¼ŒbeginChï½ž8
+//è¿”å›žå€¼ï¼š0è¡¨ç¤ºæˆåŠŸï¼Œ<0è¡¨ç¤ºå¤±è´¥
 
 I32 _stdcall EM9008_AdCodeToValue( HANDLE hDevice, I32 chNo, U16* adCode, I32 codeCount, F64* adValue );
-//º¯Êý¹¦ÄÜ£º½«ADÔ­ÂëÖµ×ª»»³ÉÎïÀíÖµ
-//Èë¿Ú²ÎÊý£º
-//           hDevice£ºÉè±¸¾ä±ú£¬EM9008_DeviceCreateº¯Êý·µ»ØÖµ
-//              chNo£ºÍ¨µÀºÅ£¬1~8
-//            adCode£ºÔ­ÂëÖµ
-//         codeCount£ºpCodeÊý×éËù°üº¬ÔªËØ¸öÊý
-//³ö¿Ú²ÎÊý£º
-//           adValue£ºADÎïÀíÖµ×ª»»½á¹û£¬µçÑ¹Öµ£¬ÐèÒªÓÃ»§·ÖÅä¿Õ¼ä£¬ÆäÔªËØ¸öÊýÎªcodeCount¸ö
-//·µ»ØÖµ£º0±íÊ¾³É¹¦£¬<0±íÊ¾Ê§°Ü
+//å‡½æ•°åŠŸèƒ½ï¼šå°†ADåŽŸç å€¼è½¬æ¢æˆç‰©ç†å€¼
+//å…¥å£å‚æ•°ï¼š
+//           hDeviceï¼šè®¾å¤‡å¥æŸ„ï¼ŒEM9008_DeviceCreateå‡½æ•°è¿”å›žå€¼
+//              chNoï¼šé€šé“å·ï¼Œ1~8
+//            adCodeï¼šåŽŸç å€¼
+//         codeCountï¼špCodeæ•°ç»„æ‰€åŒ…å«å…ƒç´ ä¸ªæ•°
+//å‡ºå£å‚æ•°ï¼š
+//           adValueï¼šADç‰©ç†å€¼è½¬æ¢ç»“æžœï¼Œç”µåŽ‹å€¼ï¼Œéœ€è¦ç”¨æˆ·åˆ†é…ç©ºé—´ï¼Œå…¶å…ƒç´ ä¸ªæ•°ä¸ºcodeCountä¸ª
+//è¿”å›žå€¼ï¼š0è¡¨ç¤ºæˆåŠŸï¼Œ<0è¡¨ç¤ºå¤±è´¥
 
 I32 _stdcall EM9008_AdReadAllOnce( HANDLE hDevice, U16 adCode[EM9008_MAXADCHCNT], I32 timeOutMS = EM9008_TIMOUT_MS );
-//º¯Êý¹¦ÄÜ£º¶ÁÈ¡ËùÓÐÒ»´ÎÔ­ÂëÖµ£¬´Ëº¯Êý·µ»Ø×î½üÒ»´ÎADµÄ²É¼¯½á¹û
-//Èë¿Ú²ÎÊý£º
-//           hDevice£ºÉè±¸¾ä±ú£¬EM9008_DeviceCreateº¯Êý·µ»ØÖµ
-//³ö¿Ú²ÎÊý£º
-//            adCode£º32Î»ÕûÐÍÊý×é£¬8ÔªËØ£¬¶ÔÓ¦AD1¡«AD8
-//·µ»ØÖµ£º0±íÊ¾³É¹¦£¬<0±íÊ¾Ê§°Ü
+//å‡½æ•°åŠŸèƒ½ï¼šè¯»å–æ‰€æœ‰ä¸€æ¬¡åŽŸç å€¼ï¼Œæ­¤å‡½æ•°è¿”å›žæœ€è¿‘ä¸€æ¬¡ADçš„é‡‡é›†ç»“æžœ
+//å…¥å£å‚æ•°ï¼š
+//           hDeviceï¼šè®¾å¤‡å¥æŸ„ï¼ŒEM9008_DeviceCreateå‡½æ•°è¿”å›žå€¼
+//å‡ºå£å‚æ•°ï¼š
+//            adCodeï¼š32ä½æ•´åž‹æ•°ç»„ï¼Œ8å…ƒç´ ï¼Œå¯¹åº”AD1ï½žAD8
+//è¿”å›žå€¼ï¼š0è¡¨ç¤ºæˆåŠŸï¼Œ<0è¡¨ç¤ºå¤±è´¥
 
-/////////////////Ó²¼þ¿ØÖÆÏà¹Øº¯Êý//////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////ç¡¬ä»¶æŽ§åˆ¶ç›¸å…³å‡½æ•°//////////////////////////////////////////////////////////////////////////////////////////////////
 I32 _stdcall EM9008_HcSetTranBytesCount( HANDLE hDevice, I32 bytesCount, I32 timeOutMS = EM9008_TIMOUT_MS );
-//º¯Êý¹¦ÄÜ£ºÉèÖÃÏÂÎ»»úÃ¿´Î´«¸øÉÏÎ»»úµÄÊý¾Ý×Ö½Ú¸öÊý£¬´Ëº¯ÊýÒ»°ãÇé¿öÏÂÎÞÐèµ÷ÓÃ
-//Èë¿Ú²ÎÊý£º
-//           hDevice£ºÉè±¸¾ä±ú£¬EM9008_DeviceCreateº¯Êý·µ»ØÖµ
-//        bytesCount£º×Ö½Ú¸öÊý£¬4¡«65535¡£
-//·µ»ØÖµ£º0±íÊ¾³É¹¦£¬<0±íÊ¾Ê§°Ü
+//å‡½æ•°åŠŸèƒ½ï¼šè®¾ç½®ä¸‹ä½æœºæ¯æ¬¡ä¼ ç»™ä¸Šä½æœºçš„æ•°æ®å­—èŠ‚ä¸ªæ•°ï¼Œæ­¤å‡½æ•°ä¸€èˆ¬æƒ…å†µä¸‹æ— éœ€è°ƒç”¨
+//å…¥å£å‚æ•°ï¼š
+//           hDeviceï¼šè®¾å¤‡å¥æŸ„ï¼ŒEM9008_DeviceCreateå‡½æ•°è¿”å›žå€¼
+//        bytesCountï¼šå­—èŠ‚ä¸ªæ•°ï¼Œ4ï½ž65535ã€‚
+//è¿”å›žå€¼ï¼š0è¡¨ç¤ºæˆåŠŸï¼Œ<0è¡¨ç¤ºå¤±è´¥
 
 I32 _stdcall EM9008_HcStart( HANDLE hDevice, I32 isHcStart, I32 timeOutMS = EM9008_TIMOUT_MS );
-//º¯Êý¹¦ÄÜ£ºÆô¶¯Ó²¼þ¿ØÖÆ²É¼¯
-//Èë¿Ú²ÎÊý£º
-//           hDevice£ºÉè±¸¾ä±ú£¬EM9008_DeviceCreateº¯Êý·µ»ØÖµ
-//         isHcStart£ºÊÇ·ñÆô¶¯£¬0±íÊ¾Í£Ö¹²É¼¯£¬1±íÊ¾Æô¶¯²É¼¯
-//³ö¿Ú²ÎÊý£º
-//                ÎÞ
-//·µ»ØÖµ£º0±íÊ¾³É¹¦£¬<0±íÊ¾Ê§°Ü
+//å‡½æ•°åŠŸèƒ½ï¼šå¯åŠ¨ç¡¬ä»¶æŽ§åˆ¶é‡‡é›†
+//å…¥å£å‚æ•°ï¼š
+//           hDeviceï¼šè®¾å¤‡å¥æŸ„ï¼ŒEM9008_DeviceCreateå‡½æ•°è¿”å›žå€¼
+//         isHcStartï¼šæ˜¯å¦å¯åŠ¨ï¼Œ0è¡¨ç¤ºåœæ­¢é‡‡é›†ï¼Œ1è¡¨ç¤ºå¯åŠ¨é‡‡é›†
+//å‡ºå£å‚æ•°ï¼š
+//                æ— 
+//è¿”å›žå€¼ï¼š0è¡¨ç¤ºæˆåŠŸï¼Œ<0è¡¨ç¤ºå¤±è´¥
 
 I32 _stdcall EM9008_HcSetBaseFreq( HANDLE hDevice,  I32 freqInx, I32 timeOutMS = EM9008_TIMOUT_MS );
-//º¯Êý¹¦ÄÜ£ºÉèÖÃAD»ù´¡²É¼¯ÆµÂÊ
-//    ×¢Òâ£ºÉè±¸×îÖÕÊµ¼ÊµÄ²É¼¯ÆµÂÊºÍÓ²¼þÂË²¨´ÎÊý¡¢Èí¼þÂË²¨´ÎÊýÓÐ¹ØÏµ£¬ÔÚÏà¹Ø²ÎÊýÉèÖÃÍê±Ïºó£¬¿ÉÒÔµ÷ÓÃEM9008_HcGetChFreqµÃµ½Ã¿¸öÍ¨µÀµÄ²É¼¯ÆµÂÊ
-//Èë¿Ú²ÎÊý£º
-//           hDevice£ºÉè±¸¾ä±ú£¬EM9008_DeviceCreateº¯Êý·µ»ØÖµ
-//            freqInx£º²É¼¯ÆµÂÊË÷Òý¾ßÌåº¬ÒåÇë²Î¿¼¡°AD»ù´¡ÆµÂÊÉèÖÃ¡±ºê¶¨Òå
-//³ö¿Ú²ÎÊý£º
-//                ÎÞ
-//·µ»ØÖµ£º0±íÊ¾³É¹¦£¬<0±íÊ¾Ê§°Ü
+//å‡½æ•°åŠŸèƒ½ï¼šè®¾ç½®ADåŸºç¡€é‡‡é›†é¢‘çŽ‡
+//    æ³¨æ„ï¼šè®¾å¤‡æœ€ç»ˆå®žé™…çš„é‡‡é›†é¢‘çŽ‡å’Œç¡¬ä»¶æ»¤æ³¢æ¬¡æ•°ã€è½¯ä»¶æ»¤æ³¢æ¬¡æ•°æœ‰å…³ç³»ï¼Œåœ¨ç›¸å…³å‚æ•°è®¾ç½®å®Œæ¯•åŽï¼Œå¯ä»¥è°ƒç”¨EM9008_HcGetChFreqå¾—åˆ°æ¯ä¸ªé€šé“çš„é‡‡é›†é¢‘çŽ‡
+//å…¥å£å‚æ•°ï¼š
+//           hDeviceï¼šè®¾å¤‡å¥æŸ„ï¼ŒEM9008_DeviceCreateå‡½æ•°è¿”å›žå€¼
+//            freqInxï¼šé‡‡é›†é¢‘çŽ‡ç´¢å¼•å…·ä½“å«ä¹‰è¯·å‚è€ƒâ€œADåŸºç¡€é¢‘çŽ‡è®¾ç½®â€å®å®šä¹‰
+//å‡ºå£å‚æ•°ï¼š
+//                æ— 
+//è¿”å›žå€¼ï¼š0è¡¨ç¤ºæˆåŠŸï¼Œ<0è¡¨ç¤ºå¤±è´¥
 
 I32 _stdcall EM9008_HcSetFreq( HANDLE hDevice,  I32 freqInx, F64* realFreq, I32 timeOutMS  = EM9008_TIMOUT_MS );
-//º¯Êý¹¦ÄÜ£ºÉèÖÃAD²É¼¯ÆµÂÊ
-//Èë¿Ú²ÎÊý£º
-//           hDevice£ºÉè±¸¾ä±ú£¬EM9008_DeviceCreateº¯Êý·µ»ØÖµ
-//            freqInx£ºÖ»ÄÜÉèÖÃ0¡«4£¬²É¼¯ÆµÂÊË÷Òý¾ßÌåº¬ÒåÇë²Î¿¼¡°AD²É¼¯ÆµÂÊÉèÖÃ¡±ºê¶¨Òå
-//³ö¿Ú²ÎÊý£º
-//           realFreq£º·µ»ØÕæÕýµÄ²É¼¯ÆµÂÊ¡£
-//·µ»ØÖµ£º0±íÊ¾³É¹¦£¬<0±íÊ¾Ê§°Ü
+//å‡½æ•°åŠŸèƒ½ï¼šè®¾ç½®ADé‡‡é›†é¢‘çŽ‡
+//å…¥å£å‚æ•°ï¼š
+//           hDeviceï¼šè®¾å¤‡å¥æŸ„ï¼ŒEM9008_DeviceCreateå‡½æ•°è¿”å›žå€¼
+//            freqInxï¼šåªèƒ½è®¾ç½®0ï½ž4ï¼Œé‡‡é›†é¢‘çŽ‡ç´¢å¼•å…·ä½“å«ä¹‰è¯·å‚è€ƒâ€œADé‡‡é›†é¢‘çŽ‡è®¾ç½®â€å®å®šä¹‰
+//å‡ºå£å‚æ•°ï¼š
+//           realFreqï¼šè¿”å›žçœŸæ­£çš„é‡‡é›†é¢‘çŽ‡ã€‚
+//è¿”å›žå€¼ï¼š0è¡¨ç¤ºæˆåŠŸï¼Œ<0è¡¨ç¤ºå¤±è´¥
 
 I32 _stdcall EM9008_AdSetHardFilterInx( HANDLE hDevice,  I32 hardFilterInx, I32 timeOutMS = EM9008_TIMOUT_MS );
-//º¯Êý¹¦ÄÜ£ºÉèÖÃÓ²¼þÂË²¨ÏµÊý
-//Èë¿Ú²ÎÊý£º
-//           hDevice£ºÉè±¸¾ä±ú£¬EM9008_DeviceCreateº¯Êý·µ»ØÖµ
-//     hardFilterInx£º0£º²»ÂË²¨
-//                    1£º2´Î
-//                    2£º4´Î
-//                    3£º8´Î
-//                    4£º16´Î
-//                    5£º32´Î
-//                    6£º64´Î
-//³ö¿Ú²ÎÊý£º
-//                ÎÞ
-//·µ»ØÖµ£º0±íÊ¾³É¹¦£¬<0±íÊ¾Ê§°Ü
+//å‡½æ•°åŠŸèƒ½ï¼šè®¾ç½®ç¡¬ä»¶æ»¤æ³¢ç³»æ•°
+//å…¥å£å‚æ•°ï¼š
+//           hDeviceï¼šè®¾å¤‡å¥æŸ„ï¼ŒEM9008_DeviceCreateå‡½æ•°è¿”å›žå€¼
+//     hardFilterInxï¼š0ï¼šä¸æ»¤æ³¢
+//                    1ï¼š2æ¬¡
+//                    2ï¼š4æ¬¡
+//                    3ï¼š8æ¬¡
+//                    4ï¼š16æ¬¡
+//                    5ï¼š32æ¬¡
+//                    6ï¼š64æ¬¡
+//å‡ºå£å‚æ•°ï¼š
+//                æ— 
+//è¿”å›žå€¼ï¼š0è¡¨ç¤ºæˆåŠŸï¼Œ<0è¡¨ç¤ºå¤±è´¥
 
 I32 _stdcall EM9008_AdSetSoftFilter( HANDLE hDevice,  I32 softFilterTimes, I32 timeOutMS = EM9008_TIMOUT_MS );
-//º¯Êý¹¦ÄÜ£ºÉèÖÃÈí¼þÂË²¨ÏµÊý
-//Èë¿Ú²ÎÊý£º
-//           hDevice£ºÉè±¸¾ä±ú£¬EM9008_DeviceCreateº¯Êý·µ»ØÖµ
-//   softFilterTimes£ºÖ»ÄÜÉèÖÃ³É1¡«255¡£
-//³ö¿Ú²ÎÊý£º
-//                ÎÞ
-//·µ»ØÖµ£º0±íÊ¾³É¹¦£¬<0±íÊ¾Ê§°Ü
+//å‡½æ•°åŠŸèƒ½ï¼šè®¾ç½®è½¯ä»¶æ»¤æ³¢ç³»æ•°
+//å…¥å£å‚æ•°ï¼š
+//           hDeviceï¼šè®¾å¤‡å¥æŸ„ï¼ŒEM9008_DeviceCreateå‡½æ•°è¿”å›žå€¼
+//   softFilterTimesï¼šåªèƒ½è®¾ç½®æˆ1ï½ž255ã€‚
+//å‡ºå£å‚æ•°ï¼š
+//                æ— 
+//è¿”å›žå€¼ï¼š0è¡¨ç¤ºæˆåŠŸï¼Œ<0è¡¨ç¤ºå¤±è´¥
 
 I32 _stdcall EM9008_HcGetChFreq( HANDLE hDevice,  F64* chFreq, I32 timeOutMS = EM9008_TIMOUT_MS );
-//º¯Êý¹¦ÄÜ£º»ñÈ¡Ã¿Í¨µÀÊý¾Ý²É¼¯ÆµÂÊ
-//Èë¿Ú²ÎÊý£º
-//           hDevice£ºÉè±¸¾ä±ú£¬EM9008_DeviceCreateº¯Êý·µ»ØÖµ
-//³ö¿Ú²ÎÊý£º
-//            chFreq£ºÃ¿Í¨µÀ²É¼¯ÆµÂÊ£¬¸ù¾Ý
-//                    EM9008_HcSetBaseFreq£¬EM9008_AdSetHardFilterInx£¬EM9008_AdSetSoftFilter£¬EM9008_AdSetBeginEndCh
-//                    ¼¸¸öº¯ÊýµÄÉèÖÃ¼ÆËãµÃµ½£¬Òò´Ë±ØÐëÏÈµ÷ÓÃÉÏÃæ¼¸¸öº¯Êý£¬²Åµ÷ÓÃ´Ëº¯Êý²ÅÄÜ¹»µÃµ½ÕýÈ·µÄÆµÂÊÖµ¡£
-//                ÎÞ
-//·µ»ØÖµ£º0±íÊ¾³É¹¦£¬<0±íÊ¾Ê§°Ü
+//å‡½æ•°åŠŸèƒ½ï¼šèŽ·å–æ¯é€šé“æ•°æ®é‡‡é›†é¢‘çŽ‡
+//å…¥å£å‚æ•°ï¼š
+//           hDeviceï¼šè®¾å¤‡å¥æŸ„ï¼ŒEM9008_DeviceCreateå‡½æ•°è¿”å›žå€¼
+//å‡ºå£å‚æ•°ï¼š
+//            chFreqï¼šæ¯é€šé“é‡‡é›†é¢‘çŽ‡ï¼Œæ ¹æ®
+//                    EM9008_HcSetBaseFreqï¼ŒEM9008_AdSetHardFilterInxï¼ŒEM9008_AdSetSoftFilterï¼ŒEM9008_AdSetBeginEndCh
+//                    å‡ ä¸ªå‡½æ•°çš„è®¾ç½®è®¡ç®—å¾—åˆ°ï¼Œå› æ­¤å¿…é¡»å…ˆè°ƒç”¨ä¸Šé¢å‡ ä¸ªå‡½æ•°ï¼Œæ‰è°ƒç”¨æ­¤å‡½æ•°æ‰èƒ½å¤Ÿå¾—åˆ°æ­£ç¡®çš„é¢‘çŽ‡å€¼ã€‚
+//                æ— 
+//è¿”å›žå€¼ï¼š0è¡¨ç¤ºæˆåŠŸï¼Œ<0è¡¨ç¤ºå¤±è´¥
 
 I32 _stdcall EM9008_HcGetGroupBc( HANDLE hDevice );
-//º¯Êý¹¦ÄÜ£ºµÃµ½Ã¿×é×Ö½ÚÊý£¬Ò²¾ÍÊÇ°üÀ¨ÁËÃ¿²É¼¯Ò»´ÎÊý¾Ý£¬½øÈë»º³åÇøµÄËùÓÐ×Ö½ÚÊý¡£
-//Èë¿Ú²ÎÊý£º
-//           hDevice£ºÉè±¸¾ä±ú£¬EM9008_DeviceCreateº¯Êý·µ»ØÖµ
-//·µ»ØÖµ£º>0±íÊ¾×Ö½ÚÊý
+//å‡½æ•°åŠŸèƒ½ï¼šå¾—åˆ°æ¯ç»„å­—èŠ‚æ•°ï¼Œä¹Ÿå°±æ˜¯åŒ…æ‹¬äº†æ¯é‡‡é›†ä¸€æ¬¡æ•°æ®ï¼Œè¿›å…¥ç¼“å†²åŒºçš„æ‰€æœ‰å­—èŠ‚æ•°ã€‚
+//å…¥å£å‚æ•°ï¼š
+//           hDeviceï¼šè®¾å¤‡å¥æŸ„ï¼ŒEM9008_DeviceCreateå‡½æ•°è¿”å›žå€¼
+//è¿”å›žå€¼ï¼š>0è¡¨ç¤ºå­—èŠ‚æ•°
 
 I32 _stdcall EM9008_HcSFifoCanReadCount( HANDLE hDevice, I32* canReadCount );
-//º¯Êý¹¦ÄÜ£ºµÃµ½ÉÏÎ»»ú»º³åÇø¿É¶ÁÊý¾Ý¸öÊý
-//Èë¿Ú²ÎÊý£º
-//           hDevice£ºÉè±¸¾ä±ú£¬EM9008_DeviceCreateº¯Êý·µ»ØÖµ
-//³ö¿Ú²ÎÊý£º
-//      canReadCount£ºµ±Ç°¿É¶ÁÊý¾Ý¸öÊý
-//·µ»ØÖµ£º>0±íÊ¾×Ö½ÚÊý
+//å‡½æ•°åŠŸèƒ½ï¼šå¾—åˆ°ä¸Šä½æœºç¼“å†²åŒºå¯è¯»æ•°æ®ä¸ªæ•°
+//å…¥å£å‚æ•°ï¼š
+//           hDeviceï¼šè®¾å¤‡å¥æŸ„ï¼ŒEM9008_DeviceCreateå‡½æ•°è¿”å›žå€¼
+//å‡ºå£å‚æ•°ï¼š
+//      canReadCountï¼šå½“å‰å¯è¯»æ•°æ®ä¸ªæ•°
+//è¿”å›žå€¼ï¼š>0è¡¨ç¤ºå­—èŠ‚æ•°
 
 I32 _stdcall EM9008_HcSFifoRead( HANDLE hDevice, I32 dataCount, U16* dataBuffer, I32* realReadCount );
-//º¯Êý¹¦ÄÜ£º¶Á³öÉÏÎ»»ú»º³åÇøÖÐÊý¾Ý
-//Èë¿Ú²ÎÊý£º
-//           hDevice£ºÉè±¸¾ä±ú£¬EM9008_DeviceCreateº¯Êý·µ»ØÖµ
-//         dataCount£ºÒª¶ÁÈ¡µÄÊý¾Ý¸öÊý£¬ÇëÉèÖÃÎªÍ¨µÀÕûÊý±¶£¬±ãÓÚÊý¾Ý´¦Àí
-//³ö¿Ú²ÎÊý£º
-//        dataBuffer£ºÔ­ÂëÊý¾ÝÊý×é£¬Æä´óÐ¡ÎªdataCount
-//     realReadCount£ºÊµ¼Ê¶ÁÈ¡Êý¾Ý¸öÊý
-//·µ»ØÖµ£º>0±íÊ¾×Ö½ÚÊý
+//å‡½æ•°åŠŸèƒ½ï¼šè¯»å‡ºä¸Šä½æœºç¼“å†²åŒºä¸­æ•°æ®
+//å…¥å£å‚æ•°ï¼š
+//           hDeviceï¼šè®¾å¤‡å¥æŸ„ï¼ŒEM9008_DeviceCreateå‡½æ•°è¿”å›žå€¼
+//         dataCountï¼šè¦è¯»å–çš„æ•°æ®ä¸ªæ•°ï¼Œè¯·è®¾ç½®ä¸ºé€šé“æ•´æ•°å€ï¼Œä¾¿äºŽæ•°æ®å¤„ç†
+//å‡ºå£å‚æ•°ï¼š
+//        dataBufferï¼šåŽŸç æ•°æ®æ•°ç»„ï¼Œå…¶å¤§å°ä¸ºdataCount
+//     realReadCountï¼šå®žé™…è¯»å–æ•°æ®ä¸ªæ•°
+//è¿”å›žå€¼ï¼š>0è¡¨ç¤ºå­—èŠ‚æ•°
 
-/////////////////¿ª¹ØÁ¿Ïà¹Øº¯Êý//////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////å¼€å…³é‡ç›¸å…³å‡½æ•°//////////////////////////////////////////////////////////////////////////////////////////////////
 I32 _stdcall EM9008_IoReadAllOnce( HANDLE hDevice, I8 iStatus[EM9008_MAXDICHCNT], I8 oStatus[EM9008_MAXDOCHCNT], I32 timeOutMS = EM9008_TIMOUT_MS );
-//º¯Êý¹¦ÄÜ£ºµÃµ½ËùÓÐ¿ª¹ØÁ¿ÊäÈë×î½üÒ»´ÎÊäÈë
-//Èë¿Ú²ÎÊý£º
-//           hDevice£ºÉè±¸¾ä±ú£¬EM9008_DeviceCreateº¯Êý·µ»ØÖµ
-//³ö¿Ú²ÎÊý£º
-//           iStatus£ºÊý×é£¬iStatus[0]~iStatus[7]¶ÔÓ¦DI1~DI8
-//           oStatus£ºÊý×é£¬oStatus[0]~oStatus[7]¶ÔÓ¦DO1~DO8
-//·µ»ØÖµ£º0±íÊ¾³É¹¦£¬<0±íÊ¾Ê§°Ü
+//å‡½æ•°åŠŸèƒ½ï¼šå¾—åˆ°æ‰€æœ‰å¼€å…³é‡è¾“å…¥æœ€è¿‘ä¸€æ¬¡è¾“å…¥
+//å…¥å£å‚æ•°ï¼š
+//           hDeviceï¼šè®¾å¤‡å¥æŸ„ï¼ŒEM9008_DeviceCreateå‡½æ•°è¿”å›žå€¼
+//å‡ºå£å‚æ•°ï¼š
+//           iStatusï¼šæ•°ç»„ï¼ŒiStatus[0]~iStatus[7]å¯¹åº”DI1~DI8
+//           oStatusï¼šæ•°ç»„ï¼ŒoStatus[0]~oStatus[7]å¯¹åº”DO1~DO8
+//è¿”å›žå€¼ï¼š0è¡¨ç¤ºæˆåŠŸï¼Œ<0è¡¨ç¤ºå¤±è´¥
 
 I32 _stdcall EM9008_DoWriteAllOnce( HANDLE hDevice, I8 oStatus[EM9008_MAXDOCHCNT], I32 timeOutMS = EM9008_TIMOUT_MS );
-//º¯Êý¹¦ÄÜ£ºÉèÖÃËùÓÐ¿ª¹ØÁ¿Êä³ö
-//Èë¿Ú²ÎÊý£º
-//           hDevice£ºÉè±¸¾ä±ú£¬EM9008_DeviceCreateº¯Êý·µ»ØÖµ
-//           oStatus£ºÊý×é£¬oStatus[0]~oStatus[7]¶ÔÓ¦DO1~DO8
-//·µ»ØÖµ£º0±íÊ¾³É¹¦£¬<0±íÊ¾Ê§°Ü
+//å‡½æ•°åŠŸèƒ½ï¼šè®¾ç½®æ‰€æœ‰å¼€å…³é‡è¾“å‡º
+//å…¥å£å‚æ•°ï¼š
+//           hDeviceï¼šè®¾å¤‡å¥æŸ„ï¼ŒEM9008_DeviceCreateå‡½æ•°è¿”å›žå€¼
+//           oStatusï¼šæ•°ç»„ï¼ŒoStatus[0]~oStatus[7]å¯¹åº”DO1~DO8
+//è¿”å›žå€¼ï¼š0è¡¨ç¤ºæˆåŠŸï¼Œ<0è¡¨ç¤ºå¤±è´¥
 
 I32 _stdcall EM9008_DoWriteInitStatus( HANDLE hDevice, I8 intiStatus[EM9008_MAXDOCHCNT], I32 timeOutMS = EM9008_TIMOUT_MS );
-//º¯Êý¹¦ÄÜ£ºÉèÖÃËùÓÐ¿ª¹ØÁ¿Êä³öÉÏµç³õÊ¼×´Ì¬
-//Èë¿Ú²ÎÊý£º
-//           hDevice£ºÉè±¸¾ä±ú£¬EM9008_DeviceCreateº¯Êý·µ»ØÖµ
-//        intiStatus£ºÊý×é£¬oStatus[0]~oStatus[7]¶ÔÓ¦DO1~DO8
-//·µ»ØÖµ£º0±íÊ¾³É¹¦£¬<0±íÊ¾Ê§°Ü
+//å‡½æ•°åŠŸèƒ½ï¼šè®¾ç½®æ‰€æœ‰å¼€å…³é‡è¾“å‡ºä¸Šç”µåˆå§‹çŠ¶æ€
+//å…¥å£å‚æ•°ï¼š
+//           hDeviceï¼šè®¾å¤‡å¥æŸ„ï¼ŒEM9008_DeviceCreateå‡½æ•°è¿”å›žå€¼
+//        intiStatusï¼šæ•°ç»„ï¼ŒoStatus[0]~oStatus[7]å¯¹åº”DO1~DO8
+//è¿”å›žå€¼ï¼š0è¡¨ç¤ºæˆåŠŸï¼Œ<0è¡¨ç¤ºå¤±è´¥
 
 I32 _stdcall EM9008_DoSetMode( HANDLE hDevice, I32 chNo, I32 modeInx, I32 timeOutMS = EM9008_TIMOUT_MS );
-//º¯Êý¹¦ÄÜ£ºÉèÖÃ¿ª¹ØÁ¿Êä³ö¹¦ÄÜ
-//Èë¿Ú²ÎÊý£º
-//           hDevice£ºÉè±¸¾ä±ú£¬EM9008_DeviceCreateº¯Êý·µ»ØÖµ
-//              chNo£º1¡«7
-//           modeInx£º0±íÊ¾Îª¿ª¹ØÁ¿£¬1±íÊ¾ÎªPWM
-//·µ»ØÖµ£º0±íÊ¾³É¹¦£¬<0±íÊ¾Ê§°Ü
+//å‡½æ•°åŠŸèƒ½ï¼šè®¾ç½®å¼€å…³é‡è¾“å‡ºåŠŸèƒ½
+//å…¥å£å‚æ•°ï¼š
+//           hDeviceï¼šè®¾å¤‡å¥æŸ„ï¼ŒEM9008_DeviceCreateå‡½æ•°è¿”å›žå€¼
+//              chNoï¼š1ï½ž7
+//           modeInxï¼š0è¡¨ç¤ºä¸ºå¼€å…³é‡ï¼Œ1è¡¨ç¤ºä¸ºPWM
+//è¿”å›žå€¼ï¼š0è¡¨ç¤ºæˆåŠŸï¼Œ<0è¡¨ç¤ºå¤±è´¥
 
 I32 _stdcall EM9008_DiSetMode( HANDLE hDevice, I32 chNo, I32 modeInx, I32 timeOutMS = EM9008_TIMOUT_MS );
-//º¯Êý¹¦ÄÜ£ºÉèÖÃ¿ª¹ØÁ¿ÊäÈë¹¦ÄÜ
-//Èë¿Ú²ÎÊý£º
-//           hDevice£ºÉè±¸¾ä±ú£¬EM9008_DeviceCreateº¯Êý·µ»ØÖµ
-//              chNo£ºÍ¨µÀºÅ£¬1¡«8
-//           modeInx£º0±íÊ¾¿ª¹ØÁ¿£¬ÆäËûÖµ²»Í¬ÖµÊ±Æäº¬ÒåºÍÍ¨µÀÏà¹Ø¡£
-//                   chNo=1Ê±£¬modeInx=1±íÊ¾±àÂëÆ÷A
-//                   chNo=2Ê±£¬modeInx=1±íÊ¾±àÂëÆ÷B
-//                   chNo=3Ê±£¬modeInx=1±íÊ¾¼ÆÊýÆ÷1¼ÆÊý£¬modeInx=2±íÊ¾¼ÆÊýÆ÷1²âÆµ£¬modeInx=3±íÊ¾±àÂëÆ÷¹ýÁãÐÅºÅ
-//                   chNo=4Ê±£¬modeInx=1±íÊ¾¼ÆÊýÆ÷2¼ÆÊý£¬modeInx=2±íÊ¾¼ÆÊýÆ÷2²âÆµ£¬modeInx=3±íÊ¾PWMÊ§Ð§ÐÅºÅ1
-//                   chNo=5Ê±£¬modeInx=1±íÊ¾¼ÆÊýÆ÷3¼ÆÊý£¬modeInx=2±íÊ¾¼ÆÊýÆ÷3²âÆµ£¬modeInx=3±íÊ¾PWMÊ§Ð§ÐÅºÅ2
-//                   chNo=6Ê±£¬modeInx=1±íÊ¾¼ÆÊýÆ÷4¼ÆÊý£¬modeInx=2±íÊ¾¼ÆÊýÆ÷4²âÆµ£¬modeInx=3±íÊ¾PWMÊ§Ð§ÐÅºÅ3
-//                   chNo=7Ê±£¬modeInx=1±íÊ¾¼ÆÊýÆ÷5¼ÆÊý£¬modeInx=2±íÊ¾¼ÆÊýÆ÷5²âÆµ
-//                   chNo=8Ê±£¬modeInx=1±íÊ¾¼ÆÊýÆ÷6¼ÆÊý£¬modeInx=2±íÊ¾¼ÆÊýÆ÷6²âÆµ
-//·µ»ØÖµ£º0±íÊ¾³É¹¦£¬<0±íÊ¾Ê§°Ü
+//å‡½æ•°åŠŸèƒ½ï¼šè®¾ç½®å¼€å…³é‡è¾“å…¥åŠŸèƒ½
+//å…¥å£å‚æ•°ï¼š
+//           hDeviceï¼šè®¾å¤‡å¥æŸ„ï¼ŒEM9008_DeviceCreateå‡½æ•°è¿”å›žå€¼
+//              chNoï¼šé€šé“å·ï¼Œ1ï½ž8
+//           modeInxï¼š0è¡¨ç¤ºå¼€å…³é‡ï¼Œå…¶ä»–å€¼ä¸åŒå€¼æ—¶å…¶å«ä¹‰å’Œé€šé“ç›¸å…³ã€‚
+//                   chNo=1æ—¶ï¼ŒmodeInx=1è¡¨ç¤ºç¼–ç å™¨A
+//                   chNo=2æ—¶ï¼ŒmodeInx=1è¡¨ç¤ºç¼–ç å™¨B
+//                   chNo=3æ—¶ï¼ŒmodeInx=1è¡¨ç¤ºè®¡æ•°å™¨1è®¡æ•°ï¼ŒmodeInx=2è¡¨ç¤ºè®¡æ•°å™¨1æµ‹é¢‘ï¼ŒmodeInx=3è¡¨ç¤ºç¼–ç å™¨è¿‡é›¶ä¿¡å·
+//                   chNo=4æ—¶ï¼ŒmodeInx=1è¡¨ç¤ºè®¡æ•°å™¨2è®¡æ•°ï¼ŒmodeInx=2è¡¨ç¤ºè®¡æ•°å™¨2æµ‹é¢‘ï¼ŒmodeInx=3è¡¨ç¤ºPWMå¤±æ•ˆä¿¡å·1
+//                   chNo=5æ—¶ï¼ŒmodeInx=1è¡¨ç¤ºè®¡æ•°å™¨3è®¡æ•°ï¼ŒmodeInx=2è¡¨ç¤ºè®¡æ•°å™¨3æµ‹é¢‘ï¼ŒmodeInx=3è¡¨ç¤ºPWMå¤±æ•ˆä¿¡å·2
+//                   chNo=6æ—¶ï¼ŒmodeInx=1è¡¨ç¤ºè®¡æ•°å™¨4è®¡æ•°ï¼ŒmodeInx=2è¡¨ç¤ºè®¡æ•°å™¨4æµ‹é¢‘ï¼ŒmodeInx=3è¡¨ç¤ºPWMå¤±æ•ˆä¿¡å·3
+//                   chNo=7æ—¶ï¼ŒmodeInx=1è¡¨ç¤ºè®¡æ•°å™¨5è®¡æ•°ï¼ŒmodeInx=2è¡¨ç¤ºè®¡æ•°å™¨5æµ‹é¢‘
+//                   chNo=8æ—¶ï¼ŒmodeInx=1è¡¨ç¤ºè®¡æ•°å™¨6è®¡æ•°ï¼ŒmodeInx=2è¡¨ç¤ºè®¡æ•°å™¨6æµ‹é¢‘
+//è¿”å›žå€¼ï¼š0è¡¨ç¤ºæˆåŠŸï¼Œ<0è¡¨ç¤ºå¤±è´¥
 
-/////////////////¼ÆÊýÆ÷Ïà¹Øº¯Êý//////////////////////////////////////////////////////////////////////////////////////////////////
-//×¢Òâ´Ë´¦º¯Êý¾ùÐèÒª½«ÖÁÉÙÒ»Â·DI¹¦ÄÜÉèÖÃÎª¼ÆÊýÆ÷ºó²Å¿ÉÒÔÕýÈ·Ö´ÐÐ
+/////////////////è®¡æ•°å™¨ç›¸å…³å‡½æ•°//////////////////////////////////////////////////////////////////////////////////////////////////
+//æ³¨æ„æ­¤å¤„å‡½æ•°å‡éœ€è¦å°†è‡³å°‘ä¸€è·¯DIåŠŸèƒ½è®¾ç½®ä¸ºè®¡æ•°å™¨åŽæ‰å¯ä»¥æ­£ç¡®æ‰§è¡Œ
 I32 _stdcall EM9008_CtSetFreqBase( HANDLE hDevice, F64 freqBase_ms, F64* real_ms, I32 timeOutMS = EM9008_TIMOUT_MS );
-//º¯Êý¹¦ÄÜ£ºÉèÖÃËùÓÐÍ¨µÀµÄ¼ÆÊýÆ÷²âÆµ»ù×¼Âö³åÖÜÆÚ£¬ÒÔºÁÃëÎªµ¥Î»
-//Èë¿Ú²ÎÊý£º
-//           hDevice£ºÉè±¸¾ä±ú£¬EM9008_DeviceCreateº¯Êý·µ»ØÖµ
-//       freqBase_ms£º²âÆµ»ù×¼ÖÜÆÚ£¬ÒÔºÁÃëÎªµ¥Î»
-//³ö¿Ú²ÎÊý£º
-//           real_ms£ºÊµ¼Ê²âÆµ»ù×¼£¬´ó¶àÊýÇé¿öºÍfreqBase_msÒ»ÖÂ
-//·µ»ØÖµ£º0±íÊ¾³É¹¦£¬<0±íÊ¾Ê§°Ü
+//å‡½æ•°åŠŸèƒ½ï¼šè®¾ç½®æ‰€æœ‰é€šé“çš„è®¡æ•°å™¨æµ‹é¢‘åŸºå‡†è„‰å†²å‘¨æœŸï¼Œä»¥æ¯«ç§’ä¸ºå•ä½
+//å…¥å£å‚æ•°ï¼š
+//           hDeviceï¼šè®¾å¤‡å¥æŸ„ï¼ŒEM9008_DeviceCreateå‡½æ•°è¿”å›žå€¼
+//       freqBase_msï¼šæµ‹é¢‘åŸºå‡†å‘¨æœŸï¼Œä»¥æ¯«ç§’ä¸ºå•ä½
+//å‡ºå£å‚æ•°ï¼š
+//           real_msï¼šå®žé™…æµ‹é¢‘åŸºå‡†ï¼Œå¤§å¤šæ•°æƒ…å†µå’ŒfreqBase_msä¸€è‡´
+//è¿”å›žå€¼ï¼š0è¡¨ç¤ºæˆåŠŸï¼Œ<0è¡¨ç¤ºå¤±è´¥
 
 I32 _stdcall EM9008_CtReadAllOnce( HANDLE hDevice, U32 ctCode[EM9008_MAXCTCHCNT], I32 timeOutMS = EM9008_TIMOUT_MS );
-//º¯Êý¹¦ÄÜ£º¶ÁÈ¡ËùÓÐÂ·¼ÆÊýÆ÷µÄÔ­ÂëÖµ
-//Èë¿Ú²ÎÊý£º
-//           hDevice£ºÉè±¸¾ä±ú£¬EM9008_DeviceCreateº¯Êý·µ»ØÖµ
-//³ö¿Ú²ÎÊý£º
-//            ctCode£º¼ÆÊýÆ÷Ô­ÂëÖµ£¬Èç¹ûÊÇ¼ÆÊý·½Ê½¾ÍÊÇ¼ÆÊýÖµ£¬Èç¹ûÊÇ²âÆµÔòÐèÒª¼ÆËã²ÅÄÜ×ª»¯³ÉÆµÂÊÖµ
-//·µ»ØÖµ£º0±íÊ¾³É¹¦£¬<0±íÊ¾Ê§°Ü
+//å‡½æ•°åŠŸèƒ½ï¼šè¯»å–æ‰€æœ‰è·¯è®¡æ•°å™¨çš„åŽŸç å€¼
+//å…¥å£å‚æ•°ï¼š
+//           hDeviceï¼šè®¾å¤‡å¥æŸ„ï¼ŒEM9008_DeviceCreateå‡½æ•°è¿”å›žå€¼
+//å‡ºå£å‚æ•°ï¼š
+//            ctCodeï¼šè®¡æ•°å™¨åŽŸç å€¼ï¼Œå¦‚æžœæ˜¯è®¡æ•°æ–¹å¼å°±æ˜¯è®¡æ•°å€¼ï¼Œå¦‚æžœæ˜¯æµ‹é¢‘åˆ™éœ€è¦è®¡ç®—æ‰èƒ½è½¬åŒ–æˆé¢‘çŽ‡å€¼
+//è¿”å›žå€¼ï¼š0è¡¨ç¤ºæˆåŠŸï¼Œ<0è¡¨ç¤ºå¤±è´¥
 
 I32 _stdcall EM9008_CtCodeToValue( HANDLE hDevice, I32 chNo, U32* ctCode, I32 codeCount, F64* ctValue );
-//º¯Êý¹¦ÄÜ£º½«Ô­ÂëÖµ×ª»»³É¶ÔÓ¦µÄÎïÀíÖµ
-//Èë¿Ú²ÎÊý£º
-//           hDevice£ºÉè±¸¾ä±ú£¬EM9008_DeviceCreateº¯Êý·µ»ØÖµ
-//              chNo£ºÍ¨µÀºÅ
-//            ctCode£º¼ÆÊýÆ÷Ô­ÂëÖµ£¬Èç¹ûÊÇ¼ÆÊý·½Ê½¾ÍÊÇ¼ÆÊýÖµ£¬Èç¹ûÊÇ²âÆµÔòÐèÒª¼ÆËã²ÅÄÜ×ª»¯³ÉÆµÂÊÖµ
-//         codeCount£ºÔ­ÂëÖµ¸öÊý£¬ctCodeºÍctValueµÄ´óÐ¡¾ùÓë´Ë²ÎÊýÓÐ¹Ø
-//³ö¿Ú²ÎÊý£º
-//           ctValue£º¼ÆÊýÆ÷ÎïÀíÖµ£¬Èç¹ûÊÇ¼ÆÊý·½Ê½¾ÍÊÇ¼ÆÊýÖµ£¬Èç¹ûÊÇ²âÆµÔòÊÇ²âÆµÖµ
-//·µ»ØÖµ£º0±íÊ¾³É¹¦£¬<0±íÊ¾Ê§°Ü
+//å‡½æ•°åŠŸèƒ½ï¼šå°†åŽŸç å€¼è½¬æ¢æˆå¯¹åº”çš„ç‰©ç†å€¼
+//å…¥å£å‚æ•°ï¼š
+//           hDeviceï¼šè®¾å¤‡å¥æŸ„ï¼ŒEM9008_DeviceCreateå‡½æ•°è¿”å›žå€¼
+//              chNoï¼šé€šé“å·
+//            ctCodeï¼šè®¡æ•°å™¨åŽŸç å€¼ï¼Œå¦‚æžœæ˜¯è®¡æ•°æ–¹å¼å°±æ˜¯è®¡æ•°å€¼ï¼Œå¦‚æžœæ˜¯æµ‹é¢‘åˆ™éœ€è¦è®¡ç®—æ‰èƒ½è½¬åŒ–æˆé¢‘çŽ‡å€¼
+//         codeCountï¼šåŽŸç å€¼ä¸ªæ•°ï¼ŒctCodeå’ŒctValueçš„å¤§å°å‡ä¸Žæ­¤å‚æ•°æœ‰å…³
+//å‡ºå£å‚æ•°ï¼š
+//           ctValueï¼šè®¡æ•°å™¨ç‰©ç†å€¼ï¼Œå¦‚æžœæ˜¯è®¡æ•°æ–¹å¼å°±æ˜¯è®¡æ•°å€¼ï¼Œå¦‚æžœæ˜¯æµ‹é¢‘åˆ™æ˜¯æµ‹é¢‘å€¼
+//è¿”å›žå€¼ï¼š0è¡¨ç¤ºæˆåŠŸï¼Œ<0è¡¨ç¤ºå¤±è´¥
 
 I32 _stdcall EM9008_CtClearAll( HANDLE hDevice, I8 clearBit[EM9008_MAXCTCHCNT] , I32 timeOutMS = EM9008_TIMOUT_MS );
-//º¯Êý¹¦ÄÜ£ºÖ¸¶¨Í¨µÀ¼ÆÊýÆ÷ÇåÁã£¬±¾º¯ÊýÖ»ÓÐÔÚ¼ÆÊý·½Ê½ÏÂ²ÅÓÐÒâÒå£¬Òò´ËÖ´ÐÐºó»á½«ÏàÓ¦Í¨µÀÉèÖÃÎª¼ÆÊý¹¤×÷·½Ê½	
-//Èë¿Ú²ÎÊý£º
-//           hDevice£ºÉè±¸¾ä±ú£¬EM9008_DeviceCreateº¯Êý·µ»ØÖµ
-//           isClear£º6ÔªËØÊý×é£¬Ã¿Ò»¸öÔªËØ¶ÔÓ¦Ò»Â·¼ÆÊýÆ÷£¬1±íÊ¾¶ÔÓ¦Í¨µÀÇåÁã,0±íÊ¾¶ÔÓ¦Í¨µÀ²»ÇåÁã
-//·µ»ØÖµ£º0±íÊ¾³É¹¦£¬<0±íÊ¾Ê§°Ü
+//å‡½æ•°åŠŸèƒ½ï¼šæŒ‡å®šé€šé“è®¡æ•°å™¨æ¸…é›¶ï¼Œæœ¬å‡½æ•°åªæœ‰åœ¨è®¡æ•°æ–¹å¼ä¸‹æ‰æœ‰æ„ä¹‰ï¼Œå› æ­¤æ‰§è¡ŒåŽä¼šå°†ç›¸åº”é€šé“è®¾ç½®ä¸ºè®¡æ•°å·¥ä½œæ–¹å¼	
+//å…¥å£å‚æ•°ï¼š
+//           hDeviceï¼šè®¾å¤‡å¥æŸ„ï¼ŒEM9008_DeviceCreateå‡½æ•°è¿”å›žå€¼
+//           isClearï¼š6å…ƒç´ æ•°ç»„ï¼Œæ¯ä¸€ä¸ªå…ƒç´ å¯¹åº”ä¸€è·¯è®¡æ•°å™¨ï¼Œ1è¡¨ç¤ºå¯¹åº”é€šé“æ¸…é›¶,0è¡¨ç¤ºå¯¹åº”é€šé“ä¸æ¸…é›¶
+//è¿”å›žå€¼ï¼š0è¡¨ç¤ºæˆåŠŸï¼Œ<0è¡¨ç¤ºå¤±è´¥
 
 I32 _stdcall EM9008_CtSetMode( HANDLE hDevice, I32 chNo, I8 ctMode, I32 timeOutMS = EM9008_TIMOUT_MS );
-//º¯Êý¹¦ÄÜ£ºÖ¸¶¨Í¨µÀ¼ÆÊýÆ÷¹¤×÷·½Ê½	
-//Èë¿Ú²ÎÊý£º
-//           hDevice£ºÉè±¸¾ä±ú£¬EM9008_DeviceCreateº¯Êý·µ»ØÖµ
-//              chNo£ºÍ¨µÀºÅ
-//            ctMode£º¼ÆÊý·½Ê½£¬0£¬¼ÆÊý£¬1£¬²âÆµ
-//·µ»ØÖµ£º0±íÊ¾³É¹¦£¬<0±íÊ¾Ê§°Ü
+//å‡½æ•°åŠŸèƒ½ï¼šæŒ‡å®šé€šé“è®¡æ•°å™¨å·¥ä½œæ–¹å¼	
+//å…¥å£å‚æ•°ï¼š
+//           hDeviceï¼šè®¾å¤‡å¥æŸ„ï¼ŒEM9008_DeviceCreateå‡½æ•°è¿”å›žå€¼
+//              chNoï¼šé€šé“å·
+//            ctModeï¼šè®¡æ•°æ–¹å¼ï¼Œ0ï¼Œè®¡æ•°ï¼Œ1ï¼Œæµ‹é¢‘
+//è¿”å›žå€¼ï¼š0è¡¨ç¤ºæˆåŠŸï¼Œ<0è¡¨ç¤ºå¤±è´¥
 
-/////////////////±àÂëÆ÷Ïà¹Øº¯Êý//////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////ç¼–ç å™¨ç›¸å…³å‡½æ•°//////////////////////////////////////////////////////////////////////////////////////////////////
 I32 _stdcall EM9008_EcReadAllOnce( HANDLE hDevice, I32* abCode, F64* freq, I32 timeOutMS = EM9008_TIMOUT_MS );
-//º¯Êý¹¦ÄÜ£º¶ÁÈ¡±àÂëÆ÷·µ»ØÖµ
-//Èë¿Ú²ÎÊý£º
-//           hDevice£ºÉè±¸¾ä±ú£¬EM9008_DeviceCreateº¯Êý·µ»ØÖµ
-//³ö¿Ú²ÎÊý£º
-//            abCode£º±àÂëÆ÷ABÖµ£¬32Î»ÓÐ·ûºÅÖ¸Õë£¬ÐèÒªÓÃ»§·ÖÅä¿Õ¼ä¡£
-//             freq£º±àÂëÆ÷ÆµÂÊ£¬64Î»¸¡µãÐÍÖ¸Õë£¬ÐèÒªÓÃ»§·ÖÅä¿Õ¼ä£¬Èç¹ûÖ¸ÕëÖµÎª0£¬Ôò±íÊ¾²»·µ»ØÆµÂÊ¡£
-//·µ»ØÖµ£º0±íÊ¾³É¹¦£¬<0±íÊ¾Ê§°Ü
+//å‡½æ•°åŠŸèƒ½ï¼šè¯»å–ç¼–ç å™¨è¿”å›žå€¼
+//å…¥å£å‚æ•°ï¼š
+//           hDeviceï¼šè®¾å¤‡å¥æŸ„ï¼ŒEM9008_DeviceCreateå‡½æ•°è¿”å›žå€¼
+//å‡ºå£å‚æ•°ï¼š
+//            abCodeï¼šç¼–ç å™¨ABå€¼ï¼Œ32ä½æœ‰ç¬¦å·æŒ‡é’ˆï¼Œéœ€è¦ç”¨æˆ·åˆ†é…ç©ºé—´ã€‚
+//             freqï¼šç¼–ç å™¨é¢‘çŽ‡ï¼Œ64ä½æµ®ç‚¹åž‹æŒ‡é’ˆï¼Œéœ€è¦ç”¨æˆ·åˆ†é…ç©ºé—´ï¼Œå¦‚æžœæŒ‡é’ˆå€¼ä¸º0ï¼Œåˆ™è¡¨ç¤ºä¸è¿”å›žé¢‘çŽ‡ã€‚
+//è¿”å›žå€¼ï¼š0è¡¨ç¤ºæˆåŠŸï¼Œ<0è¡¨ç¤ºå¤±è´¥
 
 I32 _stdcall EM9008_EcSetMaxPos( HANDLE hDevice, U32 maxPosition, I32 timeOutMS = EM9008_TIMOUT_MS );
-//º¯Êý¹¦ÄÜ£ºÉèÖÃ±àÂëÆ÷×î´óÎ»ÖÃ
-//Èë¿Ú²ÎÊý£º
-//           hDevice£ºÉè±¸¾ä±ú£¬EM9008_DeviceCreateº¯Êý·µ»ØÖµ
-//       maxPosition£º±àÂëÆ÷×î´óÎ»ÖÃ£¬µ±±àÂëÆ÷¼ÆÊýÖµ³¬¹ý´ËÖµºó½«´Ó0¿ªÊ¼¼ÆÊý
-//³ö¿Ú²ÎÊý£º
-//           ÎÞ
-//·µ»ØÖµ£º0±íÊ¾³É¹¦£¬<0±íÊ¾Ê§°Ü
+//å‡½æ•°åŠŸèƒ½ï¼šè®¾ç½®ç¼–ç å™¨æœ€å¤§ä½ç½®
+//å…¥å£å‚æ•°ï¼š
+//           hDeviceï¼šè®¾å¤‡å¥æŸ„ï¼ŒEM9008_DeviceCreateå‡½æ•°è¿”å›žå€¼
+//       maxPositionï¼šç¼–ç å™¨æœ€å¤§ä½ç½®ï¼Œå½“ç¼–ç å™¨è®¡æ•°å€¼è¶…è¿‡æ­¤å€¼åŽå°†ä»Ž0å¼€å§‹è®¡æ•°
+//å‡ºå£å‚æ•°ï¼š
+//           æ— 
+//è¿”å›žå€¼ï¼š0è¡¨ç¤ºæˆåŠŸï¼Œ<0è¡¨ç¤ºå¤±è´¥
 
 I32 _stdcall EM9008_EcSetVelocityInx( HANDLE hDevice, I32 velocityInx, I32 timeOutMS = EM9008_TIMOUT_MS );
-//º¯Êý¹¦ÄÜ£ºÉèÖÃ±àÂëÆ÷²âËÙ²ÎÊý
-//Èë¿Ú²ÎÊý£º
-//           hDevice£ºÉè±¸¾ä±ú£¬EM9008_DeviceCreateº¯Êý·µ»ØÖµ
-//       velocityInx£º²âËÙ²ÎÊý¡£
-//³ö¿Ú²ÎÊý£º
-//       ÎÞ
-//·µ»ØÖµ£º0±íÊ¾³É¹¦£¬<0±íÊ¾Ê§°Ü
+//å‡½æ•°åŠŸèƒ½ï¼šè®¾ç½®ç¼–ç å™¨æµ‹é€Ÿå‚æ•°
+//å…¥å£å‚æ•°ï¼š
+//           hDeviceï¼šè®¾å¤‡å¥æŸ„ï¼ŒEM9008_DeviceCreateå‡½æ•°è¿”å›žå€¼
+//       velocityInxï¼šæµ‹é€Ÿå‚æ•°ã€‚
+//å‡ºå£å‚æ•°ï¼š
+//       æ— 
+//è¿”å›žå€¼ï¼š0è¡¨ç¤ºæˆåŠŸï¼Œ<0è¡¨ç¤ºå¤±è´¥
 
 I32 _stdcall EM9008_EcSetMode( HANDLE hDevice, I32 ecEn, I32 ecMode, I32 ecFilter, I32 ecZeroInxEnable, I32 timeOutMS = EM9008_TIMOUT_MS );
-//º¯Êý¹¦ÄÜ£ºÉèÖÃ±àÂëÆ÷¹¤×÷Ä£Ê½
-//Èë¿Ú²ÎÊý£º
-//           hDevice£ºÉè±¸¾ä±ú£¬EM9008_DeviceCreateº¯Êý·µ»ØÖµ
-//              ecEn£ºÊ¹ÄÜÎ»£¬ÇëÉèÎª1
-//            ecMode£º¹¤×÷Ä£Ê½£¬0±íÊ¾Õý½»ÐÅºÅÊäÈë£¬1±íÊ¾Ê±ÖÓ·½ÏòÐÅºÅÊäÈë
-//          ecFilter£ºÂË²¨ÏµÊý£¬0¡«15£¬Êý×ÖÔ½´ó£¬ÂË²¨Ð§¹ûÔ½ºÃ¡£
-//   ecZeroInxEnable£º¹ýÁãÐÅºÅÊ¹ÄÜ£¬0½ûÖ¹¹ýÁãÐÅºÅ£¬1Ê¹ÄÜ¹ýÁãÐÅºÅ¡£Ê¹ÄÜ¹ýÁãÐÅºÅÊ±£¬¼ì²âµ½¹ýÁãÐÅºÅ±àÂëÆ÷¼ÆÊý½«ÇåÁã
-//³ö¿Ú²ÎÊý£º
-//       maxPosition£º±àÂëÆ÷×î´óÎ»ÖÃ£¬µ±±àÂëÆ÷¼ÆÊýÖµ³¬¹ý´ËÖµºó½«´Ó0¿ªÊ¼¼ÆÊý
-//·µ»ØÖµ£º0±íÊ¾³É¹¦£¬<0±íÊ¾Ê§°Ü
+//å‡½æ•°åŠŸèƒ½ï¼šè®¾ç½®ç¼–ç å™¨å·¥ä½œæ¨¡å¼
+//å…¥å£å‚æ•°ï¼š
+//           hDeviceï¼šè®¾å¤‡å¥æŸ„ï¼ŒEM9008_DeviceCreateå‡½æ•°è¿”å›žå€¼
+//              ecEnï¼šä½¿èƒ½ä½ï¼Œè¯·è®¾ä¸º1
+//            ecModeï¼šå·¥ä½œæ¨¡å¼ï¼Œ0è¡¨ç¤ºæ­£äº¤ä¿¡å·è¾“å…¥ï¼Œ1è¡¨ç¤ºæ—¶é’Ÿæ–¹å‘ä¿¡å·è¾“å…¥
+//          ecFilterï¼šæ»¤æ³¢ç³»æ•°ï¼Œ0ï½ž15ï¼Œæ•°å­—è¶Šå¤§ï¼Œæ»¤æ³¢æ•ˆæžœè¶Šå¥½ã€‚
+//   ecZeroInxEnableï¼šè¿‡é›¶ä¿¡å·ä½¿èƒ½ï¼Œ0ç¦æ­¢è¿‡é›¶ä¿¡å·ï¼Œ1ä½¿èƒ½è¿‡é›¶ä¿¡å·ã€‚ä½¿èƒ½è¿‡é›¶ä¿¡å·æ—¶ï¼Œæ£€æµ‹åˆ°è¿‡é›¶ä¿¡å·ç¼–ç å™¨è®¡æ•°å°†æ¸…é›¶
+//å‡ºå£å‚æ•°ï¼š
+//       maxPositionï¼šç¼–ç å™¨æœ€å¤§ä½ç½®ï¼Œå½“ç¼–ç å™¨è®¡æ•°å€¼è¶…è¿‡æ­¤å€¼åŽå°†ä»Ž0å¼€å§‹è®¡æ•°
+//è¿”å›žå€¼ï¼š0è¡¨ç¤ºæˆåŠŸï¼Œ<0è¡¨ç¤ºå¤±è´¥
 
 I32 _stdcall EM9008_EcClear( HANDLE hDevice, I32 chNo, I32 timeOutMS = EM9008_TIMOUT_MS );
-//º¯Êý¹¦ÄÜ£º±àÂëÆ÷¼ÆÊýÖµÇåÁã
-//Èë¿Ú²ÎÊý£º
-//           hDevice£ºÉè±¸¾ä±ú£¬EM9008_DeviceCreateº¯Êý·µ»ØÖµ
-//              chNo£ºÖ¸¶¨Í¨µÀºÅµÄ±àÂëÆ÷ÇåÁã£¬±¾Éè±¸Ö»ÓÐÒ»¸öÍ¨µÀ£¬Òò´ËÖ»ÄÜÎª1
-//·µ»ØÖµ£º0±íÊ¾³É¹¦£¬<0±íÊ¾Ê§°Ü
+//å‡½æ•°åŠŸèƒ½ï¼šç¼–ç å™¨è®¡æ•°å€¼æ¸…é›¶
+//å…¥å£å‚æ•°ï¼š
+//           hDeviceï¼šè®¾å¤‡å¥æŸ„ï¼ŒEM9008_DeviceCreateå‡½æ•°è¿”å›žå€¼
+//              chNoï¼šæŒ‡å®šé€šé“å·çš„ç¼–ç å™¨æ¸…é›¶ï¼Œæœ¬è®¾å¤‡åªæœ‰ä¸€ä¸ªé€šé“ï¼Œå› æ­¤åªèƒ½ä¸º1
+//è¿”å›žå€¼ï¼š0è¡¨ç¤ºæˆåŠŸï¼Œ<0è¡¨ç¤ºå¤±è´¥
 
 I32 _stdcall EM9008_SetWtdStatus( HANDLE hDevice, I8 enableWtd, U16 s, I32 timeOutMS = EM9008_TIMOUT_MS );
-//º¯Êý¹¦ÄÜ£ºÉèÖÃ¿´ÃÅ¹·
-//Èë¿Ú²ÎÊý£º
-//           hDevice£ºÉè±¸¾ä±ú£¬EM9008_DeviceCreateº¯Êý·µ»ØÖµ
-//         enableWtd£º1£¬Ê¹ÄÜ¿´ÃÅ¹·£»0£¬½ûÖ¹¿´ÃÅ¹·
-//                 s£º³¬Ê±ÃëÊý£¬1¡«30£¬Èç¹ûÔÚÖ¸¶¨Ê±¼äÄÚÃ»ÓÐÏòÏÂÎ»»ú·¢ËÍÈÎºÎÖ¸Áî£¬ÔòÏÂÎ»»ú½«»á¸´Î»
-//·µ»ØÖµ£º0±íÊ¾³É¹¦£¬<0±íÊ¾Ê§°Ü
+//å‡½æ•°åŠŸèƒ½ï¼šè®¾ç½®çœ‹é—¨ç‹—
+//å…¥å£å‚æ•°ï¼š
+//           hDeviceï¼šè®¾å¤‡å¥æŸ„ï¼ŒEM9008_DeviceCreateå‡½æ•°è¿”å›žå€¼
+//         enableWtdï¼š1ï¼Œä½¿èƒ½çœ‹é—¨ç‹—ï¼›0ï¼Œç¦æ­¢çœ‹é—¨ç‹—
+//                 sï¼šè¶…æ—¶ç§’æ•°ï¼Œ1ï½ž30ï¼Œå¦‚æžœåœ¨æŒ‡å®šæ—¶é—´å†…æ²¡æœ‰å‘ä¸‹ä½æœºå‘é€ä»»ä½•æŒ‡ä»¤ï¼Œåˆ™ä¸‹ä½æœºå°†ä¼šå¤ä½
+//è¿”å›žå€¼ï¼š0è¡¨ç¤ºæˆåŠŸï¼Œ<0è¡¨ç¤ºå¤±è´¥
 
-/////////////////Âö¿íµ÷ÖÆÏà¹Øº¯Êý//////////////////////////////////////////////////////////////////////////////////////////////////
-//×¢Òâ´Ë´¦º¯Êý¾ùÐèÒª½«ÖÁÉÙÒ»Â·DO¹¦ÄÜÉèÖÃÎªPWMºó²Å¿ÉÒÔÕýÈ·Ö´ÐÐ
+/////////////////è„‰å®½è°ƒåˆ¶ç›¸å…³å‡½æ•°//////////////////////////////////////////////////////////////////////////////////////////////////
+//æ³¨æ„æ­¤å¤„å‡½æ•°å‡éœ€è¦å°†è‡³å°‘ä¸€è·¯DOåŠŸèƒ½è®¾ç½®ä¸ºPWMåŽæ‰å¯ä»¥æ­£ç¡®æ‰§è¡Œ
 I32 _stdcall EM9008_PwmSetBaseClkDiv( HANDLE hDevice, I8 baseClkDiv, I32 timeOutMS = EM9008_TIMOUT_MS );
-//º¯Êý¹¦ÄÜ£ºÉè¶¨PWMÊä³ö»ù×¼Ê±ÖÓ
-//Èë¿Ú²ÎÊý£º
-//                hDevice£ºÉè±¸¾ä±ú£¬EM9008_DeviceCreateº¯Êý·µ»ØÖµ
-//             baseClkDiv£º»ù×¼Ê±ÖÓ·ÖÆµÏµÊý£¬0¡«7
-//·µ»ØÖµ£º0±íÊ¾³É¹¦£¬<0±íÊ¾Ê§°Ü
+//å‡½æ•°åŠŸèƒ½ï¼šè®¾å®šPWMè¾“å‡ºåŸºå‡†æ—¶é’Ÿ
+//å…¥å£å‚æ•°ï¼š
+//                hDeviceï¼šè®¾å¤‡å¥æŸ„ï¼ŒEM9008_DeviceCreateå‡½æ•°è¿”å›žå€¼
+//             baseClkDivï¼šåŸºå‡†æ—¶é’Ÿåˆ†é¢‘ç³»æ•°ï¼Œ0ï½ž7
+//è¿”å›žå€¼ï¼š0è¡¨ç¤ºæˆåŠŸï¼Œ<0è¡¨ç¤ºå¤±è´¥
 
 I32 _stdcall EM9008_PwmGetBaseClkDiv( HANDLE hDevice, I8* baseClkDiv, I32 timeOutMS = EM9008_TIMOUT_MS );
-//º¯Êý¹¦ÄÜ£ºµÃµ½PWMÊä³ö»ù×¼Ê±ÖÓ
-//Èë¿Ú²ÎÊý£º
-//                hDevice£ºÉè±¸¾ä±ú£¬EM9008_DeviceCreateº¯Êý·µ»ØÖµ
-//³ö¿Ú²ÎÊý£º
-//             baseClkDiv£º»ù×¼Ê±ÖÓ·ÖÆµÏµÊý£¬0¡«7
-//·µ»ØÖµ£º0±íÊ¾³É¹¦£¬<0±íÊ¾Ê§°Ü
+//å‡½æ•°åŠŸèƒ½ï¼šå¾—åˆ°PWMè¾“å‡ºåŸºå‡†æ—¶é’Ÿ
+//å…¥å£å‚æ•°ï¼š
+//                hDeviceï¼šè®¾å¤‡å¥æŸ„ï¼ŒEM9008_DeviceCreateå‡½æ•°è¿”å›žå€¼
+//å‡ºå£å‚æ•°ï¼š
+//             baseClkDivï¼šåŸºå‡†æ—¶é’Ÿåˆ†é¢‘ç³»æ•°ï¼Œ0ï½ž7
+//è¿”å›žå€¼ï¼š0è¡¨ç¤ºæˆåŠŸï¼Œ<0è¡¨ç¤ºå¤±è´¥
 
 I32 _stdcall EM9008_PwmGetFreqRange( HANDLE hDevice, F64* minHz, F64* maxHz, I8* baseClkDiv, I32* sysClkFreq, I32 timeOutMS = EM9008_TIMOUT_MS );
-//º¯Êý¹¦ÄÜ£ºµÃµ½PWMÊä³öÆµÂÊ·¶Î§£¬ÆµÂÊ·¶Î§ºÍEM9008_PwmSetBaseClkDivÉèÖÃµÄ»ù×¼Ê±ÖÓÏµÊýÓÐ¹ØÏµ
-//Èë¿Ú²ÎÊý£º
-//                hDevice£ºÉè±¸¾ä±ú£¬EM9008_DeviceCreateº¯Êý·µ»ØÖµ
-//³ö¿Ú²ÎÊý£º
-//                  minHz£º×îÐ¡¿ÉÉèÖÃÆµÂÊ
-//                  maxHz£º×î´ó¿ÉÉèÖÃÆµÂÊ£¬×¢ÒâÆµÂÊÔ½½Ó½ü×î´ó¿ÉÉèÖÃÆµÂÊ£¬Õ¼¿Õ±È¿Éµ÷½Ú·¶Î§Ô½Ð¡£¬
-//                         ÔÚ×î´ó¿ÉÉèÖÃÆµÂÊÊ±£¬Õ¼¿Õ±ÈÖ»ÄÜÎª50%£¬
-//                         ÁíÍâÊÜÓ²¼þËùÏÞ£¬Êµ¼ÊÊä³öÎÞ·¨´ïµ½×î´ó¿ÉÉèÖÃÆµÂÊ£¬¾ßÌåÇë²Î¿¼Ó²¼þÊÖ²á¡£
-//             baseClkDiv£º»ù×¼Ê±ÖÓ·ÖÆµÏµÊý
-//             sysClkFreq£ºÏµÍ³Ê±ÖÓÆµÂÊ£¬Ò»°ãÎª120,000,000Hz
-//·µ»ØÖµ£º0±íÊ¾³É¹¦£¬<0±íÊ¾Ê§°Ü
+//å‡½æ•°åŠŸèƒ½ï¼šå¾—åˆ°PWMè¾“å‡ºé¢‘çŽ‡èŒƒå›´ï¼Œé¢‘çŽ‡èŒƒå›´å’ŒEM9008_PwmSetBaseClkDivè®¾ç½®çš„åŸºå‡†æ—¶é’Ÿç³»æ•°æœ‰å…³ç³»
+//å…¥å£å‚æ•°ï¼š
+//                hDeviceï¼šè®¾å¤‡å¥æŸ„ï¼ŒEM9008_DeviceCreateå‡½æ•°è¿”å›žå€¼
+//å‡ºå£å‚æ•°ï¼š
+//                  minHzï¼šæœ€å°å¯è®¾ç½®é¢‘çŽ‡
+//                  maxHzï¼šæœ€å¤§å¯è®¾ç½®é¢‘çŽ‡ï¼Œæ³¨æ„é¢‘çŽ‡è¶ŠæŽ¥è¿‘æœ€å¤§å¯è®¾ç½®é¢‘çŽ‡ï¼Œå ç©ºæ¯”å¯è°ƒèŠ‚èŒƒå›´è¶Šå°ï¼Œ
+//                         åœ¨æœ€å¤§å¯è®¾ç½®é¢‘çŽ‡æ—¶ï¼Œå ç©ºæ¯”åªèƒ½ä¸º50%ï¼Œ
+//                         å¦å¤–å—ç¡¬ä»¶æ‰€é™ï¼Œå®žé™…è¾“å‡ºæ— æ³•è¾¾åˆ°æœ€å¤§å¯è®¾ç½®é¢‘çŽ‡ï¼Œå…·ä½“è¯·å‚è€ƒç¡¬ä»¶æ‰‹å†Œã€‚
+//             baseClkDivï¼šåŸºå‡†æ—¶é’Ÿåˆ†é¢‘ç³»æ•°
+//             sysClkFreqï¼šç³»ç»Ÿæ—¶é’Ÿé¢‘çŽ‡ï¼Œä¸€èˆ¬ä¸º120,000,000Hz
+//è¿”å›žå€¼ï¼š0è¡¨ç¤ºæˆåŠŸï¼Œ<0è¡¨ç¤ºå¤±è´¥
 
 I32 _stdcall EM9008_PwmSetPulse( HANDLE hDevice, I32 chNo, F64 freq, F64 duty, F64* realFreq, F64* realDuty, I32 timeOutMS = EM9008_TIMOUT_MS );
-//º¯Êý¹¦ÄÜ£ºÉè¶¨Ö¸¶¨Í¨µÀµÄPWMÊä³ö¸÷Ïî²ÎÊý
-//          ×¢Òâ£º7Â·PWM·ÖÎªËÄ×é£¬£¨1£¬2£©£¨3£¬4£©£¨5£¬6£©£¨7£©£¬Ã¿×éÖ»ÄÜÉèÖÃÏàÍ¬µÄÊä³öÆµÂÊ£¬Òò´ËÍ¨µÀ2£¬4£¬6ÆµÂÊÉèÖÃÎÞÐ§£¬Ö»ÄÜÉèÖÃÕ¼¿Õ±È
-//Èë¿Ú²ÎÊý£º
-//                hDevice£ºÉè±¸¾ä±ú£¬EM9008_DeviceCreateº¯Êý·µ»ØÖµ
-//                   chNo£ºÍ¨µÀºÅ£¬1¡«7
-//                   freq£ºÊä³öÆµÂÊ¡£Æä·¶Î§ÇëÔÚµ÷ÓÃEM9008_PwmSetBaseClkDivºóµ÷ÓÃEM9008_PwmGetFreqRangeº¯Êý»ñµÃ
-//              dutyCycle£ºÕ¼¿Õ±È¡£0~1£¬¾ßÌåµ÷½ÚµµÎ»È¡¾öÓÚÊä³öÆµÂÊ£¬Êä³öÆµÂÊÔ½µÍ£¬¿Éµ÷½ÚµÄµµÎ»Ô½¶à¡£
-//³ö¿Ú²ÎÊý£º
-//               realFreq£ºÕæÊµÆµÂÊÖµ£¬´Ë²ÎÊýÎÞÐ§£¬Çëµ÷ÓÃEM9008_PwmGetPulse»ñµÃ
-//          realDutyCycle£ºÕæÊµÕ¼¿Õ±ÈÖµ£¬´Ë²ÎÊýÎÞÐ§£¬Çëµ÷ÓÃEM9008_PwmGetPulse»ñµÃ
-//·µ»ØÖµ£º0±íÊ¾³É¹¦£¬<0±íÊ¾Ê§°Ü
+//å‡½æ•°åŠŸèƒ½ï¼šè®¾å®šæŒ‡å®šé€šé“çš„PWMè¾“å‡ºå„é¡¹å‚æ•°
+//          æ³¨æ„ï¼š7è·¯PWMåˆ†ä¸ºå››ç»„ï¼Œï¼ˆ1ï¼Œ2ï¼‰ï¼ˆ3ï¼Œ4ï¼‰ï¼ˆ5ï¼Œ6ï¼‰ï¼ˆ7ï¼‰ï¼Œæ¯ç»„åªèƒ½è®¾ç½®ç›¸åŒçš„è¾“å‡ºé¢‘çŽ‡ï¼Œå› æ­¤é€šé“2ï¼Œ4ï¼Œ6é¢‘çŽ‡è®¾ç½®æ— æ•ˆï¼Œåªèƒ½è®¾ç½®å ç©ºæ¯”
+//å…¥å£å‚æ•°ï¼š
+//                hDeviceï¼šè®¾å¤‡å¥æŸ„ï¼ŒEM9008_DeviceCreateå‡½æ•°è¿”å›žå€¼
+//                   chNoï¼šé€šé“å·ï¼Œ1ï½ž7
+//                   freqï¼šè¾“å‡ºé¢‘çŽ‡ã€‚å…¶èŒƒå›´è¯·åœ¨è°ƒç”¨EM9008_PwmSetBaseClkDivåŽè°ƒç”¨EM9008_PwmGetFreqRangeå‡½æ•°èŽ·å¾—
+//              dutyCycleï¼šå ç©ºæ¯”ã€‚0~1ï¼Œå…·ä½“è°ƒèŠ‚æ¡£ä½å–å†³äºŽè¾“å‡ºé¢‘çŽ‡ï¼Œè¾“å‡ºé¢‘çŽ‡è¶Šä½Žï¼Œå¯è°ƒèŠ‚çš„æ¡£ä½è¶Šå¤šã€‚
+//å‡ºå£å‚æ•°ï¼š
+//               realFreqï¼šçœŸå®žé¢‘çŽ‡å€¼ï¼Œæ­¤å‚æ•°æ— æ•ˆï¼Œè¯·è°ƒç”¨EM9008_PwmGetPulseèŽ·å¾—
+//          realDutyCycleï¼šçœŸå®žå ç©ºæ¯”å€¼ï¼Œæ­¤å‚æ•°æ— æ•ˆï¼Œè¯·è°ƒç”¨EM9008_PwmGetPulseèŽ·å¾—
+//è¿”å›žå€¼ï¼š0è¡¨ç¤ºæˆåŠŸï¼Œ<0è¡¨ç¤ºå¤±è´¥
 
 I32 _stdcall EM9008_PwmGetPulse( HANDLE hDevice, I32 chNo, F64 freq, F64 duty, F64* realFreq, F64* realDuty, I32 timeOutMS = EM9008_TIMOUT_MS );
-//º¯Êý¹¦ÄÜ£º¸ù¾Ý¸ø¶¨ÆµÂÊºÍÕ¼¿Õ±È¼ÆËã³öÊµ¼ÊÆµÂÊºÍÕ¼¿Õ±È¡£
-//Èë¿Ú²ÎÊý£º
-//                hDevice£ºÉè±¸¾ä±ú£¬EM9008_DeviceCreateº¯Êý·µ»ØÖµ
-//                   chNo£ºÍ¨µÀºÅ£¬1¡«7
-//                   freq£ºÊä³öÆµÂÊ¡£
-//              dutyCycle£ºÕ¼¿Õ±È¡£0~1£¬¾ßÌåµ÷½ÚµµÎ»È¡¾öÓÚÊä³öÆµÂÊ£¬Êä³öÆµÂÊÔ½µÍ£¬¿Éµ÷½ÚµÄµµÎ»Ô½¶à¡£
-//³ö¿Ú²ÎÊý£º
-//               realFreq£ºÕæÊµÆµÂÊÖµ£¬ÓÉÓÚÊý×ÖÁ¿»¯Îó²î£¬Éè¶¨ÆµÂÊºÍÕæÊµÆµÂÊÖ®¼ä»áÓÐÐ©Îó²î
-//          realDutyCycle£ºÕæÊµÕ¼¿Õ±ÈÖµ£¬ÓÉÓÚÊý×ÖÁ¿»¯Îó²î£¬Éè¶¨Õ¼¿Õ±ÈºÍÕæÊµÕ¼¿Õ±ÈÖ®¼ä»áÓÐÐ©Îó²î
-//·µ»ØÖµ£º0±íÊ¾³É¹¦£¬<0±íÊ¾Ê§°Ü
+//å‡½æ•°åŠŸèƒ½ï¼šæ ¹æ®ç»™å®šé¢‘çŽ‡å’Œå ç©ºæ¯”è®¡ç®—å‡ºå®žé™…é¢‘çŽ‡å’Œå ç©ºæ¯”ã€‚
+//å…¥å£å‚æ•°ï¼š
+//                hDeviceï¼šè®¾å¤‡å¥æŸ„ï¼ŒEM9008_DeviceCreateå‡½æ•°è¿”å›žå€¼
+//                   chNoï¼šé€šé“å·ï¼Œ1ï½ž7
+//                   freqï¼šè¾“å‡ºé¢‘çŽ‡ã€‚
+//              dutyCycleï¼šå ç©ºæ¯”ã€‚0~1ï¼Œå…·ä½“è°ƒèŠ‚æ¡£ä½å–å†³äºŽè¾“å‡ºé¢‘çŽ‡ï¼Œè¾“å‡ºé¢‘çŽ‡è¶Šä½Žï¼Œå¯è°ƒèŠ‚çš„æ¡£ä½è¶Šå¤šã€‚
+//å‡ºå£å‚æ•°ï¼š
+//               realFreqï¼šçœŸå®žé¢‘çŽ‡å€¼ï¼Œç”±äºŽæ•°å­—é‡åŒ–è¯¯å·®ï¼Œè®¾å®šé¢‘çŽ‡å’ŒçœŸå®žé¢‘çŽ‡ä¹‹é—´ä¼šæœ‰äº›è¯¯å·®
+//          realDutyCycleï¼šçœŸå®žå ç©ºæ¯”å€¼ï¼Œç”±äºŽæ•°å­—é‡åŒ–è¯¯å·®ï¼Œè®¾å®šå ç©ºæ¯”å’ŒçœŸå®žå ç©ºæ¯”ä¹‹é—´ä¼šæœ‰äº›è¯¯å·®
+//è¿”å›žå€¼ï¼š0è¡¨ç¤ºæˆåŠŸï¼Œ<0è¡¨ç¤ºå¤±è´¥
 
 I32 _stdcall EM9008_PwmStartAll( HANDLE hDevice, I8 startOrStop[EM9008_MAXPWMCHCNT], I32 timeOutMS = EM9008_TIMOUT_MS );
-//º¯Êý¹¦ÄÜ£ºÉè¶¨ËùÓÐÍ¨µÀµÄPWMÊä³ö¿ªÊ¼»òÕßÍ£Ö¹
-//Èë¿Ú²ÎÊý£º
-//                hDevice£ºÉè±¸¾ä±ú£¬EM9008_DeviceCreateº¯Êý·µ»ØÖµ
-//            startOrStop£ºÆô¶¯ÉèÖÃÊý×é£¬Êý×éÔªËØ0~7¶ÔÓ¦PWM1~PWM7£¬ÒÔPWM1ÎªÀý£º
-//                         startOrStop[0]=0£¬Í£Ö¹Êä³ö
-//                         startOrStop[0]=1£¬Æô¶¯Êä³ö
-//·µ»ØÖµ£º0±íÊ¾³É¹¦£¬<0±íÊ¾Ê§°Ü
+//å‡½æ•°åŠŸèƒ½ï¼šè®¾å®šæ‰€æœ‰é€šé“çš„PWMè¾“å‡ºå¼€å§‹æˆ–è€…åœæ­¢
+//å…¥å£å‚æ•°ï¼š
+//                hDeviceï¼šè®¾å¤‡å¥æŸ„ï¼ŒEM9008_DeviceCreateå‡½æ•°è¿”å›žå€¼
+//            startOrStopï¼šå¯åŠ¨è®¾ç½®æ•°ç»„ï¼Œæ•°ç»„å…ƒç´ 0~7å¯¹åº”PWM1~PWM7ï¼Œä»¥PWM1ä¸ºä¾‹ï¼š
+//                         startOrStop[0]=0ï¼Œåœæ­¢è¾“å‡º
+//                         startOrStop[0]=1ï¼Œå¯åŠ¨è¾“å‡º
+//è¿”å›žå€¼ï¼š0è¡¨ç¤ºæˆåŠŸï¼Œ<0è¡¨ç¤ºå¤±è´¥
 
 I32 _stdcall EM9008_SysSetBaseClkDiv( HANDLE hDevice, I8 baseClkDiv, I32 timeOutMS = EM9008_TIMOUT_MS );
-//´Ëº¯ÊýÖ÷ÒªÓÃÓÚÄÚ²¿Éú²ú£¬ÓÃ»§ÎÞÐèÊ¹ÓÃ
+//æ­¤å‡½æ•°ä¸»è¦ç”¨äºŽå†…éƒ¨ç”Ÿäº§ï¼Œç”¨æˆ·æ— éœ€ä½¿ç”¨
 I32 _stdcall EM9008_SysGetSysClkFreq( HANDLE hDevice, I32* sysClkFreq, I32 timeOutMS = EM9008_TIMOUT_MS );
-//´Ëº¯ÊýÖ÷ÒªÓÃÓÚÄÚ²¿Éú²ú£¬ÓÃ»§ÎÞÐèÊ¹ÓÃ
+//æ­¤å‡½æ•°ä¸»è¦ç”¨äºŽå†…éƒ¨ç”Ÿäº§ï¼Œç”¨æˆ·æ— éœ€ä½¿ç”¨
 
-/////////////////////ÏÂÁÐº¯ÊýÎªÀúÊ·Êý¾ÝÎÄ¼þÏà¹Ø²Ù×÷////////////////////////////////////////////////////////
+/////////////////////ä¸‹åˆ—å‡½æ•°ä¸ºåŽ†å²æ•°æ®æ–‡ä»¶ç›¸å…³æ“ä½œ////////////////////////////////////////////////////////
 I32 _stdcall EM9008_DFWOpen( HANDLE hDevice, char* dirPath, I32 pathLen );
-//º¯Êý¹¦ÄÜ£º³õÊ¼»¯ÀúÊ·Êý¾ÝÐ´Èë²Ù×÷º¯Êý¡£
-//Èë¿Ú²ÎÊý£º
-//        hDevice£ºÉè±¸¾ä±ú£¬EM9008_DeviceCreateº¯Êý·µ»ØÖµ
-//        dirPath£º´æ·ÅÀúÊ·ÎÄ¼þµÄÂ·¾¶£¬Æä×î´ó³¤¶È²»ÄÜ³¬¹ý256
-//        pathLen£ºÂ·¾¶Ãû³¤¶È£¬Èç¹ûÎª0±íÊ¾disPathÊÇÒÔ0½áÎ²µÄ×Ö·û´®¡£
-//                ³ÌÐò½«»áÔÚÖ¸¶¨Ä¿Â¼ÏÂ×Ô¶¯½¨Á¢¡°yy-mm-dd-hh-MM-ss-1.dat¡±ÎÄ¼þ£¬ÒÀ´ÎÊÇÄêÔÂÈÕÊ±·ÖÃë,-1±íÊ¾µÚÒ»¸öÎÄ¼þ£¬Ã¿¸öÎÄ¼þ512MB×óÓÒ¡£³¬¹ý512MBµÄÎÄ¼þ½«»áË³´ÎÔö¼Ó-2£¬-3¡­¡­
-//³ö¿Ú²ÎÊý£º
-//                ÎÞ
-//·µ»ØÖµ£º0±íÊ¾Ã»ÓÐ´íÎó
+//å‡½æ•°åŠŸèƒ½ï¼šåˆå§‹åŒ–åŽ†å²æ•°æ®å†™å…¥æ“ä½œå‡½æ•°ã€‚
+//å…¥å£å‚æ•°ï¼š
+//        hDeviceï¼šè®¾å¤‡å¥æŸ„ï¼ŒEM9008_DeviceCreateå‡½æ•°è¿”å›žå€¼
+//        dirPathï¼šå­˜æ”¾åŽ†å²æ–‡ä»¶çš„è·¯å¾„ï¼Œå…¶æœ€å¤§é•¿åº¦ä¸èƒ½è¶…è¿‡256
+//        pathLenï¼šè·¯å¾„åé•¿åº¦ï¼Œå¦‚æžœä¸º0è¡¨ç¤ºdisPathæ˜¯ä»¥0ç»“å°¾çš„å­—ç¬¦ä¸²ã€‚
+//                ç¨‹åºå°†ä¼šåœ¨æŒ‡å®šç›®å½•ä¸‹è‡ªåŠ¨å»ºç«‹â€œyy-mm-dd-hh-MM-ss-1.datâ€æ–‡ä»¶ï¼Œä¾æ¬¡æ˜¯å¹´æœˆæ—¥æ—¶åˆ†ç§’,-1è¡¨ç¤ºç¬¬ä¸€ä¸ªæ–‡ä»¶ï¼Œæ¯ä¸ªæ–‡ä»¶512MBå·¦å³ã€‚è¶…è¿‡512MBçš„æ–‡ä»¶å°†ä¼šé¡ºæ¬¡å¢žåŠ -2ï¼Œ-3â€¦â€¦
+//å‡ºå£å‚æ•°ï¼š
+//                æ— 
+//è¿”å›žå€¼ï¼š0è¡¨ç¤ºæ²¡æœ‰é”™è¯¯
 
 I32 _stdcall EM9008_DFWClose( HANDLE hDevice );
-//º¯Êý¹¦ÄÜ£º¹Ø±ÕÀúÊ·Êý¾ÝÎÄ¼þ
-//Èë¿Ú²ÎÊý£º
-//          hDevice£ºÉè±¸¾ä±ú£¬EM9008_DeviceCreateº¯Êý·µ»ØÖµ
-//³ö¿Ú²ÎÊý£º
-//                ÎÞ
-//·µ»ØÖµ£º0±íÊ¾Ã»ÓÐ´íÎó
+//å‡½æ•°åŠŸèƒ½ï¼šå…³é—­åŽ†å²æ•°æ®æ–‡ä»¶
+//å…¥å£å‚æ•°ï¼š
+//          hDeviceï¼šè®¾å¤‡å¥æŸ„ï¼ŒEM9008_DeviceCreateå‡½æ•°è¿”å›žå€¼
+//å‡ºå£å‚æ•°ï¼š
+//                æ— 
+//è¿”å›žå€¼ï¼š0è¡¨ç¤ºæ²¡æœ‰é”™è¯¯
 
 I32 _stdcall EM9008_DFROpen( HANDLE hDevice, char* filePathName, I32 pathLen );
-//º¯Êý¹¦ÄÜ£º³õÊ¼»¯ÀúÊ·Êý¾Ý¶ÁÈ¡²Ù×÷º¯Êý
-//Èë¿Ú²ÎÊý£º
-//        filePathName£º°üº¬Â·¾¶ÃûµÄÀúÊ·ÎÄ¼þÃû£¬×¢ÒâÆä³¤¶È²»ÄÜ³¬¹ý256¸ö×Ö·û
-//             pathLen£ºÇ°Ò»¸ö×Ö·û´®µÄ³¤¶È¡£Èç¹ûÎª0£¬ÔòÄ¬ÈÏfilePathNameÊÇÒÔ0Îª½áÎ²µÄCÀàÐÍ×Ö·û´®¡£
-//³ö¿Ú²ÎÊý£º
-//                ÎÞ
-//·µ»ØÖµ£º·Ç0Öµ±íÊ¾ÎÄ¼þ¾ä±ú
-//        0±íÊ¾´ò¿ªÎÄ¼þÊ§°Ü¡£
-//        ×¢Òâ¶ÁÀúÊ·Êý¾ÝÊ±²»ÄÜ¹»Í¬Ê±Á¬½ÓÉè±¸£¬Òò´ËÈç¹ûÏÈµ÷ÓÃÁËEM9008_CmdConnect²¢ÇÒ³É¹¦·µ»Ø£¬Ôò´Ëº¯Êý»á·µ»ØÊ§°Ü
+//å‡½æ•°åŠŸèƒ½ï¼šåˆå§‹åŒ–åŽ†å²æ•°æ®è¯»å–æ“ä½œå‡½æ•°
+//å…¥å£å‚æ•°ï¼š
+//        filePathNameï¼šåŒ…å«è·¯å¾„åçš„åŽ†å²æ–‡ä»¶åï¼Œæ³¨æ„å…¶é•¿åº¦ä¸èƒ½è¶…è¿‡256ä¸ªå­—ç¬¦
+//             pathLenï¼šå‰ä¸€ä¸ªå­—ç¬¦ä¸²çš„é•¿åº¦ã€‚å¦‚æžœä¸º0ï¼Œåˆ™é»˜è®¤filePathNameæ˜¯ä»¥0ä¸ºç»“å°¾çš„Cç±»åž‹å­—ç¬¦ä¸²ã€‚
+//å‡ºå£å‚æ•°ï¼š
+//                æ— 
+//è¿”å›žå€¼ï¼šéž0å€¼è¡¨ç¤ºæ–‡ä»¶å¥æŸ„
+//        0è¡¨ç¤ºæ‰“å¼€æ–‡ä»¶å¤±è´¥ã€‚
+//        æ³¨æ„è¯»åŽ†å²æ•°æ®æ—¶ä¸èƒ½å¤ŸåŒæ—¶è¿žæŽ¥è®¾å¤‡ï¼Œå› æ­¤å¦‚æžœå…ˆè°ƒç”¨äº†EM9008_CmdConnectå¹¶ä¸”æˆåŠŸè¿”å›žï¼Œåˆ™æ­¤å‡½æ•°ä¼šè¿”å›žå¤±è´¥
 
 I32 _stdcall EM9008_DFRClose( HANDLE hDevice );
-//º¯Êý¹¦ÄÜ£º¹Ø±ÕÀúÊ·¶ÁÎÄ¼þ
-//Èë¿Ú²ÎÊý£º
-//           hDevice£ºÀúÊ·ÎÄ¼þ¾ä±ú
-//³ö¿Ú²ÎÊý£º
-//                ÎÞ
-//·µ»ØÖµ£ºÎÞ
+//å‡½æ•°åŠŸèƒ½ï¼šå…³é—­åŽ†å²è¯»æ–‡ä»¶
+//å…¥å£å‚æ•°ï¼š
+//           hDeviceï¼šåŽ†å²æ–‡ä»¶å¥æŸ„
+//å‡ºå£å‚æ•°ï¼š
+//                æ— 
+//è¿”å›žå€¼ï¼šæ— 
 
 I32 _stdcall EM9008_DFRRead( HANDLE hDevice, F64 beginGroupInx, I32 groupCount, I32* realReadCount );
-//º¯Êý¹¦ÄÜ£º¶ÁÈ¡ÀúÊ·ÎÄ¼þ²¢ÇÒ¸ù¾Ý¶ÁÈ¡×éÊý½«Êý¾Ý°´ÕÕÍ¨µÀ·Åµ½»º³åÇøÖÐ
-//Èë¿Ú²ÎÊý£º
-//              hDevice£ºÀúÊ·ÎÄ¼þ¾ä±ú
-//        groupCount£ºÒª¶ÁÈ¡µÄ×éÊý£¬×¢ÒâÕâÀïÒ»×éÊý¾ÝÊÇÃ¿¸öÊ¹ÄÜÍ¨µÀ¶¼¶Á»ØÒ»´Î¡£
-//     beginGroupInx£º¶ÁÈ¡¿ªÊ¼µÄÎ»ÖÃ¡£Èç¹ûÎª-1£¬Ôò±íÊ¾´ÓÉÏÒ»´Î¶ÁÈ¡µÄ½áÊø¿ªÊ¼¶ÁÈ¡¡£
-//³ö¿Ú²ÎÊý£º
-//     realReadCount£ºÊµ¼Ê¶ÁÈ¡µÄÃ¿Í¨µÀÊý¾Ý¸öÊý¡£
-//·µ»ØÖµ£º0Öµ³É¹¦
-//        <0±íÊ¾Ê§°Ü£¬¾ßÌåÇë²Î¿¼EM9008_Error.H¡£
+//å‡½æ•°åŠŸèƒ½ï¼šè¯»å–åŽ†å²æ–‡ä»¶å¹¶ä¸”æ ¹æ®è¯»å–ç»„æ•°å°†æ•°æ®æŒ‰ç…§é€šé“æ”¾åˆ°ç¼“å†²åŒºä¸­
+//å…¥å£å‚æ•°ï¼š
+//              hDeviceï¼šåŽ†å²æ–‡ä»¶å¥æŸ„
+//        groupCountï¼šè¦è¯»å–çš„ç»„æ•°ï¼Œæ³¨æ„è¿™é‡Œä¸€ç»„æ•°æ®æ˜¯æ¯ä¸ªä½¿èƒ½é€šé“éƒ½è¯»å›žä¸€æ¬¡ã€‚
+//     beginGroupInxï¼šè¯»å–å¼€å§‹çš„ä½ç½®ã€‚å¦‚æžœä¸º-1ï¼Œåˆ™è¡¨ç¤ºä»Žä¸Šä¸€æ¬¡è¯»å–çš„ç»“æŸå¼€å§‹è¯»å–ã€‚
+//å‡ºå£å‚æ•°ï¼š
+//     realReadCountï¼šå®žé™…è¯»å–çš„æ¯é€šé“æ•°æ®ä¸ªæ•°ã€‚
+//è¿”å›žå€¼ï¼š0å€¼æˆåŠŸ
+//        <0è¡¨ç¤ºå¤±è´¥ï¼Œå…·ä½“è¯·å‚è€ƒEM9008_Error.Hã€‚
 
 I32 _stdcall EM9008_DFRGetFreq( HANDLE hDevice, F64* daqFreq );
-//º¯Êý¹¦ÄÜ£ºµÃµ½ÀúÊ·ÎÄ¼þµÄ²É¼¯ÆµÂÊ
-//Èë¿Ú²ÎÊý£º
-//              hDevice£ºÀúÊ·ÎÄ¼þ¾ä±ú
-//³ö¿Ú²ÎÊý£º
-//      daqFreq£º²É¼¯ÆµÂÊ
-//·µ»ØÖµ£º0Öµ³É¹¦
-//        <0±íÊ¾Ê§°Ü£¬¾ßÌåÇë²Î¿¼EM9008_Error.H¡£
+//å‡½æ•°åŠŸèƒ½ï¼šå¾—åˆ°åŽ†å²æ–‡ä»¶çš„é‡‡é›†é¢‘çŽ‡
+//å…¥å£å‚æ•°ï¼š
+//              hDeviceï¼šåŽ†å²æ–‡ä»¶å¥æŸ„
+//å‡ºå£å‚æ•°ï¼š
+//      daqFreqï¼šé‡‡é›†é¢‘çŽ‡
+//è¿”å›žå€¼ï¼š0å€¼æˆåŠŸ
+//        <0è¡¨ç¤ºå¤±è´¥ï¼Œå…·ä½“è¯·å‚è€ƒEM9008_Error.Hã€‚
 
 I32 _stdcall EM9008_DFRGetGroupTotal( HANDLE hDevice, F64* groupTotal, F64* timeTotal );
-//º¯Êý¹¦ÄÜ£ºµÃµ½ÀúÊ·ÎÄ¼þËù°üº¬µÄÊý¾Ý×Ü×éÊý£¬ºÍ×ÜÊ±³¤
-//Èë¿Ú²ÎÊý£º
-//              hDevice£ºÀúÊ·ÎÄ¼þ¾ä±ú
-//³ö¿Ú²ÎÊý£º
-//        groupTotal£º×Ü×éÊý
-//        timeTotal£º×ÜÊ±³¤
-//·µ»ØÖµ£º0Öµ³É¹¦
-//        <0±íÊ¾Ê§°Ü£¬¾ßÌåÇë²Î¿¼EM9008_Error.H¡£
+//å‡½æ•°åŠŸèƒ½ï¼šå¾—åˆ°åŽ†å²æ–‡ä»¶æ‰€åŒ…å«çš„æ•°æ®æ€»ç»„æ•°ï¼Œå’Œæ€»æ—¶é•¿
+//å…¥å£å‚æ•°ï¼š
+//              hDeviceï¼šåŽ†å²æ–‡ä»¶å¥æŸ„
+//å‡ºå£å‚æ•°ï¼š
+//        groupTotalï¼šæ€»ç»„æ•°
+//        timeTotalï¼šæ€»æ—¶é•¿
+//è¿”å›žå€¼ï¼š0å€¼æˆåŠŸ
+//        <0è¡¨ç¤ºå¤±è´¥ï¼Œå…·ä½“è¯·å‚è€ƒEM9008_Error.Hã€‚
 
 I32 _stdcall EM9008_DFRGetAdChRange( HANDLE hDevice, I32* adBeginCh, I32* adEndCh );
-//º¯Êý¹¦ÄÜ£ºµÃµ½ÀúÊ·ÎÄ¼þËù°üº¬µÄÊ¹ÄÜADÍ¨µÀ
-//Èë¿Ú²ÎÊý£º
-//              hDevice£ºÀúÊ·ÎÄ¼þ¾ä±ú
-//³ö¿Ú²ÎÊý£º
-//            adBeginCh£ºÆðÊ¼Í¨µÀ
-//              adEndCh£ºÖÕÖ¹Í¨µÀ
-//·µ»ØÖµ£º0Öµ³É¹¦
-//        <0±íÊ¾Ê§°Ü£¬¾ßÌåÇë²Î¿¼EM9008_Error.H¡£
+//å‡½æ•°åŠŸèƒ½ï¼šå¾—åˆ°åŽ†å²æ–‡ä»¶æ‰€åŒ…å«çš„ä½¿èƒ½ADé€šé“
+//å…¥å£å‚æ•°ï¼š
+//              hDeviceï¼šåŽ†å²æ–‡ä»¶å¥æŸ„
+//å‡ºå£å‚æ•°ï¼š
+//            adBeginChï¼šèµ·å§‹é€šé“
+//              adEndChï¼šç»ˆæ­¢é€šé“
+//è¿”å›žå€¼ï¼š0å€¼æˆåŠŸ
+//        <0è¡¨ç¤ºå¤±è´¥ï¼Œå…·ä½“è¯·å‚è€ƒEM9008_Error.Hã€‚
 
 I32 _stdcall EM9008_DFRGetRange( HANDLE hDevice, I8 rangeInx[EM9008_MAXADCHCNT] );
-//º¯Êý¹¦ÄÜ£º´ÓÀúÊ·Êý¾ÝÎÄ¼þÖÐµÃµ½Ã¿¸öÍ¨µÀµÄ²É¼¯·¶Î§
-//Èë¿Ú²ÎÊý£º
-//              hDevice£ºÀúÊ·ÎÄ¼þ¾ä±ú
-//³ö¿Ú²ÎÊý£º
-//           typeInx£º8ÔªËØÊý×é£¬Ã¿¸öÍ¨µÀµÄ·¶Î§
-//·µ»ØÖµ£º=0,±íÊ¾³É¹¦
+//å‡½æ•°åŠŸèƒ½ï¼šä»ŽåŽ†å²æ•°æ®æ–‡ä»¶ä¸­å¾—åˆ°æ¯ä¸ªé€šé“çš„é‡‡é›†èŒƒå›´
+//å…¥å£å‚æ•°ï¼š
+//              hDeviceï¼šåŽ†å²æ–‡ä»¶å¥æŸ„
+//å‡ºå£å‚æ•°ï¼š
+//           typeInxï¼š8å…ƒç´ æ•°ç»„ï¼Œæ¯ä¸ªé€šé“çš„èŒƒå›´
+//è¿”å›žå€¼ï¼š=0,è¡¨ç¤ºæˆåŠŸ
 
-/////////////ÆäËüÓÃ»§Ò»°ãÓÃ²»µ½µÄº¯Êý
+/////////////å…¶å®ƒç”¨æˆ·ä¸€èˆ¬ç”¨ä¸åˆ°çš„å‡½æ•°
 I32 _stdcall EM9008_AdWriteZero( HANDLE hDevice, I32 chNo, U16 zeroCode, I32 timeOutMS = EM9008_TIMOUT_MS );
-//Ð£×¼Ïà¹Øº¯Êý
+//æ ¡å‡†ç›¸å…³å‡½æ•°
 I32 _stdcall EM9008_AdWriteFull( HANDLE hDevice, I32 chNo, U16 fullCode, I32 timeOutMS = EM9008_TIMOUT_MS );
-//Ð£×¼Ïà¹Øº¯Êý
+//æ ¡å‡†ç›¸å…³å‡½æ•°
 I32 _stdcall EM9008_AdReadZeroFull( HANDLE hDevice, U16* zeroCode, U16* fullCode, I32 timeOutMS = EM9008_TIMOUT_MS );
-//Ð£×¼Ïà¹Øº¯Êý
+//æ ¡å‡†ç›¸å…³å‡½æ•°
 I32 _stdcall EM9008_HcHFifoStatus( HANDLE hDevice, I32* sFifoStatus, I32 timeOutMS = EM9008_TIMOUT_MS );
-//ÏÂÎ»»úÈí¼þ»º³åÇø×´Ì¬
+//ä¸‹ä½æœºè½¯ä»¶ç¼“å†²åŒºçŠ¶æ€
 I32 _stdcall EM9008_ReadCoreTemp( HANDLE hDevice, F64* coreTemperature, I32 timeOutMS = EM9008_TIMOUT_MS );
-//¶ÁÈ¡ÏÂÎ»»úºËÐÄÎÂ¶È
+//è¯»å–ä¸‹ä½æœºæ ¸å¿ƒæ¸©åº¦
 
 
 }

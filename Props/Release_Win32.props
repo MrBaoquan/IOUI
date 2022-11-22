@@ -12,6 +12,7 @@
   <ItemDefinitionGroup>
     <ClCompile>
       <PreprocessorDefinitions>IOUI_EXPORTS;_WINDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <PostBuildEvent>
       <Command>call $(SolutionDir)IOUIENV.bat Win32 Release $(ProjectDir)</Command>

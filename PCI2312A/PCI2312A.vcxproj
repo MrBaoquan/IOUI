@@ -156,7 +156,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h" />
-    <ClInclude Include="Source\Public\IOUI.h" />
     <ClInclude Include="Source\Public\PCI2312A.h" />
   </ItemGroup>
   <ItemGroup>

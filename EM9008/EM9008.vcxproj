@@ -154,7 +154,6 @@
     <ClInclude Include="Source\Public\EM9008.h" />
     <ClInclude Include="Source\Public\EM9008_CVI.h" />
     <ClInclude Include="Source\Public\EM9008_Errors.h" />
-    <ClInclude Include="Source\Public\IOUI.h" />
     <ClInclude Include="Source\Public\ZT_Type.h" />
   </ItemGroup>
   <ItemGroup>

@@ -196,6 +196,9 @@ void CIOUIDebugDlg::OnTimer(UINT_PTR nIDEvent)
 {
     // TODO: 在此添加消息处理程序代码和/或调用默认值
     dh::IODeviceController::Instance().Update();
+	BYTE _custom[1024];
+	dh::IODeviceController::Instance().GetIODevice("ExternalDev_0")
+		.RefreshStreamingData(_custom, 1024);
 	
     CDialogEx::OnTimer(nIDEvent);
 }

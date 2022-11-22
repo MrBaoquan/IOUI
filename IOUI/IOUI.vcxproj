@@ -153,9 +153,6 @@
     <ClCompile Include="Source\Private\DllMain.cpp" />
     <ClCompile Include="Source\Private\IOUI.cpp" />
   </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="Source\Public\IOUI.h" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

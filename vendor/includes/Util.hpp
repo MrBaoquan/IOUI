@@ -89,3 +89,26 @@ std::string BuildDeviceAttribute(const char* Attribute, uint8 DeviceIndex) {
 	return std::string(Attribute) +"_" + std::to_string(DeviceIndex);
 }
 
+void Int2Bytes(std::vector<BYTE>& Bytes, int Val) {
+	Bytes.push_back((Val >> 24) & 0xFF);
+	Bytes.push_back((Val >> 16) & 0xFF);
+	Bytes.push_back((Val >> 8) & 0xFF);
+	Bytes.push_back((Val) & 0xFF);
+}
+
+void Long2Bytes(std::vector<BYTE>& Bytes, int Val) {
+	Bytes.push_back((Val >> 24) & 0xFF);
+	Bytes.push_back((Val >> 16) & 0xFF);
+	Bytes.push_back((Val >> 8) & 0xFF);
+	Bytes.push_back((Val) & 0xFF);
+}
+
+void Float2Bytes(std::vector<BYTE>& Bytes, int Val) {
+	Bytes.push_back((Val >> 24) & 0xFF);
+	Bytes.push_back((Val >> 16) & 0xFF);
+	Bytes.push_back((Val >> 8) & 0xFF);
+	Bytes.push_back((Val) & 0xFF);
+}
+
+
+
