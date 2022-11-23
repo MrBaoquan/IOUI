@@ -1,83 +1,83 @@
-#pragma once
+ï»¿#pragma once
 
 class TypeID
 {
 public:
 	enum ETypeID
 	{
-		// °´Å¥
+		// ï¿½ï¿½Å¥
 		BUTTON = 0,
-		// ²ÎÓë´ÎÊý
+		// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		PARTICKETIME = 1,
-		// ÊÖ±ú
+		// ï¿½Ö±ï¿½
 		HANDLE = 2,
-		// Ò£¸Ð
+		// Ò£ï¿½ï¿½
 		ROCKER = 3,
-		// µç»úÆô¶¯
+		// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		EMACHINE = 4,
-		// À­¸Ë
+		// ï¿½ï¿½ï¿½ï¿½
 		PULLROD = 5,
-		// ÐýÅ¥
+		// ï¿½ï¿½Å¥
 		KNOB = 6,
-		// ´«¸ÐÆ÷
+		// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		TENSOR = 7,
-		// ÊÖÂÖ
+		// ï¿½ï¿½ï¿½ï¿½
 		HANDWHEEL = 8,
-		// ÉãÏñÍ·
+		// ï¿½ï¿½ï¿½ï¿½Í·
 		CAMERA = 9,
-		// À×´ï
+		// ï¿½×´ï¿½
 		RADAR = 10,
-		// ´¥Ãþ¼ü
+		// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		TOUCHKEY = 11,
-		// °´¼ü
+		// ï¿½ï¿½ï¿½ï¿½
 		KEY = 12,
-		// RFID¿¨
+		// RFIDï¿½ï¿½
 		RFID = 13,
-		// ×ªÅÌ
+		// ×ªï¿½ï¿½
 		TURNTABLE = 14,
-		// »¬¸Ë
+		// ï¿½ï¿½ï¿½ï¿½
 		SLIDEBAR = 15,
-		// Ìå¸ÐÆ÷
+		// ï¿½ï¿½ï¿½ï¿½ï¿½
 		SOMATOSENSORY = 16,
 
 		ETID_MAX,
 	};
 
-	//×Ô¶¨ÒåÀàÐÍµÄ ETypeID
+	//ï¿½Ô¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Íµï¿½ ETypeID
 #define ETID_CUSTOM (ETID_MAX+1)
 
-	// ±¨¾¯ÀàÐÍ
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	enum EAlarmType {
-		EAT_TouchScreen, //´¥ÃþÆÁ
-		EAT_Sensor, //´«¸ÐÆ÷
-		EAT_Camera, //ÉãÏñÍ·
-		EAT_Robot, //»úÆ÷ÈË
-		EAT_Kinect, // Ìå¸Ð
-		EAT_PciCard, // °å¿¨
-		EAT_ConveyorFailure, // ´«ËÍ´ø¹ÊÕÏ
-		KinectDisconnected, // KinectÁ¬½Ó¶Ï¿ª
-		PlatformSystemAlarm, // Æ½Ì¨ÏµÍ³±¨¾¯
-		CoilOverheating, // ÏßÈ¦¹ýÈÈ
-		MechanismAlarm, // »ú¹¹±¨¾¯
-		MicrophoneDisconnected, // Âó¿Ë·çÁ¬½Ó¶Ï¿ª
-		EncoderDamaged, // ±àÂëÆ÷Ëð»µ
-		CodeScannerDisconnected, // É¨ÂëÆ÷Á¬½Ó¶Ï¿ª
-		InsufficientScrewSupply, // ÂÝ¶¤¹©ÁÏ²»×ã
-		ChargingModuleAlarm, // ³äµçÄ£¿é±¨¾¯
-		HelmetConnectionFailure, // Í·¿øÁ¬½ÓÊ§°Ü±¨¾¯
-		LowPowerAlarm, // µÍµçÁ¿±¨¾¯
-		RobotFishAlarm, // »úÆ÷Óã±¨¾¯
-		MotorFault, // µç»ú1¹ÊÕÏ
-		WindmillModelDamageDetection, // ·ç³µÄ£ÐÍ¼ì²âËð»µ
-		SlideBlockDamaged, // »¬¿éËð»µ
-		RollerDamaged, // ¹öÂÖËð»µ
-		BatteryModelDetectionDamage, // µç³ØÄ£ÐÍ¼ì²âËð»µ
-		ElectrodeMaterialDamage, // µç¼«²ÄÁÏÄ£ÐÍ¼ì²âËð»µ
-		BlockDamaged, // ²¦¿éËð»µ
-		RotaryTableDamaged, // ×ªÅÌËð»µ
+		EAT_TouchScreen, //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+		EAT_Sensor, //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+		EAT_Camera, //ï¿½ï¿½ï¿½ï¿½Í·
+		EAT_Robot, //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+		EAT_Kinect, // ï¿½ï¿½ï¿½
+		EAT_PciCard, // ï¿½å¿¨
+		EAT_ConveyorFailure, // ï¿½ï¿½ï¿½Í´ï¿½ï¿½ï¿½ï¿½ï¿½
+		KinectDisconnected, // Kinectï¿½ï¿½ï¿½Ó¶Ï¿ï¿½
+		PlatformSystemAlarm, // Æ½Ì¨ÏµÍ³ï¿½ï¿½ï¿½ï¿½
+		CoilOverheating, // ï¿½ï¿½È¦ï¿½ï¿½ï¿½ï¿½
+		MechanismAlarm, // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+		MicrophoneDisconnected, // ï¿½ï¿½Ë·ï¿½ï¿½ï¿½ï¿½Ó¶Ï¿ï¿½
+		EncoderDamaged, // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+		CodeScannerDisconnected, // É¨ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¶Ï¿ï¿½
+		InsufficientScrewSupply, // ï¿½Ý¶ï¿½ï¿½ï¿½ï¿½Ï²ï¿½ï¿½ï¿½
+		ChargingModuleAlarm, // ï¿½ï¿½ï¿½Ä£ï¿½é±¨ï¿½ï¿½
+		HelmetConnectionFailure, // Í·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê§ï¿½Ü±ï¿½ï¿½ï¿½
+		LowPowerAlarm, // ï¿½Íµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+		RobotFishAlarm, // ï¿½ï¿½ï¿½ï¿½ï¿½ã±¨ï¿½ï¿½
+		MotorFault, // ï¿½ï¿½ï¿½1ï¿½ï¿½ï¿½ï¿½
+		WindmillModelDamageDetection, // ï¿½ç³µÄ£ï¿½Í¼ï¿½ï¿½ï¿½ï¿½
+		SlideBlockDamaged, // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+		RollerDamaged, // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+		BatteryModelDetectionDamage, // ï¿½ï¿½ï¿½Ä£ï¿½Í¼ï¿½ï¿½ï¿½ï¿½
+		ElectrodeMaterialDamage, // ï¿½ç¼«ï¿½ï¿½ï¿½ï¿½Ä£ï¿½Í¼ï¿½ï¿½ï¿½ï¿½
+		BlockDamaged, // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+		RotaryTableDamaged, // ×ªï¿½ï¿½ï¿½ï¿½
 		EAT_MAX,
 	};
 
-	// ÓÃ»§×Ô¶¨Òå¾¯±¨ID
+	// ï¿½Ã»ï¿½ï¿½Ô¶ï¿½ï¿½å¾¯ï¿½ï¿½ID
 #define EAT_CUSTOM (EAT_MAX+1)
 };

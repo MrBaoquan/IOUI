@@ -1,4 +1,4 @@
-/*  reacTIVision tangible interaction framework
+﻿/*  reacTIVision tangible interaction framework
 	Copyright (C) 2005-2017 Martin Kaltenbrunner <martin@tuio.org>
 	Based on an example by Nicolas Roussel <nicolas.roussel@inria.fr>
  

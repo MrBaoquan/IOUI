@@ -1,4 +1,4 @@
-/** Copyright (c) 2018 Hefei And Technology Co.,Ltd
+ï»¿/** Copyright (c) 2018 Hefei And Technology Co.,Ltd
  *  Author: MrBaoquan
  *  CreateTime: 2018-5-16 10:44
  *  Email: mrma617@gmail.com
@@ -15,13 +15,13 @@
 #pragma comment(lib,"PCI1020_32.lib")
 #endif
 
-/** Éè±¸»ù±¾ÐÅÏ¢ */
+/** ï¿½è±¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢ */
 DeviceInfo g_DeviceInfo; 
 
 IOUI_API DeviceInfo* __stdcall Initialize()
 {
     g_DeviceInfo.InputCount = 32 + 4;
-    g_DeviceInfo.OutputCount = 32 + 32 + 4;  // 32¸ö¿ª¹ØÁ¿Êä³öÍ¨µÀ + 4¸öÂö³åÊä³öÍ¨µÀ
+    g_DeviceInfo.OutputCount = 32 + 32 + 4;  // 32ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¨ï¿½ï¿½ + 4ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¨ï¿½ï¿½
     g_DeviceInfo.AxisCount = 0;
 
     return &g_DeviceInfo;
@@ -33,7 +33,7 @@ PCI1020_PARA_DataList DL;
 
 IOUI_API int __stdcall OpenDevice(uint8 deviceIndex)
 {
-    // DLL ÑÓ³Ù¼ÓÔØ
+    // DLL ï¿½Ó³Ù¼ï¿½ï¿½ï¿½
 #ifdef WIN_64
     std::string _path = DevelopHelper::Paths::Instance().GetModuleDir() + "Core\\PCI1020_64.DLL";
 #else
@@ -47,22 +47,22 @@ IOUI_API int __stdcall OpenDevice(uint8 deviceIndex)
     {
 		PCIManager::Instance().AddDevice(deviceIndex, DeviceData(hHandle, g_DeviceInfo));
 
-        LC.AxisNum = PCI1020_XAXIS;		// ÖáºÅ(PCI1020_XAXIS:XÖá,PCI1020_YAXIS:YÖá, PCI1020_ZAXIS:ZÖá,PCI1020_UAXIS:UÖá)
-        LC.LV_DV = PCI1020_DV;			// Çý¶¯·½Ê½ PCI1020_DV:¶¨³¤Çý¶¯ PCI1020_LV:Á¬ÐøÇý¶¯
-        LC.PulseMode = PCI1020_CWCCW;	// Âö³å·½Ê½ PCI1020_CWCCW:CW/CCW·½Ê½,PCI1020_CPDIR:CP/DIR·½Ê½ 
-        LC.Line_Curve = PCI1020_LINE;	// ÔË¶¯·½Ê½PCI1020_LINE:Ö±Ïß¼Ó/¼õËÙ; PCI1020_CURVE:SÇúÏß¼Ó/¼õËÙ)
-        DL.Multiple = 1;					// ±¶ÂÊ (1~500) 
-        DL.Acceleration = 5000;			// ¼ÓËÙ¶È(125~1000,000)(Ö±Ïß¼Ó¼õËÙÇý¶¯ÖÐ¼ÓËÙ¶ÈÒ»Ö±²»±ä)
-        DL.Deceleration = 2500;			// ¼õËÙ¶È(125~1000,000)(Ö±Ïß¼Ó¼õËÙÇý¶¯ÖÐ¼ÓËÙ¶ÈÒ»Ö±²»±ä)
-    //	DL.AccIncRate = 8000;			// ¼ÓËÙ¶È±ä»¯ÂÊ(½öSÇúÏßÇý¶¯Ê±ÓÐÐ§)
+        LC.AxisNum = PCI1020_XAXIS;		// ï¿½ï¿½ï¿½(PCI1020_XAXIS:Xï¿½ï¿½,PCI1020_YAXIS:Yï¿½ï¿½, PCI1020_ZAXIS:Zï¿½ï¿½,PCI1020_UAXIS:Uï¿½ï¿½)
+        LC.LV_DV = PCI1020_DV;			// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê½ PCI1020_DV:ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ PCI1020_LV:ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+        LC.PulseMode = PCI1020_CWCCW;	// ï¿½ï¿½ï¿½å·½Ê½ PCI1020_CWCCW:CW/CCWï¿½ï¿½Ê½,PCI1020_CPDIR:CP/DIRï¿½ï¿½Ê½ 
+        LC.Line_Curve = PCI1020_LINE;	// ï¿½Ë¶ï¿½ï¿½ï¿½Ê½PCI1020_LINE:Ö±ï¿½ß¼ï¿½/ï¿½ï¿½ï¿½ï¿½; PCI1020_CURVE:Sï¿½ï¿½ï¿½ß¼ï¿½/ï¿½ï¿½ï¿½ï¿½)
+        DL.Multiple = 1;					// ï¿½ï¿½ï¿½ï¿½ (1~500) 
+        DL.Acceleration = 5000;			// ï¿½ï¿½ï¿½Ù¶ï¿½(125~1000,000)(Ö±ï¿½ß¼Ó¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¼ï¿½ï¿½Ù¶ï¿½Ò»Ö±ï¿½ï¿½ï¿½ï¿½)
+        DL.Deceleration = 2500;			// ï¿½ï¿½ï¿½Ù¶ï¿½(125~1000,000)(Ö±ï¿½ß¼Ó¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¼ï¿½ï¿½Ù¶ï¿½Ò»Ö±ï¿½ï¿½ï¿½ï¿½)
+    //	DL.AccIncRate = 8000;			// ï¿½ï¿½ï¿½Ù¶È±ä»¯ï¿½ï¿½(ï¿½ï¿½Sï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½Ð§)
     //	DL.DecIncRate = 2000; 
-        DL.StartSpeed = 100;			// ³õÊ¼ËÙ¶È(1~8000)
-        DL.DriveSpeed = 8000;			// Çý¶¯ËÙ¶È	(1~8000)	
-    //	LC.DecMode = PCI1020_AUTO;		// ¼õËÙÄ£Ê½ PCI1020_AUTO :×Ô¶¯¼õËÙ PCI1020_HAND:ÊÖ¶¯¼õËÙ
-        LC.nPulseNum = 0;			// ¶¨Á¿Êä³öÂö³åÊý(0~268435455)
-        LC.Direction = PCI1020_PDIRECTION;// ÔË¶¯·½Ïò PCI1020_PDIRECTION: Õý×ª  PCI1020_MDIRECTION:·´×ª		
+        DL.StartSpeed = 100;			// ï¿½ï¿½Ê¼ï¿½Ù¶ï¿½(1~8000)
+        DL.DriveSpeed = 8000;			// ï¿½ï¿½ï¿½ï¿½ï¿½Ù¶ï¿½	(1~8000)	
+    //	LC.DecMode = PCI1020_AUTO;		// ï¿½ï¿½ï¿½ï¿½Ä£Ê½ PCI1020_AUTO :ï¿½Ô¶ï¿½ï¿½ï¿½ï¿½ï¿½ PCI1020_HAND:ï¿½Ö¶ï¿½ï¿½ï¿½ï¿½ï¿½
+        LC.nPulseNum = 0;			// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½(0~268435455)
+        LC.Direction = PCI1020_PDIRECTION;// ï¿½Ë¶ï¿½ï¿½ï¿½ï¿½ï¿½ PCI1020_PDIRECTION: ï¿½ï¿½×ª  PCI1020_MDIRECTION:ï¿½ï¿½×ª		
 
-        PCI1020_InitLVDV(				//	³õÊ¼»¯Á¬Ðø,¶¨³¤Âö³åÇý¶¯
+        PCI1020_InitLVDV(				//	ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
             hHandle,
             &DL,
             &LC);
@@ -79,7 +79,7 @@ IOUI_API int __stdcall CloseDevice(uint8 deviceIndex)
 
 IOUI_API int __stdcall SetDeviceDO(uint8 deviceIndex, short* InDOStatus)
 {
-    static PCI1020_PARA_DO Para[4];	// ¿ª¹ØÁ¿Êä³ö
+    static PCI1020_PARA_DO Para[4];	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
     const DeviceData* _devData = PCIManager::Instance().GetDeviceData(deviceIndex);
     if (!_devData) { return 0; }
@@ -90,7 +90,7 @@ IOUI_API int __stdcall SetDeviceDO(uint8 deviceIndex, short* InDOStatus)
     
     for (int nAxisNum = 0; nAxisNum < 4; nAxisNum++)
     {
-        // ÉèÖÃX£¬Y,Z,UÖáÊä³öÇÐ»»(PCI1020_STATUSOUT:×´Ì¬Êä³ö PCI1020_GENERALOUT:Í¨ÓÃÊä³ö)
+        // ï¿½ï¿½ï¿½ï¿½Xï¿½ï¿½Y,Z,Uï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð»ï¿½(PCI1020_STATUSOUT:×´Ì¬ï¿½ï¿½ï¿½ PCI1020_GENERALOUT:Í¨ï¿½ï¿½ï¿½ï¿½ï¿½)
         PCI1020_OutSwitch(_devData->handle, nAxisNum, PCI1020_STATUSOUT);
 
         Para[nAxisNum].OUT0 = InDOStatus [nAxisNum * 4 + 0];
@@ -101,10 +101,10 @@ IOUI_API int __stdcall SetDeviceDO(uint8 deviceIndex, short* InDOStatus)
         Para[nAxisNum].OUT5 = InDOStatus[nAxisNum * 4 + 5];
         Para[nAxisNum].OUT6 = InDOStatus[nAxisNum * 4 + 6];
         Para[nAxisNum].OUT7 = InDOStatus[nAxisNum * 4 + 7];
-        // ÉèÖÃ¸÷Öá¿ª¹ØÁ¿Êä³ö
+        // ï¿½ï¿½ï¿½Ã¸ï¿½ï¿½á¿ªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         PCI1020_SetDeviceDO(_devData->handle, nAxisNum, &Para[nAxisNum]);
 
-        // Âö³åÐÅºÅ´¦Àí
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ÅºÅ´ï¿½ï¿½ï¿½
         int _pulseChannel = 32 + nAxisNum * 8;
         if (InDOStatus[_pulseChannel]) {
             LC.AxisNum = nAxisNum;
@@ -116,14 +116,14 @@ IOUI_API int __stdcall SetDeviceDO(uint8 deviceIndex, short* InDOStatus)
             DL.StartSpeed = InDOStatus[_pulseChannel + 4] ? InDOStatus[_pulseChannel + 2] : 100;
             DL.DriveSpeed = InDOStatus[_pulseChannel + 5] ? InDOStatus[_pulseChannel + 5] : 8000;
 
-            PCI1020_InitLVDV(				//	³õÊ¼»¯Á¬Ðø,¶¨³¤Âö³åÇý¶¯
+            PCI1020_InitLVDV(				//	ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
                 _devData->handle,
                 &DL,
                 &LC);
             PCI1020_StartLVDV(_devData->handle, nAxisNum);
         }
 
-        // ¼±Í£ÐÅºÅ´¦Àí
+        // ï¿½ï¿½Í£ï¿½ÅºÅ´ï¿½ï¿½ï¿½
         int _stopSignal = 64 + nAxisNum;
         if (InDOStatus[_stopSignal]) {
             PCI1020_InstStop(_devData->handle, nAxisNum);
@@ -144,8 +144,8 @@ IOUI_API int __stdcall GetDeviceDO(uint8 deviceIndex, short* OutDOStatus)
 
 IOUI_API int __stdcall GetDeviceDI(uint8 deviceIndex, BYTE* OutDIStatus)
 {
-    static PCI1020_PARA_RR3  ParaRR3;    // ¿ª¹ØÁ¿ÊäÈë 
-    static PCI1020_PARA_RR4  ParaRR4;    // ¿ª¹ØÁ¿ÊäÈë
+    static PCI1020_PARA_RR3  ParaRR3;    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 
+    static PCI1020_PARA_RR4  ParaRR4;    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
     HANDLE hHandle = PCIManager::Instance().GetHandle(deviceIndex);
     ZeroMemory(OutDIStatus, g_DeviceInfo.InputCount);

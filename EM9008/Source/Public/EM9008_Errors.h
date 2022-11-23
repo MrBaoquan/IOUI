@@ -1,25 +1,25 @@
-#ifndef EM9008_ERRORS_H
+ï»¿#ifndef EM9008_ERRORS_H
 #define EM9008_ERRORS_H
 
-//¶¨Òå´íÎóºÅ
-#define EM9008_SUCCESS                           0 //³É¹¦
-#define EM9008_FAILURE                          -1 //Ê§°Ü
-#define EM9008_TIMEOUT_ERROR                    -2 //³¬Ê±´íÎó
-#define EM9008_CONNECT_ERROR                    -3 //ÍøÂçÁ¬½Ó´íÎó£¬·¢Éú´Ë´íÎóºóÓ¦¸ÃÖØÐÂ½¨Á¢Á¬½Ó
-#define EM9008_SEND_ERROR                       -4 //·¢ËÍ´íÎó
-#define EM9008_CMDVERIFY_ERROR                  -5 //·¢ËÍÃüÁîÐ£Ñé´íÎó
-#define EM9008_RECVVERIFY_ERROR                 -6 //½ÓÊÕÊý¾ÝÐ£Ñé´íÎó
-#define EM9008_DATANOTREADY                     -7 //Êý¾ÝÃ»ÓÐ×¼±¸ºÃ
-#define EM9008_PARA_ERROR                       -8 //²ÎÊý´íÎó
-#define EM9008_FREQBASE_ERROR                   -9 //²ÎÊý´íÎó
-#define EM9008_CH_ERROR                        -10 //Í¨µÀÉèÖÃ´íÎó£¬Ò»°ãÊÇÓÉÓÚÃ»ÓÐÉèÖÃÊ¹ÄÜÍ¨µÀ»òÕßÈ«²¿Í¨µÀ²»Ê¹ÄÜµ¼ÖÂ¡£
-#define EM9008_DATA_CONNECT_ERROR              -11 //Êý¾ÝÁ¬½Ó´íÎó£¬·¢Éú´Ë´íÎóºóÓ¦¸ÃÖØÐÂ½¨Á¢Á¬½Ó
-#define EM9008_INITNET_ERROR                    -100 //³õÊ¼»¯ÍøÂç´íÎó
-#define EM9008_SOCKET_ERROR                     -101 //´ò¿ªÍøÂçÌ×½Ó×Ö´íÎó
-#define EM9008_FILEPATH_ERROR                   -201 //ÎÄ¼þÄ¿Â¼´íÎó
-#define EM9008_FILEWRITE_ERROR                  -202 //Ð´ÎÄ¼þ´íÎó
-#define EM9008_FILEREAD_ERROR                   -203 //¶ÁÎÄ¼þ´íÎó
-#define EM9008_FILESEEK_ERROR                   -204 //¶ÁÎÄ¼þ´íÎó
-#define EM9008_FILECLOSE_ERROR                  -205 //¶ÁÎÄ¼þ´íÎó
+//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+#define EM9008_SUCCESS                           0 //ï¿½É¹ï¿½
+#define EM9008_FAILURE                          -1 //Ê§ï¿½ï¿½
+#define EM9008_TIMEOUT_ERROR                    -2 //ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½
+#define EM9008_CONNECT_ERROR                    -3 //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó´ï¿½ï¿½ó£¬·ï¿½ï¿½ï¿½ï¿½Ë´ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½ï¿½ï¿½ï¿½Â½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+#define EM9008_SEND_ERROR                       -4 //ï¿½ï¿½ï¿½Í´ï¿½ï¿½ï¿½
+#define EM9008_CMDVERIFY_ERROR                  -5 //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð£ï¿½ï¿½ï¿½ï¿½ï¿½
+#define EM9008_RECVVERIFY_ERROR                 -6 //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð£ï¿½ï¿½ï¿½ï¿½ï¿½
+#define EM9008_DATANOTREADY                     -7 //ï¿½ï¿½ï¿½ï¿½Ã»ï¿½ï¿½×¼ï¿½ï¿½ï¿½ï¿½
+#define EM9008_PARA_ERROR                       -8 //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+#define EM9008_FREQBASE_ERROR                   -9 //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+#define EM9008_CH_ERROR                        -10 //Í¨ï¿½ï¿½ï¿½ï¿½ï¿½Ã´ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¹ï¿½ï¿½Í¨ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È«ï¿½ï¿½Í¨ï¿½ï¿½ï¿½ï¿½Ê¹ï¿½Üµï¿½ï¿½Â¡ï¿½
+#define EM9008_DATA_CONNECT_ERROR              -11 //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó´ï¿½ï¿½ó£¬·ï¿½ï¿½ï¿½ï¿½Ë´ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½ï¿½ï¿½ï¿½Â½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+#define EM9008_INITNET_ERROR                    -100 //ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+#define EM9008_SOCKET_ERROR                     -101 //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×½ï¿½ï¿½Ö´ï¿½ï¿½ï¿½
+#define EM9008_FILEPATH_ERROR                   -201 //ï¿½Ä¼ï¿½Ä¿Â¼ï¿½ï¿½ï¿½ï¿½
+#define EM9008_FILEWRITE_ERROR                  -202 //Ð´ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½
+#define EM9008_FILEREAD_ERROR                   -203 //ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½
+#define EM9008_FILESEEK_ERROR                   -204 //ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½
+#define EM9008_FILECLOSE_ERROR                  -205 //ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½
 
 #endif

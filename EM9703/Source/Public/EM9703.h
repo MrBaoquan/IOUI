@@ -1,4 +1,4 @@
-#if !defined(EM9703_H)
+ï»¿#if !defined(EM9703_H)
 #define EM9703_H
 
 #if _MSC_VER > 1000
@@ -8,97 +8,97 @@
 #include "ZT_Type.h"
 
 
-#define EM9703_USB_MAX_COUNT                        16 //×î´ó¿ÉÖ§³ÖUSBÄ£¿é¸öÊý
-#define EM9703_BASE_FREQ                            50000000.0//»ù´¡Ê±ÖÓ£¬50M
-#define EM9703_PWM_BASE_FREQ                        10000000.0//PWM»ù´¡Ê±ÖÓ£¬10M
-#define EM9703_MAXIOCHCNT                           64 //IO×î´óÍ¨µÀÊý
-#define EM9703_MAXCTCHCNT                           16 //¼ÆÊýÆ÷×î´óÍ¨µÀÊý
-#define EM9703_MAXECCHCNT                           4 //±àÂëÆ÷×î´óÍ¨µÀÊý
-#define EM9703_MAXPWMCHCNT                          8 //PWM×î´óÍ¨µÀÊý
+#define EM9703_USB_MAX_COUNT                        16 //ï¿½ï¿½ï¿½ï¿½Ö§ï¿½ï¿½USBÄ£ï¿½ï¿½ï¿½ï¿½ï¿½
+#define EM9703_BASE_FREQ                            50000000.0//ï¿½ï¿½ï¿½ï¿½Ê±ï¿½Ó£ï¿½50M
+#define EM9703_PWM_BASE_FREQ                        10000000.0//PWMï¿½ï¿½ï¿½ï¿½Ê±ï¿½Ó£ï¿½10M
+#define EM9703_MAXIOCHCNT                           64 //IOï¿½ï¿½ï¿½Í¨ï¿½ï¿½ï¿½ï¿½
+#define EM9703_MAXCTCHCNT                           16 //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¨ï¿½ï¿½ï¿½ï¿½
+#define EM9703_MAXECCHCNT                           4 //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¨ï¿½ï¿½ï¿½ï¿½
+#define EM9703_MAXPWMCHCNT                          8 //PWMï¿½ï¿½ï¿½Í¨ï¿½ï¿½ï¿½ï¿½
 
-//Æô¶¯·½Ê½
-#define EM9703_STARTMode_ONCE                       0 //µ¥´Î£¬EM9703»áÃ¿100msÆô¶¯Ò»´Î×ª»»£¬ÓÃ»§¿ÉÒÔ¶Á»Ø×î½üÒ»´ÎµÄ×ª»»½á¹û
-#define EM9703_STARTMode_ICLK                       1 //ÄÚÊ±ÖÓÆô¶¯²É¼¯
-#define EM9703_STARTMode_ECLK                       2 //ÍâÊ±ÖÓÆô¶¯²É¼¯
+//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê½
+#define EM9703_STARTMode_ONCE                       0 //ï¿½ï¿½ï¿½Î£ï¿½EM9703ï¿½ï¿½Ã¿100msï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½×ªï¿½ï¿½ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½ï¿½Ô¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½Îµï¿½×ªï¿½ï¿½ï¿½ï¿½ï¿½
+#define EM9703_STARTMode_ICLK                       1 //ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½É¼ï¿½
+#define EM9703_STARTMode_ECLK                       2 //ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½É¼ï¿½
 
-//¼ÆÊýÆ÷¹¤×÷·½Ê½
-#define EM9703_CT_MODE_COUNT                         0 //¼ÆÊý
-#define EM9703_CT_MODE_HFREQ                         1 //²â¸ßÆµ
-#define EM9703_CT_MODE_LFREQ                         3 //²âµÍÆµ
+//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê½
+#define EM9703_CT_MODE_COUNT                         0 //ï¿½ï¿½ï¿½ï¿½
+#define EM9703_CT_MODE_HFREQ                         1 //ï¿½ï¿½ï¿½Æµ
+#define EM9703_CT_MODE_LFREQ                         3 //ï¿½ï¿½ï¿½Æµ
 
-//IO·½Ïò
-#define EM9703_IO_IN                                 0 //ÊäÈë
-#define EM9703_IO_OUT                                1 //Êä³ö
+//IOï¿½ï¿½ï¿½ï¿½
+#define EM9703_IO_IN                                 0 //ï¿½ï¿½ï¿½ï¿½
+#define EM9703_IO_OUT                                1 //ï¿½ï¿½ï¿½
 
 extern "C"
 {
-	//´´½¨Ò»¸öÉè±¸
+	//ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½è±¸
 	HANDLE _stdcall EM9703_CreateDevice();
-	//¹Ø±ÕÉè±¸£¬Í¬Ê±ÊÍ·ÅÉè±¸Õ¼ÓÃµÄÄÚ´æ×ÊÔ´
+	//ï¿½Ø±ï¿½ï¿½è±¸ï¿½ï¿½Í¬Ê±ï¿½Í·ï¿½ï¿½è±¸Õ¼ï¿½Ãµï¿½ï¿½Ú´ï¿½ï¿½ï¿½Ô´
 	void _stdcall EM9703_CloseDevice(HANDLE pDev);
-	//µÃµ½´íÎóºÅ
+	//ï¿½Ãµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	I32 _stdcall EM9703_GetErrorCode(HANDLE pDev);
-	//Á¬½ÓÃüÁî¶Ë¿Ú
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ë¿ï¿½
 	I32 _stdcall EM9703_CmdConnect( HANDLE pDev, char* strIP, int port );
-	//¹Ø±ÕÃüÁî¶Ë¿Ú
+	//ï¿½Ø±ï¿½ï¿½ï¿½ï¿½ï¿½Ë¿ï¿½
 	void _stdcall EM9703_CmdClose( HANDLE pDev );
-	//Ê¹ÄÜÍ¨Ñ¶¿´ÃÅ¹·,µ±ÏÂÎ»»úÔÚoverTimeSÃëÄÚÃ»ÓÐ½ÓÊÕµ½ÈÎºÎÃüÁî½«»áÊÓÎªÍ¨Ñ¶ÖÐ¶Ï£¬´ËÊ±ÉÏÎ»»úÐèÒªÖØÐÂµ÷ÓÃEM9703_CmdConnectº¯Êý¡£
+	//Ê¹ï¿½ï¿½Í¨Ñ¶ï¿½ï¿½ï¿½Å¹ï¿½,ï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½ï¿½ï¿½overTimeSï¿½ï¿½ï¿½ï¿½Ã»ï¿½Ð½ï¿½ï¿½Õµï¿½ï¿½Îºï¿½ï¿½ï¿½ï¿½î½«ï¿½ï¿½ï¿½ï¿½ÎªÍ¨Ñ¶ï¿½Ð¶Ï£ï¿½ï¿½ï¿½Ê±ï¿½ï¿½Î»ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½Âµï¿½ï¿½ï¿½EM9703_CmdConnectï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	I32 _stdcall EM9703_CmdEnableWTD( HANDLE pDev, U16 overTimeS );
-	//Á¬½ÓÊý¾Ý¶Ë¿Ú
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý¶Ë¿ï¿½
 	I32 _stdcall EM9703_DataConnect( HANDLE pDev, int port );
-	//¹Ø±ÕÊý¾Ý¶Ë¿Ú
+	//ï¿½Ø±ï¿½ï¿½ï¿½ï¿½Ý¶Ë¿ï¿½
 	void _stdcall EM9703_DataClose( HANDLE pDev );
 	
-	//Éè¶¨¶¨Ê±²É¼¯ÆµÂÊ
+	//ï¿½è¶¨ï¿½ï¿½Ê±ï¿½É¼ï¿½Æµï¿½ï¿½
 	I32 _stdcall EM9703_HCSetFreq( HANDLE pDev,  F64 groupFreq, F64* realFreq );
-	//Æô¶¯²É¼¯£¨¶¨Ê±¡¢Íâ´¥·¢£©
+	//ï¿½ï¿½ï¿½ï¿½ï¿½É¼ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½â´¥ï¿½ï¿½ï¿½ï¿½
 	I32 _stdcall EM9703_HCStart( HANDLE pDev, I32 startMode );
-	//Í£Ö¹²É¼¯£¨¶¨Ê±¡¢Íâ´¥·¢£©
+	//Í£Ö¹ï¿½É¼ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½â´¥ï¿½ï¿½ï¿½ï¿½
 	I32 _stdcall EM9703_HCStop( HANDLE pDev );
-	//´ÓÊý¾Ý¶Ë¿Ú¶ÁÈ¡ÏÂÎ»»úµÄ¶¨Ê±²É¼¯Êý¾Ý
+	//ï¿½ï¿½ï¿½ï¿½ï¿½Ý¶Ë¿Ú¶ï¿½È¡ï¿½ï¿½Î»ï¿½ï¿½ï¿½Ä¶ï¿½Ê±ï¿½É¼ï¿½ï¿½ï¿½ï¿½ï¿½
 	I32 _stdcall EM9703_HCReadCode( HANDLE pDev, I32 dataCount, U8* dataBuffer, I32 outtime = 500 );
 	
-	//ÉèÖÃ¿ª¹ØÁ¿·½Ïò£¬×¢Òâ´Ëº¯Êý¶ÔEM9703NÎÞÐ§
+	//ï¿½ï¿½ï¿½Ã¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×¢ï¿½ï¿½Ëºï¿½ï¿½ï¿½ï¿½ï¿½EM9703Nï¿½ï¿½Ð§
 	I32 _stdcall EM9703_IoSetDir( HANDLE pDev, I8 dir[2] );
-	//µÃµ½ËùÓÐ¿ª¹ØÁ¿µÄ×´Ì¬£¬×¢ÒâiStatus[0]~iStatus[31]¶ÔÓ¦DI1~DI32,iStatus[32]~iStatus[63]¶ÔÓ¦DO1~DO32,
+	//ï¿½Ãµï¿½ï¿½ï¿½ï¿½Ð¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×´Ì¬ï¿½ï¿½×¢ï¿½ï¿½iStatus[0]~iStatus[31]ï¿½ï¿½Ó¦DI1~DI32,iStatus[32]~iStatus[63]ï¿½ï¿½Ó¦DO1~DO32,
 	I32 _stdcall EM9703_IoGetAll( HANDLE pDev, I8 iStatus[EM9703_MAXIOCHCNT] );
-	//ÉèÖÃËùÓÐ¿ª¹ØÁ¿µÄ×´Ì¬£¬×¢ÒâoStatus[0]~oStatus[31]¶ÔÓ¦DI1~DI32,oStatus[32]~oStatus[63]¶ÔÓ¦DO1~DO32,
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×´Ì¬ï¿½ï¿½×¢ï¿½ï¿½oStatus[0]~oStatus[31]ï¿½ï¿½Ó¦DI1~DI32,oStatus[32]~oStatus[63]ï¿½ï¿½Ó¦DO1~DO32,
 	I32 _stdcall EM9703_IoSetAll( HANDLE pDev, I8 oStatus[EM9703_MAXIOCHCNT] );
-	//ÉèÖÃÏÂÎ»»úÉÏµçÊ±³õÖµ£¬×¢ÒâoStatus[0]~oStatus[31]¶ÔÓ¦DI1~DI32,oStatus[32]~oStatus[63]¶ÔÓ¦DO1~DO32
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½ï¿½Ïµï¿½Ê±ï¿½ï¿½Öµï¿½ï¿½×¢ï¿½ï¿½oStatus[0]~oStatus[31]ï¿½ï¿½Ó¦DI1~DI32,oStatus[32]~oStatus[63]ï¿½ï¿½Ó¦DO1~DO32
 	I32 _stdcall EM9703_IoSetInitStatus( HANDLE pDev, I8 initStatus[EM9703_MAXIOCHCNT] );
-	//µÃµ½ÏÂÎ»»úÉÏµçÊ±³õÖµ£¬×¢ÒâoStatus[0]~oStatus[31]¶ÔÓ¦DI1~DI32,oStatus[32]~oStatus[63]¶ÔÓ¦DO1~DO32
+	//ï¿½Ãµï¿½ï¿½ï¿½Î»ï¿½ï¿½ï¿½Ïµï¿½Ê±ï¿½ï¿½Öµï¿½ï¿½×¢ï¿½ï¿½oStatus[0]~oStatus[31]ï¿½ï¿½Ó¦DI1~DI32,oStatus[32]~oStatus[63]ï¿½ï¿½Ó¦DO1~DO32
 	I32 _stdcall EM9703_IoGetInitStatus( HANDLE pDev, I8 initStatus[EM9703_MAXIOCHCNT] );
 	
-	//¼ÆÊýÆ÷¹¤×÷·½Ê½
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê½
 	I32 _stdcall EM9703_CtSetModeAll( HANDLE pDev, I8 ctMode[EM9703_MAXCTCHCNT] );
-	//ÇåÁã¼ÆÊýÆ÷
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	I32 _stdcall EM9703_CtClear( HANDLE pDev, I32 chNo );
-	//ÇåÁãËùÓÐ¼ÆÊýÆ÷
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¼ï¿½ï¿½ï¿½ï¿½ï¿½
 	I32 _stdcall EM9703_CtClearAll( HANDLE pDev );
-	//ÉèÖÃ²âÆµ»ù×¼£¬ÒÔmsÎªµ¥Î»£¬Ö»ÓÐµ±¼ÆÊýÆ÷¹¤×÷ÔÚ²âÆµ·½Ê½ÏÂÊ±²ÅÓÐÓÃ
+	//ï¿½ï¿½ï¿½Ã²ï¿½Æµï¿½ï¿½×¼ï¿½ï¿½ï¿½ï¿½msÎªï¿½ï¿½Î»ï¿½ï¿½Ö»ï¿½Ðµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú²ï¿½Æµï¿½ï¿½Ê½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	I32 _stdcall EM9703_CtSetFreqBase( HANDLE pDev, I32 chNo, F64 freqBase_ms, F64* real_ms );
-	//¶Á»ØËùÓÐÍ¨µÀµÄ¼ÆÊýÆ÷µ±Ç°Öµ
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¨ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç°Öµ
 	I32 _stdcall EM9703_CtReadCodeAll( HANDLE pDev, U32 ctCode[EM9703_MAXCTCHCNT] );
 	
-	//¶Á»ØËùÓÐÍ¨µÀµÄ±àÂëÆ÷Öµ
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¨ï¿½ï¿½ï¿½Ä±ï¿½ï¿½ï¿½ï¿½ï¿½Öµ
 	I32 _stdcall EM9703_EcReadAll( HANDLE pDev, I32 encoderAB[EM9703_MAXECCHCNT], I32 encoderZ[EM9703_MAXECCHCNT] );
-	//±àÂëÆ÷ÇåÁã£¬isClear[0]~isClear[3]¶ÔÓ¦±àÂëÆ÷1~±àÂëÆ÷4,0±íÊ¾²»ÇåÁã£¬1±íÊ¾ÇåÁã
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ã£¬isClear[0]~isClear[3]ï¿½ï¿½Ó¦ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½1~ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½4,0ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½ï¿½ã£¬1ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½
 	I32 _stdcall EM9703_EcClearAll( HANDLE pDev, I8 isClear[EM9703_MAXECCHCNT] );
 	
-	//ÉèÖÃÖ¸¶¨Í¨µÀµÄPWMÂö³åÊä³öµ½¸öÊý£¬Èç¹ûÉèÖÃÎª0£¬Ôò±íÊ¾Æô¶¯PWMºóÒ»Ö±Êä³ö¡£
+	//ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½Í¨ï¿½ï¿½ï¿½ï¿½PWMï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îª0ï¿½ï¿½ï¿½ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½PWMï¿½ï¿½Ò»Ö±ï¿½ï¿½ï¿½ï¿½ï¿½
 	I32 _stdcall EM9703_PwmSetCount( HANDLE pDev, I32 chNo, U32 setCount );
-	//PWMÂö³åÊÇ·ñÊä³öµ½Ö¸¶¨¸öÊý
+	//PWMï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	I32 _stdcall EM9703_PwmIsOver( HANDLE pDev, I8 isOver[EM9703_MAXPWMCHCNT] );
-	//ÉèÖÃPWMÂö³åµÄÖÜÆÚºÍÕ¼¿Õ±È
+	//ï¿½ï¿½ï¿½ï¿½PWMï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Úºï¿½Õ¼ï¿½Õ±ï¿½
 	I32 _stdcall EM9703_PwmSetPulse( HANDLE pDev, I32 chNo, double freq, double dutyCycle, double* realFreq, double* realDutyCycle );
-	//Æô¶¯»òÕßÍ£Ö¹PWMÊä³ö£¬is90±íÊ¾ÏàÓ¦µÄÍ¨µÀÊÇ·ñÑÓÊ±90¡ã
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í£Ö¹PWMï¿½ï¿½ï¿½ï¿½ï¿½is90ï¿½ï¿½Ê¾ï¿½ï¿½Ó¦ï¿½ï¿½Í¨ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½Ê±90ï¿½ï¿½
 	I32 _stdcall EM9703_PwmStartAll( HANDLE pDev, I8 startOrStop[EM9703_MAXPWMCHCNT], I8 is90[EM9703_MAXPWMCHCNT] );
 	
-	//µÃµ½ÉÏÎ»»úUSBÐéÄâÍø¿¨µÄÅäÖÃ
+	//ï¿½Ãµï¿½ï¿½ï¿½Î»ï¿½ï¿½USBï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	I32 _stdcall EM9703_GetUSBStatus( char usbName[][256], unsigned char ip[][4], long ipCount );
-	//µÃµ½ÉÏÎ»»úUSBÐéÄâÍø¿¨µÄÅäÖÃ
+	//ï¿½Ãµï¿½ï¿½ï¿½Î»ï¿½ï¿½USBï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	I32 _stdcall EM9703_SetUSBHostIp( long devInx, char* ip );
-	//ÉèÖÃÉÏÎ»»úUSBÐéÄâÍø¿¨µÄIPµØÖ·
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½USBï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½IPï¿½ï¿½Ö·
 	I32 _stdcall EM9703_SetClientIP( HANDLE pDev, const char* strIP );
 };
 

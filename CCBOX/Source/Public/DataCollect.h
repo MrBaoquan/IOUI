@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "TypeID.h"
 
 #ifdef NETPACKET_EXPORTS
@@ -14,52 +14,52 @@
 class DATCOLLECT_API DataCollect
 {
 public:
-	// °´Å¥Ôö¼Ó´ÎÊý  _nTypeNumber µÚ¼¸¸öÉè±¸(ÀàÐÍµÄºÅÂë)
+	// ï¿½ï¿½Å¥ï¿½ï¿½ï¿½Ó´ï¿½ï¿½ï¿½  _nTypeNumber ï¿½Ú¼ï¿½ï¿½ï¿½ï¿½è±¸(ï¿½ï¿½ï¿½ÍµÄºï¿½ï¿½ï¿½)
 	static void IncButtonClicked(int _nTypeNumber = 0);
-	// ²ÎÓë´ÎÊý
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	static void IncParticketimeNum(int _nTypeNumber = 0);
-	// ÊÖ±ú 
+	// ï¿½Ö±ï¿½ 
 	static void IncHandleNum(int _nTypeNumber = 0);
-	// Ò£¸Ð  
+	// Ò£ï¿½ï¿½  
 	static void IncRockerNum(int _nTypeNumber = 0);
-	// µç»úÆô¶¯ 
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 
 	static void IncEmachineNum(int _nTypeNumber = 0);
-	// À­¸Ë 
+	// ï¿½ï¿½ï¿½ï¿½ 
 	static void IncPullrodNum(int _nTypeNumber = 0);
-	// ÐýÅ¥
+	// ï¿½ï¿½Å¥
 	static void IncKnobNum(int _nTypeNumber = 0);
-	// ´«¸ÐÆ÷
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	static void IncTensorNum(int _nTypeNumber = 0);
-	// ÊÖÂÖ 
+	// ï¿½ï¿½ï¿½ï¿½ 
 	static void IncHandwheelNum(int _nTypeNumber = 0);
-	// ÉãÏñÍ·
+	// ï¿½ï¿½ï¿½ï¿½Í·
 	static void IncCameraNum(int _nTypeNumber = 0);
-	// À×´ï 
+	// ï¿½×´ï¿½ 
 	static void IncRadarNum(int _nTypeNumber = 0);
-	// ´¥Ãþ¼ü
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	static void IncTouchkeyNum(int _nTypeNumber = 0);
-	// °´¼ü  
+	// ï¿½ï¿½ï¿½ï¿½  
 	static void IncKeyNum(int _nTypeNumber = 0);
-	// rfid¿¨
+	// rfidï¿½ï¿½
 	static void IncRfidNum(int _nTypeNumber = 0);
-	// ×ªÅÌ  
+	// ×ªï¿½ï¿½  
 	static void IncTurntableNum(int _nTypeNumber = 0);
-	// »¬¸Ë  
+	// ï¿½ï¿½ï¿½ï¿½  
 	static void IncSlidebarNum(int _nTypeNumber = 0);
-	// Ìå¸ÐÆ÷
+	// ï¿½ï¿½ï¿½ï¿½ï¿½
 	static void IncSomatosensoryNum(int _nTypeNumber = 0);
 
-	// Ôö¼ÓÀàÐÍµã»÷´ÎÊý ETypeID ÀàÐÍID _nTypeNumber µÚ¼¸¸ö°´Å¥(ÀàÐÍµÄºÅÂë)
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Íµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ETypeID ï¿½ï¿½ï¿½ï¿½ID _nTypeNumber ï¿½Ú¼ï¿½ï¿½ï¿½ï¿½ï¿½Å¥(ï¿½ï¿½ï¿½ÍµÄºï¿½ï¿½ï¿½)
 	static void IncTypeClickedNum(int _eTypeID, int _nTypeNumber = 0);
 
-	// ÒÔÏÂÎª±¨¾¯Êý¾Ý
+	// ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	static void Alarm(int eAlarmType, int _nTypeNumber = 0);
 
-	// ÉãÏñÍ·±¨¾¯ _nTypeNumber µÚ¼¸¸ö(ÀàÐÍµÄºÅÂë)
+	// ï¿½ï¿½ï¿½ï¿½Í·ï¿½ï¿½ï¿½ï¿½ _nTypeNumber ï¿½Ú¼ï¿½ï¿½ï¿½(ï¿½ï¿½ï¿½ÍµÄºï¿½ï¿½ï¿½)
 	static void AlarmCamera(int _nTypeNumber = 0);
-	// »úÆ÷ÈË±¨¾¯
+	// ï¿½ï¿½ï¿½ï¿½ï¿½Ë±ï¿½ï¿½ï¿½
 	static void AlarmRobot(int _nTypeNumber = 0);
-	// °å¿¨±¨¾¯
+	// ï¿½å¿¨ï¿½ï¿½ï¿½ï¿½
 	static void AlarmPciCard(int _nTypeNumber = 0);
 };
 

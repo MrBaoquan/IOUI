@@ -1,5 +1,5 @@
-
-// IOUIDebug.cpp : ¶¨ÒåÓ¦ÓÃ³ÌÐòµÄÀàÐÐÎª¡£
+ï»¿
+// IOUIDebug.cpp : ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½Ã³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½
 //
 
 #include "stdafx.h"
@@ -18,34 +18,34 @@ BEGIN_MESSAGE_MAP(CIOUIDebugApp, CWinApp)
 END_MESSAGE_MAP()
 
 
-// CIOUIDebugApp ¹¹Ôì
+// CIOUIDebugApp ï¿½ï¿½ï¿½ï¿½
 
 CIOUIDebugApp::CIOUIDebugApp()
 {
-	// Ö§³ÖÖØÐÂÆô¶¯¹ÜÀíÆ÷
+	// Ö§ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	m_dwRestartManagerSupportFlags = AFX_RESTART_MANAGER_SUPPORT_RESTART;
 
-	// TODO: ÔÚ´Ë´¦Ìí¼Ó¹¹Ôì´úÂë£¬
-	// ½«ËùÓÐÖØÒªµÄ³õÊ¼»¯·ÅÖÃÔÚ InitInstance ÖÐ
+	// TODO: ï¿½Ú´Ë´ï¿½ï¿½ï¿½ï¿½Ó¹ï¿½ï¿½ï¿½ï¿½ï¿½ë£¬
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½Ä³ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ InitInstance ï¿½ï¿½
 }
 
 
-// Î¨Ò»µÄÒ»¸ö CIOUIDebugApp ¶ÔÏó
+// Î¨Ò»ï¿½ï¿½Ò»ï¿½ï¿½ CIOUIDebugApp ï¿½ï¿½ï¿½ï¿½
 
 CIOUIDebugApp theApp;
 
 
-// CIOUIDebugApp ³õÊ¼»¯
+// CIOUIDebugApp ï¿½ï¿½Ê¼ï¿½ï¿½
 
 BOOL CIOUIDebugApp::InitInstance()
 {
-	// Èç¹ûÒ»¸öÔËÐÐÔÚ Windows XP ÉÏµÄÓ¦ÓÃ³ÌÐòÇåµ¥Ö¸¶¨Òª
-	// Ê¹ÓÃ ComCtl32.dll °æ±¾ 6 »ò¸ü¸ß°æ±¾À´ÆôÓÃ¿ÉÊÓ»¯·½Ê½£¬
-	//ÔòÐèÒª InitCommonControlsEx()¡£  ·ñÔò£¬½«ÎÞ·¨´´½¨´°¿Ú¡£
+	// ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Windows XP ï¿½Ïµï¿½Ó¦ï¿½Ã³ï¿½ï¿½ï¿½ï¿½åµ¥Ö¸ï¿½ï¿½Òª
+	// Ê¹ï¿½ï¿½ ComCtl32.dll ï¿½æ±¾ 6 ï¿½ï¿½ï¿½ï¿½ß°æ±¾ï¿½ï¿½ï¿½ï¿½ï¿½Ã¿ï¿½ï¿½Ó»ï¿½ï¿½ï¿½Ê½ï¿½ï¿½
+	//ï¿½ï¿½ï¿½ï¿½Òª InitCommonControlsEx()ï¿½ï¿½  ï¿½ï¿½ï¿½ò£¬½ï¿½ï¿½Þ·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú¡ï¿½
 	INITCOMMONCONTROLSEX InitCtrls;
 	InitCtrls.dwSize = sizeof(InitCtrls);
-	// ½«ËüÉèÖÃÎª°üÀ¨ËùÓÐÒªÔÚÓ¦ÓÃ³ÌÐòÖÐÊ¹ÓÃµÄ
-	// ¹«¹²¿Ø¼þÀà¡£
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½Ó¦ï¿½Ã³ï¿½ï¿½ï¿½ï¿½ï¿½Ê¹ï¿½Ãµï¿½
+	// ï¿½ï¿½ï¿½ï¿½ï¿½Ø¼ï¿½ï¿½à¡£
 	InitCtrls.dwICC = ICC_WIN95_CLASSES;
 	InitCommonControlsEx(&InitCtrls);
 
@@ -54,42 +54,42 @@ BOOL CIOUIDebugApp::InitInstance()
 
 	AfxEnableControlContainer();
 
-	// ´´½¨ shell ¹ÜÀíÆ÷£¬ÒÔ·À¶Ô»°¿ò°üº¬
-	// ÈÎºÎ shell Ê÷ÊÓÍ¼¿Ø¼þ»ò shell ÁÐ±íÊÓÍ¼¿Ø¼þ¡£
+	// ï¿½ï¿½ï¿½ï¿½ shell ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô·ï¿½ï¿½Ô»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	// ï¿½Îºï¿½ shell ï¿½ï¿½ï¿½ï¿½Í¼ï¿½Ø¼ï¿½ï¿½ï¿½ shell ï¿½Ð±ï¿½ï¿½ï¿½Í¼ï¿½Ø¼ï¿½ï¿½ï¿½
 	CShellManager *pShellManager = new CShellManager;
 
-	// ¼¤»î¡°Windows Native¡±ÊÓ¾õ¹ÜÀíÆ÷£¬ÒÔ±ãÔÚ MFC ¿Ø¼þÖÐÆôÓÃÖ÷Ìâ
+	// ï¿½ï¿½ï¿½î¡°Windows Nativeï¿½ï¿½ï¿½Ó¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô±ï¿½ï¿½ï¿½ MFC ï¿½Ø¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	CMFCVisualManager::SetDefaultManager(RUNTIME_CLASS(CMFCVisualManagerWindows));
 
-	// ±ê×¼³õÊ¼»¯
-	// Èç¹ûÎ´Ê¹ÓÃÕâÐ©¹¦ÄÜ²¢Ï£Íû¼õÐ¡
-	// ×îÖÕ¿ÉÖ´ÐÐÎÄ¼þµÄ´óÐ¡£¬ÔòÓ¦ÒÆ³ýÏÂÁÐ
-	// ²»ÐèÒªµÄÌØ¶¨³õÊ¼»¯Àý³Ì
-	// ¸ü¸ÄÓÃÓÚ´æ´¢ÉèÖÃµÄ×¢²á±íÏî
-	// TODO: Ó¦ÊÊµ±ÐÞ¸Ä¸Ã×Ö·û´®£¬
-	// ÀýÈçÐÞ¸ÄÎª¹«Ë¾»ò×éÖ¯Ãû
-	SetRegistryKey(_T("Ó¦ÓÃ³ÌÐòÏòµ¼Éú³ÉµÄ±¾µØÓ¦ÓÃ³ÌÐò"));
+	// ï¿½ï¿½×¼ï¿½ï¿½Ê¼ï¿½ï¿½
+	// ï¿½ï¿½ï¿½Î´Ê¹ï¿½ï¿½ï¿½ï¿½Ð©ï¿½ï¿½ï¿½Ü²ï¿½Ï£ï¿½ï¿½ï¿½ï¿½Ð¡
+	// ï¿½ï¿½ï¿½Õ¿ï¿½Ö´ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½Ä´ï¿½Ð¡ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½Æ³ï¿½ï¿½ï¿½ï¿½ï¿½
+	// ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½Ø¶ï¿½ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú´æ´¢ï¿½ï¿½ï¿½Ãµï¿½×¢ï¿½ï¿½ï¿½ï¿½ï¿½
+	// TODO: Ó¦ï¿½Êµï¿½ï¿½Þ¸Ä¸ï¿½ï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½
+	// ï¿½ï¿½ï¿½ï¿½ï¿½Þ¸ï¿½Îªï¿½ï¿½Ë¾ï¿½ï¿½ï¿½ï¿½Ö¯ï¿½ï¿½
+	SetRegistryKey(_T("Ó¦ï¿½Ã³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÉµÄ±ï¿½ï¿½ï¿½Ó¦ï¿½Ã³ï¿½ï¿½ï¿½"));
 
 	CIOUIDebugDlg dlg;
 	m_pMainWnd = &dlg;
 	INT_PTR nResponse = dlg.DoModal();
 	if (nResponse == IDOK)
 	{
-		// TODO: ÔÚ´Ë·ÅÖÃ´¦ÀíºÎÊ±ÓÃ
-		//  ¡°È·¶¨¡±À´¹Ø±Õ¶Ô»°¿òµÄ´úÂë
+		// TODO: ï¿½Ú´Ë·ï¿½ï¿½Ã´ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½
+		//  ï¿½ï¿½È·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ø±Õ¶Ô»ï¿½ï¿½ï¿½Ä´ï¿½ï¿½ï¿½
 	}
 	else if (nResponse == IDCANCEL)
 	{
-		// TODO: ÔÚ´Ë·ÅÖÃ´¦ÀíºÎÊ±ÓÃ
-		//  ¡°È¡Ïû¡±À´¹Ø±Õ¶Ô»°¿òµÄ´úÂë
+		// TODO: ï¿½Ú´Ë·ï¿½ï¿½Ã´ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½
+		//  ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ø±Õ¶Ô»ï¿½ï¿½ï¿½Ä´ï¿½ï¿½ï¿½
 	}
 	else if (nResponse == -1)
 	{
-		TRACE(traceAppMsg, 0, "¾¯¸æ: ¶Ô»°¿ò´´½¨Ê§°Ü£¬Ó¦ÓÃ³ÌÐò½«ÒâÍâÖÕÖ¹¡£\n");
-		TRACE(traceAppMsg, 0, "¾¯¸æ: Èç¹ûÄúÔÚ¶Ô»°¿òÉÏÊ¹ÓÃ MFC ¿Ø¼þ£¬ÔòÎÞ·¨ #define _AFX_NO_MFC_CONTROLS_IN_DIALOGS¡£\n");
+		TRACE(traceAppMsg, 0, "ï¿½ï¿½ï¿½ï¿½: ï¿½Ô»ï¿½ï¿½ò´´½ï¿½Ê§ï¿½Ü£ï¿½Ó¦ï¿½Ã³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¹ï¿½ï¿½\n");
+		TRACE(traceAppMsg, 0, "ï¿½ï¿½ï¿½ï¿½: ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú¶Ô»ï¿½ï¿½ï¿½ï¿½ï¿½Ê¹ï¿½ï¿½ MFC ï¿½Ø¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Þ·ï¿½ #define _AFX_NO_MFC_CONTROLS_IN_DIALOGSï¿½ï¿½\n");
 	}
 
-	// É¾³ýÉÏÃæ´´½¨µÄ shell ¹ÜÀíÆ÷¡£
+	// É¾ï¿½ï¿½ï¿½ï¿½ï¿½æ´´ï¿½ï¿½ï¿½ï¿½ shell ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	if (pShellManager != NULL)
 	{
 		delete pShellManager;
@@ -99,8 +99,8 @@ BOOL CIOUIDebugApp::InitInstance()
 	ControlBarCleanUp();
 #endif
 
-	// ÓÉÓÚ¶Ô»°¿òÒÑ¹Ø±Õ£¬ËùÒÔ½«·µ»Ø FALSE ÒÔ±ãÍË³öÓ¦ÓÃ³ÌÐò£¬
-	//  ¶ø²»ÊÇÆô¶¯Ó¦ÓÃ³ÌÐòµÄÏûÏ¢±Ã¡£
+	// ï¿½ï¿½ï¿½Ú¶Ô»ï¿½ï¿½ï¿½ï¿½Ñ¹Ø±Õ£ï¿½ï¿½ï¿½ï¿½Ô½ï¿½ï¿½ï¿½ï¿½ï¿½ FALSE ï¿½Ô±ï¿½ï¿½Ë³ï¿½Ó¦ï¿½Ã³ï¿½ï¿½ï¿½
+	//  ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½Ã³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢ï¿½Ã¡ï¿½
 	return FALSE;
 }
 

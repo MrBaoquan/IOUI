@@ -1,4 +1,4 @@
-#include "FlashSender.h"
+﻿#include "FlashSender.h"
 
 //  Copyright (C) 2009 Georg Kaindl
 //  This file is part of Touché.

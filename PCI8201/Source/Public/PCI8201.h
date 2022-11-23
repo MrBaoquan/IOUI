@@ -1,19 +1,19 @@
-#ifndef _PCI8201_DEVICE_
+ï»¿#ifndef _PCI8201_DEVICE_
 #define _PCI8201_DEVICE_
 
 //***********************************************************
-// DAÊä³öº¯ÊýWriteDeviceDAµÄÄ£ÄâÁ¿Êä³ö·¶Î§²ÎÊýOutputRangeËùÊ¹ÓÃµÄÑ¡Ïî
-const long PCI8201_OUTPUT_0_P5000mV			= 0x00;		// 0¡«5000mV
-const long PCI8201_OUTPUT_0_P10000mV		= 0x01;		// 0¡«10000mV
-const long PCI8201_OUTPUT_0_P10800mV		= 0x02;		// 0¡«10800mV
-const long PCI8201_OUTPUT_N5000_P5000mV		= 0x03;		// ¡À5000mV
-const long PCI8201_OUTPUT_N10000_P10000mV	= 0x04;		// ¡À10000mV
-const long PCI8201_OUTPUT_N10800_P10800mV	= 0x05;		// ¡À10800mV
-const long PCI8201_OUTPUT_0_P10mA			= 0x06;		// 0¡«10mA
-const long PCI8201_OUTPUT_4_P20mA			= 0x07;		// 4¡«20mA
+// DAï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½WriteDeviceDAï¿½ï¿½Ä£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î§ï¿½ï¿½ï¿½ï¿½OutputRangeï¿½ï¿½Ê¹ï¿½Ãµï¿½Ñ¡ï¿½ï¿½
+const long PCI8201_OUTPUT_0_P5000mV			= 0x00;		// 0ï¿½ï¿½5000mV
+const long PCI8201_OUTPUT_0_P10000mV		= 0x01;		// 0ï¿½ï¿½10000mV
+const long PCI8201_OUTPUT_0_P10800mV		= 0x02;		// 0ï¿½ï¿½10800mV
+const long PCI8201_OUTPUT_N5000_P5000mV		= 0x03;		// ï¿½ï¿½5000mV
+const long PCI8201_OUTPUT_N10000_P10000mV	= 0x04;		// ï¿½ï¿½10000mV
+const long PCI8201_OUTPUT_N10800_P10800mV	= 0x05;		// ï¿½ï¿½10800mV
+const long PCI8201_OUTPUT_0_P10mA			= 0x06;		// 0ï¿½ï¿½10mA
+const long PCI8201_OUTPUT_4_P20mA			= 0x07;		// 4ï¿½ï¿½20mA
 
 //***********************************************************
-// ÓÃ»§º¯Êý½Ó¿Ú
+// ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¿ï¿½
 #ifndef _PCI8201_DRIVER_
 #define DEVAPI __declspec(dllimport)
 #else
@@ -23,73 +23,73 @@ const long PCI8201_OUTPUT_4_P20mA			= 0x07;		// 4¡«20mA
 #ifdef __cplusplus
 extern "C" {
 #endif
-	//######################## ³£¹æÍ¨ÓÃº¯Êý #################################
-	// ÊÊÓÃÓÚ±¾Éè±¸µÄ×î»ù±¾²Ù×÷
-	HANDLE DEVAPI FAR PASCAL PCI8201_CreateDevice(int DeviceID = 0);		// ´´½¨Éè±¸¶ÔÏó
-	HANDLE DEVAPI FAR PASCAL PCI8201_CreateDeviceEx(LONG DevicePhysID = 0);  // ÓÃÎïÀíºÅ´´½¨Éè±¸¶ÔÏó
-	int DEVAPI FAR PASCAL PCI8201_GetDeviceCount(HANDLE hDevice);			// È¡µÃÉè±¸×ÜÌ¨Êý
+	//######################## ï¿½ï¿½ï¿½ï¿½Í¨ï¿½Ãºï¿½ï¿½ï¿½ #################################
+	// ï¿½ï¿½ï¿½ï¿½ï¿½Ú±ï¿½ï¿½è±¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	HANDLE DEVAPI FAR PASCAL PCI8201_CreateDevice(int DeviceID = 0);		// ï¿½ï¿½ï¿½ï¿½ï¿½è±¸ï¿½ï¿½ï¿½ï¿½
+	HANDLE DEVAPI FAR PASCAL PCI8201_CreateDeviceEx(LONG DevicePhysID = 0);  // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Å´ï¿½ï¿½ï¿½ï¿½è±¸ï¿½ï¿½ï¿½ï¿½
+	int DEVAPI FAR PASCAL PCI8201_GetDeviceCount(HANDLE hDevice);			// È¡ï¿½ï¿½ï¿½è±¸ï¿½ï¿½Ì¨ï¿½ï¿½
 	BOOL DEVAPI FAR PASCAL PCI8201_GetDeviceCurrentID(HANDLE hDevice, PLONG DeviceLgcID, PLONG DevicePhysID);
-	BOOL DEVAPI FAR PASCAL PCI8201_ListDeviceDlg(HANDLE hDevice);			// ÁÐ±íÏµÍ³µ±ÖÐµÄËùÓÐµÄ¸ÃPCIÉè±¸
-    BOOL DEVAPI FAR PASCAL PCI8201_ReleaseDevice(HANDLE hDevice);			// ¹Ø±ÕÉè±¸,½ûÖ¹´«Êä,ÇÒÊÍ·Å×ÊÔ´
+	BOOL DEVAPI FAR PASCAL PCI8201_ListDeviceDlg(HANDLE hDevice);			// ï¿½Ð±ï¿½ÏµÍ³ï¿½ï¿½ï¿½Ðµï¿½ï¿½ï¿½ï¿½ÐµÄ¸ï¿½PCIï¿½è±¸
+    BOOL DEVAPI FAR PASCAL PCI8201_ReleaseDevice(HANDLE hDevice);			// ï¿½Ø±ï¿½ï¿½è±¸,ï¿½ï¿½Ö¹ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½Í·ï¿½ï¿½ï¿½Ô´
 
-	//####################### DAÊý¾ÝÊä³öº¯Êý #################################
-	// ÊÊÓÚ´ó¶àÊýÆÕÍ¨ÓÃ»§£¬ÕâÐ©½Ó¿Ú×î¼òµ¥¡¢×î¿ì½Ý¡¢×î¿É¿¿£¬ÈÃÓÃ»§²»±ØÖªµÀÉè±¸
-	// µÍ²ã¸´ÔÓµÄÓ²¼þ¿ØÖÆÐ­ÒéºÍ·±¶àµÄÈí¼þ¿ØÖÆ±à³Ì£¬½öÓÃÏÂÃæÒ»¸öº¯Êý±ãÄÜÇá
-	// ËÉÊµÏÖ¸ßËÙ¡¢Á¬ÐøµÄDAÊý¾ÝÊä³ö
-	BOOL DEVAPI FAR PASCAL PCI8201_WriteDeviceDA(							// Ð´DAÊý¾Ý
-									HANDLE hDevice,							// Éè±¸¶ÔÏó¾ä±ú,ËüÓÉCreateDeviceº¯Êý´´½¨
-									LONG OutputRange,						// Êä³öÁ¿³Ì£¬¾ßÌå¶¨ÒåÇë²Î¿¼ÉÏÃæµÄ³£Á¿¶¨Òå²¿·Ö
-									SHORT nDAData,							// Êä³öµÄDAÔ­Ê¼Êý¾Ý[0, 4095]
-									int nDAChannel);						// DAÊä³öÍ¨µÀ[0-7]
+	//####################### DAï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ #################################
+	// ï¿½ï¿½ï¿½Ú´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¨ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½Ð©ï¿½Ó¿ï¿½ï¿½ï¿½òµ¥¡ï¿½ï¿½ï¿½ï¿½Ý¡ï¿½ï¿½ï¿½É¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½Öªï¿½ï¿½ï¿½è±¸
+	// ï¿½Í²ã¸´ï¿½Óµï¿½Ó²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð­ï¿½ï¿½Í·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ±ï¿½Ì£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	// ï¿½ï¿½Êµï¿½Ö¸ï¿½ï¿½Ù¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½DAï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	BOOL DEVAPI FAR PASCAL PCI8201_WriteDeviceDA(							// Ð´DAï¿½ï¿½ï¿½ï¿½
+									HANDLE hDevice,							// ï¿½è±¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½CreateDeviceï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+									LONG OutputRange,						// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì£ï¿½ï¿½ï¿½ï¿½å¶¨ï¿½ï¿½ï¿½ï¿½Î¿ï¿½ï¿½ï¿½ï¿½ï¿½Ä³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½å²¿ï¿½ï¿½
+									SHORT nDAData,							// ï¿½ï¿½ï¿½ï¿½ï¿½DAÔ­Ê¼ï¿½ï¿½ï¿½ï¿½[0, 4095]
+									int nDAChannel);						// DAï¿½ï¿½ï¿½Í¨ï¿½ï¿½[0-7]
 
-	//################# ÄÚ´æÓ³Éä¼Ä´æÆ÷Ö±½Ó²Ù×÷¼°¶ÁÐ´º¯Êý ########################
-	// ÊÊÓÃÓÚÓÃ»§¶Ô±¾Éè±¸¸üÖ±½Ó¡¢¸üÌØÊâ¡¢¸üµÍ²ã¡¢¸ü¸´ÔÓµÄ¿ØÖÆ¡£±ÈÈç¸ù¾ÝÌØÊâµÄ
-	// ¿ØÖÆ¶ÔÏóÐèÒªÌØÊâµÄ¿ØÖÆÁ÷³ÌºÍ¿ØÖÆÐ§ÂÊÊ±£¬ÔòÓÃ»§¿ÉÒÔÊ¹ÓÃÕâÐ©½Ó¿ÚÓèÒÔÊµÏÖ¡£
-	BOOL DEVAPI FAR PASCAL PCI8201_GetDeviceBar(					// È¡µÃÖ¸¶¨µÄÖ¸¶¨Éè±¸¼Ä´æÆ÷×éBARµØÖ·
-											HANDLE hDevice,			// Éè±¸¶ÔÏó¾ä±ú,ËüÓÉCreateDeviceº¯Êý´´½¨
-											__int64 pbPCIBar[6]);	// ·µ»ØPCI BARËùÓÐµØÖ·,¾ßÌåPCI BARÖÐÓÐ¶àÉÙ¿ÉÓÃµØÖ·Çë¿´Ó²¼þËµÃ÷Êé
-	BOOL DEVAPI FAR PASCAL PCI8201_GetDevVersion(					// »ñÈ¡Éè±¸¹Ì¼þ¼°³ÌÐò°æ±¾
-											HANDLE hDevice,			// Éè±¸¶ÔÏó¾ä±ú,ËüÓÉCreateDeviceº¯Êý´´½¨
-											PULONG pulFmwVersion,	// ¹Ì¼þ°æ±¾
-											PULONG pulDriverVersion);// Çý¶¯°æ±¾
+	//################# ï¿½Ú´ï¿½Ó³ï¿½ï¿½Ä´ï¿½ï¿½ï¿½Ö±ï¿½Ó²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð´ï¿½ï¿½ï¿½ï¿½ ########################
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã»ï¿½ï¿½Ô±ï¿½ï¿½è±¸ï¿½ï¿½Ö±ï¿½Ó¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½â¡¢ï¿½ï¿½ï¿½Í²ã¡¢ï¿½ï¿½ï¿½ï¿½ï¿½ÓµÄ¿ï¿½ï¿½Æ¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	// ï¿½ï¿½ï¿½Æ¶ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½Ä¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÌºÍ¿ï¿½ï¿½ï¿½Ð§ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½Ê¹ï¿½ï¿½ï¿½ï¿½Ð©ï¿½Ó¿ï¿½ï¿½ï¿½ï¿½ï¿½Êµï¿½Ö¡ï¿½
+	BOOL DEVAPI FAR PASCAL PCI8201_GetDeviceBar(					// È¡ï¿½ï¿½Ö¸ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½ï¿½è±¸ï¿½Ä´ï¿½ï¿½ï¿½ï¿½ï¿½BARï¿½ï¿½Ö·
+											HANDLE hDevice,			// ï¿½è±¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½CreateDeviceï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+											__int64 pbPCIBar[6]);	// ï¿½ï¿½ï¿½ï¿½PCI BARï¿½ï¿½ï¿½Ðµï¿½Ö·,ï¿½ï¿½ï¿½ï¿½PCI BARï¿½ï¿½ï¿½Ð¶ï¿½ï¿½Ù¿ï¿½ï¿½Ãµï¿½Ö·ï¿½ë¿´Ó²ï¿½ï¿½Ëµï¿½ï¿½ï¿½ï¿½
+	BOOL DEVAPI FAR PASCAL PCI8201_GetDevVersion(					// ï¿½ï¿½È¡ï¿½è±¸ï¿½Ì¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½æ±¾
+											HANDLE hDevice,			// ï¿½è±¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½CreateDeviceï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+											PULONG pulFmwVersion,	// ï¿½Ì¼ï¿½ï¿½æ±¾
+											PULONG pulDriverVersion);// ï¿½ï¿½ï¿½ï¿½ï¿½æ±¾
 
-	BOOL DEVAPI FAR PASCAL PCI8201_WriteRegisterByte(		// ÍùÖ¸¶¨¼Ä´æÆ÷¿Õ¼äÎ»ÖÃÐ´Èëµ¥½Ú×ÖÊý¾Ý
-											HANDLE hDevice,			// Éè±¸¶ÔÏó¾ä±ú,ËüÓÉCreateDeviceº¯Êý´´½¨
-											__int64 LinearAddr,		// Ö¸¶¨¼Ä´æÆ÷µÄÏßÐÔ»ùµØÖ·,ËüµÈÓÚGetDeviceAddrÖÐµÄLinearAddr²ÎÊý·µ»ØÖµ
-											__int64 OffsetBytes,		// Ïà¶ÔÓÚÏßÐÔ»ùµØÖ·»ùµØÖ·µÄÆ«ÒÆÎ»ÖÃ(×Ö½Ú)
-											BYTE Value);			// ÍùÖ¸¶¨µØÖ·Ð´Èëµ¥×Ö½ÚÊý¾Ý£¨ÆäµØÖ·ÓÉÏßÐÔ»ùµØÖ·ºÍÆ«ÒÆÎ»ÖÃ¾ö¶¨£©
+	BOOL DEVAPI FAR PASCAL PCI8201_WriteRegisterByte(		// ï¿½ï¿½Ö¸ï¿½ï¿½ï¿½Ä´ï¿½ï¿½ï¿½ï¿½Õ¼ï¿½Î»ï¿½ï¿½Ð´ï¿½ëµ¥ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+											HANDLE hDevice,			// ï¿½è±¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½CreateDeviceï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+											__int64 LinearAddr,		// Ö¸ï¿½ï¿½ï¿½Ä´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô»ï¿½ï¿½ï¿½Ö·,ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½GetDeviceAddrï¿½Ðµï¿½LinearAddrï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµ
+											__int64 OffsetBytes,		// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô»ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½ï¿½Ö·ï¿½ï¿½Æ«ï¿½ï¿½Î»ï¿½ï¿½(ï¿½Ö½ï¿½)
+											BYTE Value);			// ï¿½ï¿½Ö¸ï¿½ï¿½ï¿½ï¿½Ö·Ð´ï¿½ëµ¥ï¿½Ö½ï¿½ï¿½ï¿½ï¿½Ý£ï¿½ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½Ô»ï¿½ï¿½ï¿½Ö·ï¿½ï¿½Æ«ï¿½ï¿½Î»ï¿½Ã¾ï¿½ï¿½ï¿½ï¿½ï¿½
 
-	BOOL DEVAPI FAR PASCAL PCI8201_WriteRegisterWord(		// Ð´Ë«×Ö½ÚÊý¾Ý£¨ÆäÓàÍ¬ÉÏ£©
+	BOOL DEVAPI FAR PASCAL PCI8201_WriteRegisterWord(		// Ð´Ë«ï¿½Ö½ï¿½ï¿½ï¿½ï¿½Ý£ï¿½ï¿½ï¿½ï¿½ï¿½Í¬ï¿½Ï£ï¿½
 											HANDLE hDevice, 
 											__int64 LinearAddr, 
 											__int64 OffsetBytes,  
 											WORD Value);
 
-	BOOL DEVAPI FAR PASCAL PCI8201_WriteRegisterULong(		// Ð´ËÄ½Ú×ÖÊý¾Ý£¨ÆäÓàÍ¬ÉÏ£©
+	BOOL DEVAPI FAR PASCAL PCI8201_WriteRegisterULong(		// Ð´ï¿½Ä½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý£ï¿½ï¿½ï¿½ï¿½ï¿½Í¬ï¿½Ï£ï¿½
 											HANDLE hDevice, 
 											__int64 LinearAddr, 
 											__int64 OffsetBytes,  
 											ULONG Value);
 
-	BYTE DEVAPI FAR PASCAL PCI8201_ReadRegisterByte(		// ¶ÁÈëµ¥×Ö½ÚÊý¾Ý£¨ÆäÓàÍ¬ÉÏ£©
+	BYTE DEVAPI FAR PASCAL PCI8201_ReadRegisterByte(		// ï¿½ï¿½ï¿½ëµ¥ï¿½Ö½ï¿½ï¿½ï¿½ï¿½Ý£ï¿½ï¿½ï¿½ï¿½ï¿½Í¬ï¿½Ï£ï¿½
 											HANDLE hDevice, 
 											__int64 LinearAddr, 
 											ULONG OffsetBytes);
 
-	WORD DEVAPI FAR PASCAL PCI8201_ReadRegisterWord(		// ¶ÁÈëË«×Ö½ÚÊý¾Ý£¨ÆäÓàÍ¬ÉÏ£©
+	WORD DEVAPI FAR PASCAL PCI8201_ReadRegisterWord(		// ï¿½ï¿½ï¿½ï¿½Ë«ï¿½Ö½ï¿½ï¿½ï¿½ï¿½Ý£ï¿½ï¿½ï¿½ï¿½ï¿½Í¬ï¿½Ï£ï¿½
 											HANDLE hDevice, 
 											__int64 LinearAddr, 
 											ULONG OffsetBytes);
 
-	ULONG DEVAPI FAR PASCAL PCI8201_ReadRegisterULong(		// ¶ÁÈëËÄ×Ö½ÚÊý¾Ý£¨ÆäÓàÍ¬ÉÏ£©
+	ULONG DEVAPI FAR PASCAL PCI8201_ReadRegisterULong(		// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö½ï¿½ï¿½ï¿½ï¿½Ý£ï¿½ï¿½ï¿½ï¿½ï¿½Í¬ï¿½Ï£ï¿½
 											HANDLE hDevice, 
 											__int64 LinearAddr, 
 											ULONG OffsetBytes);
 
-	//################# I/O¶Ë¿ÚÖ±½Ó²Ù×÷¼°¶ÁÐ´º¯Êý ########################
-	// ÊÊÓÃÓÚÓÃ»§¶Ô±¾Éè±¸¸üÖ±½Ó¡¢¸üÌØÊâ¡¢¸üµÍ²ã¡¢¸ü¸´ÔÓµÄ¿ØÖÆ¡£±ÈÈç¸ù¾ÝÌØÊâµÄ
-	// ¿ØÖÆ¶ÔÏóÐèÒªÌØÊâµÄ¿ØÖÆÁ÷³ÌºÍ¿ØÖÆÐ§ÂÊÊ±£¬ÔòÓÃ»§¿ÉÒÔÊ¹ÓÃÕâÐ©½Ó¿ÚÓèÒÔÊµÏÖ¡£
-	// µ«ÕâÐ©º¯ÊýÖ÷ÒªÊÊÓÃÓÚ´«Í³Éè±¸£¬ÈçISA×ÜÏß¡¢²¢¿Ú¡¢´®¿ÚµÈÉè±¸£¬²»ÄÜÓÃÓÚ±¾PCIÉè±¸
+	//################# I/Oï¿½Ë¿ï¿½Ö±ï¿½Ó²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð´ï¿½ï¿½ï¿½ï¿½ ########################
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã»ï¿½ï¿½Ô±ï¿½ï¿½è±¸ï¿½ï¿½Ö±ï¿½Ó¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½â¡¢ï¿½ï¿½ï¿½Í²ã¡¢ï¿½ï¿½ï¿½ï¿½ï¿½ÓµÄ¿ï¿½ï¿½Æ¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	// ï¿½ï¿½ï¿½Æ¶ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½Ä¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÌºÍ¿ï¿½ï¿½ï¿½Ð§ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½Ê¹ï¿½ï¿½ï¿½ï¿½Ð©ï¿½Ó¿ï¿½ï¿½ï¿½ï¿½ï¿½Êµï¿½Ö¡ï¿½
+	// ï¿½ï¿½ï¿½ï¿½Ð©ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½Ú´ï¿½Í³ï¿½è±¸ï¿½ï¿½ï¿½ï¿½ISAï¿½ï¿½ï¿½ß¡ï¿½ï¿½ï¿½ï¿½Ú¡ï¿½ï¿½ï¿½ï¿½Úµï¿½ï¿½è±¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú±ï¿½PCIï¿½è±¸
 
 	BOOL DEVAPI FAR PASCAL PCI8201_WritePortByte(HANDLE hDevice, __int64 pbPort, BYTE Value);
     BOOL DEVAPI FAR PASCAL PCI8201_WritePortWord(HANDLE hDevice, __int64 pbPort, WORD Value);
@@ -99,16 +99,16 @@ extern "C" {
     WORD DEVAPI FAR PASCAL PCI8201_ReadPortWord(HANDLE hDevice, __int64 pbPort);
     ULONG DEVAPI FAR PASCAL PCI8201_ReadPortULong(HANDLE hDevice, __int64 pbPort);
 
-	//########################### Ïß³Ì²Ù×÷º¯Êý ######################################
-	HANDLE DEVAPI FAR PASCAL PCI8201_CreateSystemEvent(void);			// ´´½¨ÄÚºËÊÂ¼þ¶ÔÏó£¬¹©InitDeviceIntºÍVB×ÓÏß³ÌµÈº¯ÊýÊ¹ÓÃ
-	BOOL DEVAPI FAR PASCAL PCI8201_ReleaseSystemEvent(HANDLE hEvent);	// ÊÍ·ÅÄÚºËÊÂ¼þ¶ÔÏó
+	//########################### ï¿½ß³Ì²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ######################################
+	HANDLE DEVAPI FAR PASCAL PCI8201_CreateSystemEvent(void);			// ï¿½ï¿½ï¿½ï¿½ï¿½Úºï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ó£¬¹ï¿½InitDeviceIntï¿½ï¿½VBï¿½ï¿½ï¿½ß³ÌµÈºï¿½ï¿½ï¿½Ê¹ï¿½ï¿½
+	BOOL DEVAPI FAR PASCAL PCI8201_ReleaseSystemEvent(HANDLE hEvent);	// ï¿½Í·ï¿½ï¿½Úºï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½
 
 
 #ifdef __cplusplus
 }
 #endif
 
-// ×Ô¶¯°üº¬Çý¶¯º¯Êýµ¼Èë¿â
+// ï¿½Ô¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 #ifndef _PCI8201_DRIVER_
 	#ifndef _WIN64
 		#pragma comment(lib, "PCI8201_32.lib")

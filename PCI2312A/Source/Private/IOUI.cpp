@@ -1,4 +1,4 @@
-/** Copyright (c) 2018 Hefei And Technology Co.,Ltd
+ï»¿/** Copyright (c) 2018 Hefei And Technology Co.,Ltd
  *  Author: MrBaoquan
  *  CreateTime: 2018-5-16 10:44
  *  Email: mrma617@gmail.com
@@ -14,7 +14,7 @@
 #pragma comment(lib,"PCI2312A_32.lib")
 #endif
 
-/** Éè±¸»ù±¾ÐÅÏ¢ */
+/** ï¿½è±¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢ */
 DeviceInfo g_DeviceInfo; 
 
 IOUI_API DeviceInfo* __stdcall Initialize()

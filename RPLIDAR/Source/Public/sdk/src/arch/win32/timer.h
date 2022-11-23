@@ -1,4 +1,4 @@
-/*
+﻿/*
  *  RPLIDAR SDK
  *
  *  Copyright (c) 2009 - 2014 RoboPeak Team

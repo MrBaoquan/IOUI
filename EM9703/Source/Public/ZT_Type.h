@@ -1,4 +1,4 @@
-#ifndef ZT_TYPE_H
+﻿#ifndef ZT_TYPE_H
 #define ZT_TYPE_H
 
 typedef long				I32;

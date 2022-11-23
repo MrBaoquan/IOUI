@@ -1,4 +1,4 @@
-/** Copyright (c) 2018 Hefei And Technology Co.,Ltd
+ï»¿/** Copyright (c) 2018 Hefei And Technology Co.,Ltd
  *  Author: MrBaoquan
  *  CreateTime: 2018-5-30 10:03
  *  Email: mrma617@gmail.com
@@ -8,35 +8,35 @@
 #define _PCI2312A_DEVICE_
 
 //***********************************************************
-// ÓÃÓÚINTÓ²¼þ²ÎÊý
+// ï¿½ï¿½ï¿½ï¿½INTÓ²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 typedef struct _PCI2312A_PARA_INT
 {
-	LONG lINTDrection;      // ÖÐ¶Ï·½Ïò:0:ÏÂ½µÑØ´¥·¢ÖÐ¶Ï 1:ÉÏÉýÑØ´¥·¢ÖÐ¶Ï
-	LONG lIntEnable[16];	// ¿ØÖÆ16¸öÍ¨µÀÖÐ¶ÏÊ¹ÄÜ, TRUE£ºÊ¹ÄÜ;FALSE:½ûÖ¹
-	ULONG lINTTarCount[16];	// ÖÐ¶ÏÄ¿±êÊý£¬µ±lINTEndCount>0Ê± Í¨µÀÖÐ¶Ï´ïµ½Ä¿±êÊýºó½ûÖ¹¸ÃÍ¨µÀÖÐ¶Ï
+	LONG lINTDrection;      // ï¿½Ð¶Ï·ï¿½ï¿½ï¿½:0:ï¿½Â½ï¿½ï¿½Ø´ï¿½ï¿½ï¿½ï¿½Ð¶ï¿½ 1:ï¿½ï¿½ï¿½ï¿½ï¿½Ø´ï¿½ï¿½ï¿½ï¿½Ð¶ï¿½
+	LONG lIntEnable[16];	// ï¿½ï¿½ï¿½ï¿½16ï¿½ï¿½Í¨ï¿½ï¿½ï¿½Ð¶ï¿½Ê¹ï¿½ï¿½, TRUEï¿½ï¿½Ê¹ï¿½ï¿½;FALSE:ï¿½ï¿½Ö¹
+	ULONG lINTTarCount[16];	// ï¿½Ð¶ï¿½Ä¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½lINTEndCount>0Ê± Í¨ï¿½ï¿½ï¿½Ð¶Ï´ïµ½Ä¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¹ï¿½ï¿½Í¨ï¿½ï¿½ï¿½Ð¶ï¿½
 } PCI2312A_PARA_INT, *PPCI2312A_PARA_INT;
 
 typedef struct _PCI2312A_INT_STATE
 {
-	SHORT INTTime[8];		// ÖÐ¶ÏÊ±¼ä
-	WORD INTSrc;			// ÖÐ¶ÏÊ±¸÷Í¨µÀÖÐ¶Ï×´Ì¬
-	WORD INTDIVal;			// ÖÐ¶ÏÊ±¸÷Í¨µÀ×´Ì¬
-	LONG INTCount[16];		// ÖÐ¶ÏÊ±¸÷Í¨µÀÖÐ¶ÏÊý
+	SHORT INTTime[8];		// ï¿½Ð¶ï¿½Ê±ï¿½ï¿½
+	WORD INTSrc;			// ï¿½Ð¶ï¿½Ê±ï¿½ï¿½Í¨ï¿½ï¿½ï¿½Ð¶ï¿½×´Ì¬
+	WORD INTDIVal;			// ï¿½Ð¶ï¿½Ê±ï¿½ï¿½Í¨ï¿½ï¿½×´Ì¬
+	LONG INTCount[16];		// ï¿½Ð¶ï¿½Ê±ï¿½ï¿½Í¨ï¿½ï¿½ï¿½Ð¶ï¿½ï¿½ï¿½
 } PCI2312A_INT_STATE, *PPCI2312A_INT_STATE;
 
 
-//######################## ³£Á¿¶¨Òå #################################
-// CreateFileObjectËùÓÃµÄÎÄ¼þ²Ù×÷·½Ê½¿ØÖÆ×Ö(¿ÉÍ¨¹ý»òÖ¸ÁîÊµÏÖ¶àÖÖ·½Ê½²¢²Ù×÷)
-#define PCI2312A_modeRead				0x0000		// Ö»¶ÁÎÄ¼þ·½Ê½
-#define PCI2312A_modeWrite				0x0001		// Ö»Ð´ÎÄ¼þ·½Ê½
-#define	PCI2312A_modeReadWrite			0x0002		// ¼È¶ÁÓÖÐ´ÎÄ¼þ·½Ê½
-#define PCI2312A_modeCreate				0x1000		// Èç¹ûÎÄ¼þ²»´æ¿ÉÒÔ´´½¨¸ÃÎÄ¼þ£¬Èç¹û´æÔÚ£¬ÔòÖØ½¨´ËÎÄ¼þ£¬²¢Çå0
-#define PCI2312A_typeText				0x4000		// ÒÔÎÄ±¾·½Ê½²Ù×÷ÎÄ¼þ
+//######################## ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ #################################
+// CreateFileObjectï¿½ï¿½ï¿½Ãµï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½(ï¿½ï¿½Í¨ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½Êµï¿½Ö¶ï¿½ï¿½Ö·ï¿½Ê½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½)
+#define PCI2312A_modeRead				0x0000		// Ö»ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½Ê½
+#define PCI2312A_modeWrite				0x0001		// Ö»Ð´ï¿½Ä¼ï¿½ï¿½ï¿½Ê½
+#define	PCI2312A_modeReadWrite			0x0002		// ï¿½È¶ï¿½ï¿½ï¿½Ð´ï¿½Ä¼ï¿½ï¿½ï¿½Ê½
+#define PCI2312A_modeCreate				0x1000		// ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú£ï¿½ï¿½ï¿½ï¿½Ø½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½0
+#define PCI2312A_typeText				0x4000		// ï¿½ï¿½ï¿½Ä±ï¿½ï¿½ï¿½Ê½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½
 
 //***********************************************************
 
 //***********************************************************
-// ÓÃ»§º¯Êý½Ó¿Ú
+// ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¿ï¿½
 #ifndef _PCI2312A_DRIVER_
 #define DEVAPI __declspec(dllimport)
 #else
@@ -46,106 +46,106 @@ typedef struct _PCI2312A_INT_STATE
 #ifdef __cplusplus
 extern "C" {
 #endif
-	//######################## ³£¹æÍ¨ÓÃº¯Êý #################################
-	// ÊÊÓÃÓÚ±¾Éè±¸µÄ×î»ù±¾²Ù×÷
-	HANDLE DEVAPI FAR PASCAL PCI2312A_CreateDevice(int DeviceID = 0);		// ´´½¨Éè±¸¶ÔÏó
-	int DEVAPI FAR PASCAL PCI2312A_GetDeviceCount(HANDLE hDevice);			// È¡µÃÉè±¸×ÜÌ¨Êý
+	//######################## ï¿½ï¿½ï¿½ï¿½Í¨ï¿½Ãºï¿½ï¿½ï¿½ #################################
+	// ï¿½ï¿½ï¿½ï¿½ï¿½Ú±ï¿½ï¿½è±¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	HANDLE DEVAPI FAR PASCAL PCI2312A_CreateDevice(int DeviceID = 0);		// ï¿½ï¿½ï¿½ï¿½ï¿½è±¸ï¿½ï¿½ï¿½ï¿½
+	int DEVAPI FAR PASCAL PCI2312A_GetDeviceCount(HANDLE hDevice);			// È¡ï¿½ï¿½ï¿½è±¸ï¿½ï¿½Ì¨ï¿½ï¿½
 	int DEVAPI FAR PASCAL PCI2312A_GetDeviceCurrentID(HANDLE hDevice);
-	BOOL DEVAPI FAR PASCAL PCI2312A_ListDeviceDlg(HANDLE hDevice);			// ÁÐ±íÏµÍ³µ±ÖÐµÄËùÓÐµÄ¸ÃPCIÉè±¸
-    BOOL DEVAPI FAR PASCAL PCI2312A_ReleaseDevice(HANDLE hDevice);			// ¹Ø±ÕÉè±¸,½ûÖ¹´«Êä,ÇÒÊÍ·Å×ÊÔ´
+	BOOL DEVAPI FAR PASCAL PCI2312A_ListDeviceDlg(HANDLE hDevice);			// ï¿½Ð±ï¿½ÏµÍ³ï¿½ï¿½ï¿½Ðµï¿½ï¿½ï¿½ï¿½ÐµÄ¸ï¿½PCIï¿½è±¸
+    BOOL DEVAPI FAR PASCAL PCI2312A_ReleaseDevice(HANDLE hDevice);			// ï¿½Ø±ï¿½ï¿½è±¸,ï¿½ï¿½Ö¹ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½Í·ï¿½ï¿½ï¿½Ô´
 
-	//####################### Êý×ÖI/OÊäÈëÊä³öº¯Êý #################################
-	// ÓÃ»§¿ÉÒÔÊ¹ÓÃWriteRegisterULongºÍReadRegisterULongµÈº¯ÊýÖ±½Ó¿ØÖÆ¼Ä´æÆ÷½øÐÐI/O
-	// ÊäÈëÊä³ö£¬µ«Ê¹ÓÃÏÂÃæÁ½¸öº¯Êý¸üÊ¡ÊÂ£¬Ëü²»ÐèÒªÄú¹ØÐÄ¼Ä´æÆ÷·ÖÅäºÍÎ»²Ù×÷µÈ£¬¶øÖ»
-	// ÐèÏóVBµÈÓïÑÔµÄÊôÐÔ²Ù×÷ÄÇÃ´¼òµ¥µØÊµÏÖ¸÷¿ª¹ØÁ¿Í¨µÀµÄ¿ØÖÆ¡£
-	BOOL DEVAPI FAR PASCAL PCI2312A_SetDeviceDO(            // ÉèÖÃÊý×ÖÁ¿Êä³ö×´Ì¬     
-										HANDLE hDevice,     // Éè±¸¾ä±ú								        
-										BYTE bDOSts[16]);	// ¿ª¹Ø×´Ì¬
+	//####################### ï¿½ï¿½ï¿½ï¿½I/Oï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ #################################
+	// ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½Ê¹ï¿½ï¿½WriteRegisterULongï¿½ï¿½ReadRegisterULongï¿½Èºï¿½ï¿½ï¿½Ö±ï¿½Ó¿ï¿½ï¿½Æ¼Ä´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½I/O
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¡ï¿½Â£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½Ä¼Ä´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½ï¿½ï¿½ï¿½È£ï¿½ï¿½ï¿½Ö»
+	// ï¿½ï¿½ï¿½ï¿½VBï¿½ï¿½ï¿½ï¿½ï¿½Ôµï¿½ï¿½ï¿½ï¿½Ô²ï¿½ï¿½ï¿½ï¿½ï¿½Ã´ï¿½òµ¥µï¿½Êµï¿½Ö¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¨ï¿½ï¿½ï¿½Ä¿ï¿½ï¿½Æ¡ï¿½
+	BOOL DEVAPI FAR PASCAL PCI2312A_SetDeviceDO(            // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×´Ì¬     
+										HANDLE hDevice,     // ï¿½è±¸ï¿½ï¿½ï¿½								        
+										BYTE bDOSts[16]);	// ï¿½ï¿½ï¿½ï¿½×´Ì¬
 
-	BOOL DEVAPI FAR PASCAL PCI2312A_GetDeviceDO(            // È¡µÃÊý×ÖÁ¿Êä³ö×´Ì¬     
-										HANDLE hDevice,     // Éè±¸¾ä±ú								        
-										BYTE bDISts[16]);	// ¿ª¹Ø×´Ì¬	
-
-
-	BOOL DEVAPI FAR PASCAL PCI2312A_GetDeviceDI(            // È¡µÃÊý×ÖÁ¿ÊäÈë×´Ì¬     
-										HANDLE hDevice,     // Éè±¸¾ä±ú								        
-										BYTE bDISts[16]);	// ¿ª¹Ø×´Ì¬	
-
-	//####################### ÖÐ¶Ïº¯Êý #################################
-	// ËüÓÉÓ²¼þÐÅºÅµÄ×´Ì¬±ä»¯ÒýÆðCPU²úÉúÖÐ¶ÏÊÂ¼þhEventInt¡£
-	BOOL DEVAPI FAR PASCAL PCI2312A_InitDeviceInt(			// ³õÊ¼»¯ÖÐ¶Ï
-										HANDLE hDevice,     // Éè±¸¾ä±ú	
-										HANDLE hEventInt,	// ÖÐ¶ÏÊÂ¼þ
-										PPCI2312A_PARA_INT pINTPara);	//  Ó²¼þ²ÎÊý, Ëü½öÔÚ´Ëº¯ÊýÖÐ¾ö¶¨Ó²¼þ×´Ì¬
-
-	ULONG DEVAPI FAR PASCAL PCI2312A_GetDeviceIntCount(HANDLE hDevice,	// ÔÚÖÐ¶Ï³õÊ¼»¯ºó£¬È¡µÃÖ¸¶¨Í¨µÀ²úÉúµÄ´ÎÊý
-										LONG lChannel = 0);				// Í¨µÀºÅ[0~15]
-
-	BOOL DEVAPI FAR PASCAL PCI2312A_ClearIntCount(HANDLE hDevice,		// ¶ÔÖ¸¶¨¿ª¹ØÁ¿ÊäÈëÍ¨µÀµÄÖÐ¶Ï´ÎÊýÇåÁã£¬²¢Ê¹ÄÜ¸ÃÍ¨µÀÖÐ¶Ï
-										LONG lChannel = 0);				// Í¨µÀºÅ[0~15]
-
-	BOOL DEVAPI FAR PASCAL PCI2312A_GetIntSrc(HANDLE hDevice,			// È¡µÃ¸÷Í¨µÀÖÐ¶Ï×´Ì¬
-										LONG lChannelInt[16]);			// ¸÷Í¨µÀÖÐ¶Ï×´Ì¬
-
-	ULONG DEVAPI FAR PASCAL PCI2312A_GetIntStateCount(HANDLE hDevice);	// È¡µÃµ±Ç°Çý¶¯ÖÐÊ£ÓàÖÐ¶Ï×´Ì¬Êý£¬×î´ó2048£¬³¬³ö¸²¸Ç
+	BOOL DEVAPI FAR PASCAL PCI2312A_GetDeviceDO(            // È¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×´Ì¬     
+										HANDLE hDevice,     // ï¿½è±¸ï¿½ï¿½ï¿½								        
+										BYTE bDISts[16]);	// ï¿½ï¿½ï¿½ï¿½×´Ì¬	
 
 
-	LONG DEVAPI FAR PASCAL PCI2312A_ReadINTState(						// ¶ÁÈ¡ÖÐ¶Ï×´Ì¬
-										HANDLE hDevice,					// Éè±¸¾ä±ú	
-										PCI2312A_INT_STATE pINTState[],	// ·µ»ØÖÐ¶Ï×´Ì¬
-										ULONG lReadCount);				// ¶ÁÈ¡ÖÐ¶Ï×´Ì¬Êý
+	BOOL DEVAPI FAR PASCAL PCI2312A_GetDeviceDI(            // È¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×´Ì¬     
+										HANDLE hDevice,     // ï¿½è±¸ï¿½ï¿½ï¿½								        
+										BYTE bDISts[16]);	// ï¿½ï¿½ï¿½ï¿½×´Ì¬	
 
-	BOOL DEVAPI FAR PASCAL PCI2312A_ReleaseDeviceInt(HANDLE hDevice); // ÊÍ·ÅÖÐ¶Ï×ÊÔ´
+	//####################### ï¿½Ð¶Ïºï¿½ï¿½ï¿½ #################################
+	// ï¿½ï¿½ï¿½ï¿½Ó²ï¿½ï¿½ï¿½ÅºÅµï¿½×´Ì¬ï¿½ä»¯ï¿½ï¿½ï¿½ï¿½CPUï¿½ï¿½ï¿½ï¿½ï¿½Ð¶ï¿½ï¿½Â¼ï¿½hEventIntï¿½ï¿½
+	BOOL DEVAPI FAR PASCAL PCI2312A_InitDeviceInt(			// ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½Ð¶ï¿½
+										HANDLE hDevice,     // ï¿½è±¸ï¿½ï¿½ï¿½	
+										HANDLE hEventInt,	// ï¿½Ð¶ï¿½ï¿½Â¼ï¿½
+										PPCI2312A_PARA_INT pINTPara);	//  Ó²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½ï¿½Ú´Ëºï¿½ï¿½ï¿½ï¿½Ð¾ï¿½ï¿½ï¿½Ó²ï¿½ï¿½×´Ì¬
 
-	//################# ÄÚ´æÓ³Éä¼Ä´æÆ÷Ö±½Ó²Ù×÷¼°¶ÁÐ´º¯Êý ########################
-	// ÊÊÓÃÓÚÓÃ»§¶Ô±¾Éè±¸¸üÖ±½Ó¡¢¸üÌØÊâ¡¢¸üµÍ²ã¡¢¸ü¸´ÔÓµÄ¿ØÖÆ¡£±ÈÈç¸ù¾ÝÌØÊâµÄ
-	// ¿ØÖÆ¶ÔÏóÐèÒªÌØÊâµÄ¿ØÖÆÁ÷³ÌºÍ¿ØÖÆÐ§ÂÊÊ±£¬ÔòÓÃ»§¿ÉÒÔÊ¹ÓÃÕâÐ©½Ó¿ÚÓèÒÔÊµÏÖ¡£
-	BOOL DEVAPI FAR PASCAL PCI2312A_GetDeviceBar(					// È¡µÃÖ¸¶¨µÄÖ¸¶¨Éè±¸¼Ä´æÆ÷×éBARµØÖ·
-											HANDLE hDevice,			// Éè±¸¶ÔÏó¾ä±ú,ËüÓÉCreateDeviceº¯Êý´´½¨
-											__int64 pbPCIBar[6]);	// ·µ»ØPCI BARËùÓÐµØÖ·,¾ßÌåPCI BARÖÐÓÐ¶àÉÙ¿ÉÓÃµØÖ·Çë¿´Ó²¼þËµÃ÷Êé
+	ULONG DEVAPI FAR PASCAL PCI2312A_GetDeviceIntCount(HANDLE hDevice,	// ï¿½ï¿½ï¿½Ð¶Ï³ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½È¡ï¿½ï¿½Ö¸ï¿½ï¿½Í¨ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä´ï¿½ï¿½ï¿½
+										LONG lChannel = 0);				// Í¨ï¿½ï¿½ï¿½ï¿½[0~15]
 
-	BOOL DEVAPI FAR PASCAL PCI2312A_GetDevVersion(					// »ñÈ¡Éè±¸¹Ì¼þ¼°³ÌÐò°æ±¾
-											HANDLE hDevice,			// Éè±¸¶ÔÏó¾ä±ú,ËüÓÉCreateDeviceº¯Êý´´½¨
-											PULONG pulFmwVersion,	// ¹Ì¼þ°æ±¾
-											PULONG pulDriverVersion);// Çý¶¯°æ±¾
+	BOOL DEVAPI FAR PASCAL PCI2312A_ClearIntCount(HANDLE hDevice,		// ï¿½ï¿½Ö¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¨ï¿½ï¿½ï¿½ï¿½ï¿½Ð¶Ï´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ã£¬ï¿½ï¿½Ê¹ï¿½Ü¸ï¿½Í¨ï¿½ï¿½ï¿½Ð¶ï¿½
+										LONG lChannel = 0);				// Í¨ï¿½ï¿½ï¿½ï¿½[0~15]
 
-	BOOL DEVAPI FAR PASCAL PCI2312A_WriteRegisterByte(			// ÍùÖ¸¶¨¼Ä´æÆ÷¿Õ¼äÎ»ÖÃÐ´Èëµ¥½Ú×ÖÊý¾Ý
-											HANDLE hDevice,			// Éè±¸¶ÔÏó¾ä±ú,ËüÓÉCreateDeviceº¯Êý´´½¨
-											__int64 pbLinearAddr,	// Ö¸¶¨¼Ä´æÆ÷µÄÏßÐÔ»ùµØÖ·,ËüµÈÓÚGetDeviceAddrÖÐµÄpbLinearAddr²ÎÊý·µ»ØÖµ
-											ULONG OffsetBytes,		// Ïà¶ÔÓÚÏßÐÔ»ùµØÖ·»ùµØÖ·µÄÆ«ÒÆÎ»ÖÃ(×Ö½Ú)
-											BYTE Value);			// ÍùÖ¸¶¨µØÖ·Ð´Èëµ¥×Ö½ÚÊý¾Ý£¨ÆäµØÖ·ÓÉÏßÐÔ»ùµØÖ·ºÍÆ«ÒÆÎ»ÖÃ¾ö¶¨£©
+	BOOL DEVAPI FAR PASCAL PCI2312A_GetIntSrc(HANDLE hDevice,			// È¡ï¿½Ã¸ï¿½Í¨ï¿½ï¿½ï¿½Ð¶ï¿½×´Ì¬
+										LONG lChannelInt[16]);			// ï¿½ï¿½Í¨ï¿½ï¿½ï¿½Ð¶ï¿½×´Ì¬
 
-	BOOL DEVAPI FAR PASCAL PCI2312A_WriteRegisterWord(			// Ð´Ë«×Ö½ÚÊý¾Ý£¨ÆäÓàÍ¬ÉÏ£©
+	ULONG DEVAPI FAR PASCAL PCI2312A_GetIntStateCount(HANDLE hDevice);	// È¡ï¿½Ãµï¿½Ç°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê£ï¿½ï¿½ï¿½Ð¶ï¿½×´Ì¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½2048ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+
+
+	LONG DEVAPI FAR PASCAL PCI2312A_ReadINTState(						// ï¿½ï¿½È¡ï¿½Ð¶ï¿½×´Ì¬
+										HANDLE hDevice,					// ï¿½è±¸ï¿½ï¿½ï¿½	
+										PCI2312A_INT_STATE pINTState[],	// ï¿½ï¿½ï¿½ï¿½ï¿½Ð¶ï¿½×´Ì¬
+										ULONG lReadCount);				// ï¿½ï¿½È¡ï¿½Ð¶ï¿½×´Ì¬ï¿½ï¿½
+
+	BOOL DEVAPI FAR PASCAL PCI2312A_ReleaseDeviceInt(HANDLE hDevice); // ï¿½Í·ï¿½ï¿½Ð¶ï¿½ï¿½ï¿½Ô´
+
+	//################# ï¿½Ú´ï¿½Ó³ï¿½ï¿½Ä´ï¿½ï¿½ï¿½Ö±ï¿½Ó²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð´ï¿½ï¿½ï¿½ï¿½ ########################
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã»ï¿½ï¿½Ô±ï¿½ï¿½è±¸ï¿½ï¿½Ö±ï¿½Ó¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½â¡¢ï¿½ï¿½ï¿½Í²ã¡¢ï¿½ï¿½ï¿½ï¿½ï¿½ÓµÄ¿ï¿½ï¿½Æ¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	// ï¿½ï¿½ï¿½Æ¶ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½Ä¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÌºÍ¿ï¿½ï¿½ï¿½Ð§ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½Ê¹ï¿½ï¿½ï¿½ï¿½Ð©ï¿½Ó¿ï¿½ï¿½ï¿½ï¿½ï¿½Êµï¿½Ö¡ï¿½
+	BOOL DEVAPI FAR PASCAL PCI2312A_GetDeviceBar(					// È¡ï¿½ï¿½Ö¸ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½ï¿½è±¸ï¿½Ä´ï¿½ï¿½ï¿½ï¿½ï¿½BARï¿½ï¿½Ö·
+											HANDLE hDevice,			// ï¿½è±¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½CreateDeviceï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+											__int64 pbPCIBar[6]);	// ï¿½ï¿½ï¿½ï¿½PCI BARï¿½ï¿½ï¿½Ðµï¿½Ö·,ï¿½ï¿½ï¿½ï¿½PCI BARï¿½ï¿½ï¿½Ð¶ï¿½ï¿½Ù¿ï¿½ï¿½Ãµï¿½Ö·ï¿½ë¿´Ó²ï¿½ï¿½Ëµï¿½ï¿½ï¿½ï¿½
+
+	BOOL DEVAPI FAR PASCAL PCI2312A_GetDevVersion(					// ï¿½ï¿½È¡ï¿½è±¸ï¿½Ì¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½æ±¾
+											HANDLE hDevice,			// ï¿½è±¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½CreateDeviceï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+											PULONG pulFmwVersion,	// ï¿½Ì¼ï¿½ï¿½æ±¾
+											PULONG pulDriverVersion);// ï¿½ï¿½ï¿½ï¿½ï¿½æ±¾
+
+	BOOL DEVAPI FAR PASCAL PCI2312A_WriteRegisterByte(			// ï¿½ï¿½Ö¸ï¿½ï¿½ï¿½Ä´ï¿½ï¿½ï¿½ï¿½Õ¼ï¿½Î»ï¿½ï¿½Ð´ï¿½ëµ¥ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+											HANDLE hDevice,			// ï¿½è±¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½CreateDeviceï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+											__int64 pbLinearAddr,	// Ö¸ï¿½ï¿½ï¿½Ä´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô»ï¿½ï¿½ï¿½Ö·,ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½GetDeviceAddrï¿½Ðµï¿½pbLinearAddrï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµ
+											ULONG OffsetBytes,		// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô»ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½ï¿½Ö·ï¿½ï¿½Æ«ï¿½ï¿½Î»ï¿½ï¿½(ï¿½Ö½ï¿½)
+											BYTE Value);			// ï¿½ï¿½Ö¸ï¿½ï¿½ï¿½ï¿½Ö·Ð´ï¿½ëµ¥ï¿½Ö½ï¿½ï¿½ï¿½ï¿½Ý£ï¿½ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½Ô»ï¿½ï¿½ï¿½Ö·ï¿½ï¿½Æ«ï¿½ï¿½Î»ï¿½Ã¾ï¿½ï¿½ï¿½ï¿½ï¿½
+
+	BOOL DEVAPI FAR PASCAL PCI2312A_WriteRegisterWord(			// Ð´Ë«ï¿½Ö½ï¿½ï¿½ï¿½ï¿½Ý£ï¿½ï¿½ï¿½ï¿½ï¿½Í¬ï¿½Ï£ï¿½
 											HANDLE hDevice, 
 											__int64 pbLinearAddr, 
 											ULONG OffsetBytes,  
 											WORD Value);
 
-	BOOL DEVAPI FAR PASCAL PCI2312A_WriteRegisterULong(			// Ð´ËÄ½Ú×ÖÊý¾Ý£¨ÆäÓàÍ¬ÉÏ£©
+	BOOL DEVAPI FAR PASCAL PCI2312A_WriteRegisterULong(			// Ð´ï¿½Ä½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý£ï¿½ï¿½ï¿½ï¿½ï¿½Í¬ï¿½Ï£ï¿½
 											HANDLE hDevice, 
 											__int64 pbLinearAddr, 
 											ULONG OffsetBytes,  
 											ULONG Value);
 
-	BYTE DEVAPI FAR PASCAL PCI2312A_ReadRegisterByte(			// ¶ÁÈëµ¥×Ö½ÚÊý¾Ý£¨ÆäÓàÍ¬ÉÏ£©
+	BYTE DEVAPI FAR PASCAL PCI2312A_ReadRegisterByte(			// ï¿½ï¿½ï¿½ëµ¥ï¿½Ö½ï¿½ï¿½ï¿½ï¿½Ý£ï¿½ï¿½ï¿½ï¿½ï¿½Í¬ï¿½Ï£ï¿½
 											HANDLE hDevice, 
 											__int64 pbLinearAddr, 
 											ULONG OffsetBytes);
 
-	WORD DEVAPI FAR PASCAL PCI2312A_ReadRegisterWord(			// ¶ÁÈëË«×Ö½ÚÊý¾Ý£¨ÆäÓàÍ¬ÉÏ£©
+	WORD DEVAPI FAR PASCAL PCI2312A_ReadRegisterWord(			// ï¿½ï¿½ï¿½ï¿½Ë«ï¿½Ö½ï¿½ï¿½ï¿½ï¿½Ý£ï¿½ï¿½ï¿½ï¿½ï¿½Í¬ï¿½Ï£ï¿½
 											HANDLE hDevice, 
 											__int64 pbLinearAddr, 
 											ULONG OffsetBytes);
 
-	ULONG DEVAPI FAR PASCAL PCI2312A_ReadRegisterULong(			// ¶ÁÈëËÄ×Ö½ÚÊý¾Ý£¨ÆäÓàÍ¬ÉÏ£©
+	ULONG DEVAPI FAR PASCAL PCI2312A_ReadRegisterULong(			// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö½ï¿½ï¿½ï¿½ï¿½Ý£ï¿½ï¿½ï¿½ï¿½ï¿½Í¬ï¿½Ï£ï¿½
 											HANDLE hDevice, 
 											__int64 pbLinearAddr, 
 											ULONG OffsetBytes);
 
-	//################# I/O¶Ë¿ÚÖ±½Ó²Ù×÷¼°¶ÁÐ´º¯Êý ########################
-	// ÊÊÓÃÓÚÓÃ»§¶Ô±¾Éè±¸¸üÖ±½Ó¡¢¸üÌØÊâ¡¢¸üµÍ²ã¡¢¸ü¸´ÔÓµÄ¿ØÖÆ¡£±ÈÈç¸ù¾ÝÌØÊâµÄ
-	// ¿ØÖÆ¶ÔÏóÐèÒªÌØÊâµÄ¿ØÖÆÁ÷³ÌºÍ¿ØÖÆÐ§ÂÊÊ±£¬ÔòÓÃ»§¿ÉÒÔÊ¹ÓÃÕâÐ©½Ó¿ÚÓèÒÔÊµÏÖ¡£
-	// µ«ÕâÐ©º¯ÊýÖ÷ÒªÊÊÓÃÓÚ´«Í³Éè±¸£¬ÈçISA×ÜÏß¡¢²¢¿Ú¡¢´®¿ÚµÈÉè±¸£¬²»ÄÜÓÃÓÚ±¾PCIÉè±¸
+	//################# I/Oï¿½Ë¿ï¿½Ö±ï¿½Ó²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð´ï¿½ï¿½ï¿½ï¿½ ########################
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã»ï¿½ï¿½Ô±ï¿½ï¿½è±¸ï¿½ï¿½Ö±ï¿½Ó¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½â¡¢ï¿½ï¿½ï¿½Í²ã¡¢ï¿½ï¿½ï¿½ï¿½ï¿½ÓµÄ¿ï¿½ï¿½Æ¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	// ï¿½ï¿½ï¿½Æ¶ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½Ä¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÌºÍ¿ï¿½ï¿½ï¿½Ð§ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½Ê¹ï¿½ï¿½ï¿½ï¿½Ð©ï¿½Ó¿ï¿½ï¿½ï¿½ï¿½ï¿½Êµï¿½Ö¡ï¿½
+	// ï¿½ï¿½ï¿½ï¿½Ð©ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½Ú´ï¿½Í³ï¿½è±¸ï¿½ï¿½ï¿½ï¿½ISAï¿½ï¿½ï¿½ß¡ï¿½ï¿½ï¿½ï¿½Ú¡ï¿½ï¿½ï¿½ï¿½Úµï¿½ï¿½è±¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú±ï¿½PCIï¿½è±¸
 	BOOL DEVAPI FAR PASCAL PCI2312A_WritePortByte(HANDLE hDevice, __int64 pbPort, BYTE Value);
     BOOL DEVAPI FAR PASCAL PCI2312A_WritePortWord(HANDLE hDevice, __int64 pbPort, WORD Value);
     BOOL DEVAPI FAR PASCAL PCI2312A_WritePortULong(HANDLE hDevice, __int64 pbPort, ULONG Value);
@@ -154,16 +154,16 @@ extern "C" {
     WORD DEVAPI FAR PASCAL PCI2312A_ReadPortWord(HANDLE hDevice, __int64 pbPort);
     ULONG DEVAPI FAR PASCAL PCI2312A_ReadPortULong(HANDLE hDevice, __int64 pbPort);
 
-	//########################### Ïß³Ì²Ù×÷º¯Êý ######################################
-	HANDLE DEVAPI FAR PASCAL PCI2312A_CreateSystemEvent(void);			// ´´½¨ÄÚºËÊÂ¼þ¶ÔÏó£¬¹©InitDeviceIntºÍVB×ÓÏß³ÌµÈº¯ÊýÊ¹ÓÃ
-	BOOL DEVAPI FAR PASCAL PCI2312A_ReleaseSystemEvent(HANDLE hEvent);	// ÊÍ·ÅÄÚºËÊÂ¼þ¶ÔÏó
+	//########################### ï¿½ß³Ì²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ######################################
+	HANDLE DEVAPI FAR PASCAL PCI2312A_CreateSystemEvent(void);			// ï¿½ï¿½ï¿½ï¿½ï¿½Úºï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ó£¬¹ï¿½InitDeviceIntï¿½ï¿½VBï¿½ï¿½ï¿½ß³ÌµÈºï¿½ï¿½ï¿½Ê¹ï¿½ï¿½
+	BOOL DEVAPI FAR PASCAL PCI2312A_ReleaseSystemEvent(HANDLE hEvent);	// ï¿½Í·ï¿½ï¿½Úºï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½
 
 
 #ifdef __cplusplus
 }
 #endif
 
-// ×Ô¶¯°üº¬Çý¶¯º¯Êýµ¼Èë¿â
+// ï¿½Ô¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 #ifndef _PCI2312A_DRIVER_
 	#ifndef _WIN64
 		#pragma comment(lib, "PCI2312A_32.lib")

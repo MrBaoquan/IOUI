@@ -267,3 +267,4 @@ ModelManifest.xml
 
 # FAKE - F# Make
 .fake/
+*.exe

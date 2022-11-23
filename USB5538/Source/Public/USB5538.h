@@ -1,10 +1,10 @@
-#ifndef _USB5538_DEVICE_
+ï»¿#ifndef _USB5538_DEVICE_
 #define _USB5538_DEVICE_
 
 #include<windows.h>
 
 //***********************************************************
-// Çý¶¯º¯Êý½Ó¿Ú
+// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¿ï¿½
 #ifndef _USB5538_DRIVER_
 #define DEVAPI __declspec(dllimport)
 #else
@@ -14,33 +14,33 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-	//######################## ³£¹æÍ¨ÓÃº¯Êý #################################
-	HANDLE DEVAPI FAR PASCAL USB5538_CreateDevice(int DeviceLgcID = 0); // ´´½¨Éè±¸¶ÔÏó(¸Ãº¯ÊýÊ¹ÓÃÏµÍ³ÄÚÂß¼­Éè±¸ID£©
-	HANDLE DEVAPI FAR PASCAL USB5538_CreateDeviceEx(int DevicePhysID = 0); // ´´½¨Éè±¸¶ÔÏó(¸Ãº¯ÊýÊ¹ÓÃ°å¿¨ÎïÀíÉè±¸ID£©
-	int DEVAPI FAR PASCAL USB5538_GetDeviceCount(HANDLE hDevice);      // È¡µÃUSB5538ÔÚÏµÍ³ÖÐµÄÉè±¸ÊýÁ¿
-	BOOL DEVAPI FAR PASCAL USB5538_GetDeviceCurrentID(HANDLE hDevice, PLONG DeviceLgcID, PLONG DevicePhysID); // È¡µÃµ±Ç°Éè±¸µÄÂß¼­IDºÅºÍÎïÀíIDºÅ
-	BOOL DEVAPI FAR PASCAL USB5538_ListDeviceDlg(void); // ÓÃ¶Ô»°¿òÁÐ±íÏµÍ³µ±ÖÐµÄËùÓÐUSB5538Éè±¸
-	BOOL DEVAPI FAR PASCAL USB5538_ResetDevice(HANDLE hDevice);		 // ¸´Î»Õû¸öUSBÉè±¸
-    BOOL DEVAPI FAR PASCAL USB5538_ReleaseDevice(HANDLE hDevice);    // Éè±¸¾ä±ú
+	//######################## ï¿½ï¿½ï¿½ï¿½Í¨ï¿½Ãºï¿½ï¿½ï¿½ #################################
+	HANDLE DEVAPI FAR PASCAL USB5538_CreateDevice(int DeviceLgcID = 0); // ï¿½ï¿½ï¿½ï¿½ï¿½è±¸ï¿½ï¿½ï¿½ï¿½(ï¿½Ãºï¿½ï¿½ï¿½Ê¹ï¿½ï¿½ÏµÍ³ï¿½ï¿½ï¿½ß¼ï¿½ï¿½è±¸IDï¿½ï¿½
+	HANDLE DEVAPI FAR PASCAL USB5538_CreateDeviceEx(int DevicePhysID = 0); // ï¿½ï¿½ï¿½ï¿½ï¿½è±¸ï¿½ï¿½ï¿½ï¿½(ï¿½Ãºï¿½ï¿½ï¿½Ê¹ï¿½Ã°å¿¨ï¿½ï¿½ï¿½ï¿½ï¿½è±¸IDï¿½ï¿½
+	int DEVAPI FAR PASCAL USB5538_GetDeviceCount(HANDLE hDevice);      // È¡ï¿½ï¿½USB5538ï¿½ï¿½ÏµÍ³ï¿½Ðµï¿½ï¿½è±¸ï¿½ï¿½ï¿½ï¿½
+	BOOL DEVAPI FAR PASCAL USB5538_GetDeviceCurrentID(HANDLE hDevice, PLONG DeviceLgcID, PLONG DevicePhysID); // È¡ï¿½Ãµï¿½Ç°ï¿½è±¸ï¿½ï¿½ï¿½ß¼ï¿½IDï¿½Åºï¿½ï¿½ï¿½ï¿½ï¿½IDï¿½ï¿½
+	BOOL DEVAPI FAR PASCAL USB5538_ListDeviceDlg(void); // ï¿½Ã¶Ô»ï¿½ï¿½ï¿½ï¿½Ð±ï¿½ÏµÍ³ï¿½ï¿½ï¿½Ðµï¿½ï¿½ï¿½ï¿½ï¿½USB5538ï¿½è±¸
+	BOOL DEVAPI FAR PASCAL USB5538_ResetDevice(HANDLE hDevice);		 // ï¿½ï¿½Î»ï¿½ï¿½ï¿½ï¿½USBï¿½è±¸
+    BOOL DEVAPI FAR PASCAL USB5538_ReleaseDevice(HANDLE hDevice);    // ï¿½è±¸ï¿½ï¿½ï¿½
 
-	//####################### Êý×ÖI/OÊäÈëÊä³öº¯Êý #################################
-	BOOL DEVAPI FAR PASCAL USB5538_GetDeviceDI(					// È¡µÃ¿ª¹ØÁ¿×´Ì¬     
-									HANDLE hDevice,				// Éè±¸¾ä±ú,ËüÓ¦ÓÉCreateDeviceº¯Êý´´½¨								        
-									BYTE bDISts[16]);			// ¿ª¹ØÊäÈë×´Ì¬(×¢Òâ: ±ØÐë¶¨ÒåÎª8¸ö×Ö½ÚÔªËØµÄÊý×é)
+	//####################### ï¿½ï¿½ï¿½ï¿½I/Oï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ #################################
+	BOOL DEVAPI FAR PASCAL USB5538_GetDeviceDI(					// È¡ï¿½Ã¿ï¿½ï¿½ï¿½ï¿½ï¿½×´Ì¬     
+									HANDLE hDevice,				// ï¿½è±¸ï¿½ï¿½ï¿½,ï¿½ï¿½Ó¦ï¿½ï¿½CreateDeviceï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½								        
+									BYTE bDISts[16]);			// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×´Ì¬(×¢ï¿½ï¿½: ï¿½ï¿½ï¿½ë¶¨ï¿½ï¿½Îª8ï¿½ï¿½ï¿½Ö½ï¿½Ôªï¿½Øµï¿½ï¿½ï¿½ï¿½ï¿½)
 
-    BOOL DEVAPI FAR PASCAL USB5538_SetDeviceDO(					// Êä³ö¿ª¹ØÁ¿×´Ì¬
-									HANDLE hDevice,				// Éè±¸¾ä±ú,ËüÓ¦ÓÉCreateDeviceº¯Êý´´½¨								        
-									BYTE bDOSts[16]);			// ¿ª¹ØÊä³ö×´Ì¬(×¢Òâ: ±ØÐë¶¨ÒåÎª8¸ö×Ö½ÚÔªËØµÄÊý×é)
+    BOOL DEVAPI FAR PASCAL USB5538_SetDeviceDO(					// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×´Ì¬
+									HANDLE hDevice,				// ï¿½è±¸ï¿½ï¿½ï¿½,ï¿½ï¿½Ó¦ï¿½ï¿½CreateDeviceï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½								        
+									BYTE bDOSts[16]);			// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×´Ì¬(×¢ï¿½ï¿½: ï¿½ï¿½ï¿½ë¶¨ï¿½ï¿½Îª8ï¿½ï¿½ï¿½Ö½ï¿½Ôªï¿½Øµï¿½ï¿½ï¿½ï¿½ï¿½)
 
-	BOOL DEVAPI FAR PASCAL USB5538_RetDeviceDO(					// »Ø¶ÁÊä³ö¿ª¹ØÁ¿×´Ì¬
-									HANDLE hDevice,				// Éè±¸¾ä±ú,ËüÓ¦ÓÉCreateDeviceº¯Êý´´½¨								        
-									BYTE bDOSts[16]);			// ¿ª¹ØÊä³ö×´Ì¬(×¢Òâ: ±ØÐë¶¨ÒåÎª8¸ö×Ö½ÚÔªËØµÄÊý×é)
+	BOOL DEVAPI FAR PASCAL USB5538_RetDeviceDO(					// ï¿½Ø¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×´Ì¬
+									HANDLE hDevice,				// ï¿½è±¸ï¿½ï¿½ï¿½,ï¿½ï¿½Ó¦ï¿½ï¿½CreateDeviceï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½								        
+									BYTE bDOSts[16]);			// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×´Ì¬(×¢ï¿½ï¿½: ï¿½ï¿½ï¿½ë¶¨ï¿½ï¿½Îª8ï¿½ï¿½ï¿½Ö½ï¿½Ôªï¿½Øµï¿½ï¿½ï¿½ï¿½ï¿½)
 
 #ifdef __cplusplus
 }
 #endif
 
-// ×Ô¶¯°üº¬Çý¶¯º¯Êýµ¼Èë¿â
+// ï¿½Ô¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 #ifndef _USB5538_DRIVER_
 #ifndef _WIN64
 #pragma comment(lib, "USB5538_32.lib")

@@ -1,4 +1,4 @@
-/*
+﻿/*
  *  RoboPeak Project
  *  HAL Layer - Socket Interface
  *  Copyright 2018 RoboPeak Project

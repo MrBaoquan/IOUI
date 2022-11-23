@@ -1,5 +1,5 @@
-
-// IOUIDebugDlg.h : Í·ÎÄ¼þ
+ï»¿
+// IOUIDebugDlg.h : Í·ï¿½Ä¼ï¿½
 //
 
 #pragma once
@@ -7,30 +7,30 @@
 
 namespace dh = IOToolkit;
 
-// CIOUIDebugDlg ¶Ô»°¿ò
+// CIOUIDebugDlg ï¿½Ô»ï¿½ï¿½ï¿½
 class CIOUIDebugDlg : public CDialogEx
 {
-// ¹¹Ôì
+// ï¿½ï¿½ï¿½ï¿½
 public:
-	CIOUIDebugDlg(CWnd* pParent = NULL);	// ±ê×¼¹¹Ôìº¯Êý
+	CIOUIDebugDlg(CWnd* pParent = NULL);	// ï¿½ï¿½×¼ï¿½ï¿½ï¿½ìº¯ï¿½ï¿½
 
-// ¶Ô»°¿òÊý¾Ý
+// ï¿½Ô»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 #ifdef AFX_DESIGN_TIME
 	enum { IDD = IDD_IOUIDEBUG_DIALOG };
 #endif
 
 	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);	// DDX/DDV Ö§³Ö
+	virtual void DoDataExchange(CDataExchange* pDX);	// DDX/DDV Ö§ï¿½ï¿½
 
 public:
 
     void OnSampleAxis(float InValue);
     void OnKeyDown(const dh::FKey InKey);
-// ÊµÏÖ
+// Êµï¿½ï¿½
 protected:
 	HICON m_hIcon;
 
-	// Éú³ÉµÄÏûÏ¢Ó³Éäº¯Êý
+	// ï¿½ï¿½ï¿½Éµï¿½ï¿½ï¿½Ï¢Ó³ï¿½äº¯ï¿½ï¿½
 	virtual BOOL OnInitDialog();
 	afx_msg void OnSysCommand(UINT nID, LPARAM lParam);
 	afx_msg void OnPaint();

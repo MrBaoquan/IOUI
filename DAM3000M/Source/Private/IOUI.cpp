@@ -1,4 +1,4 @@
-/** Copyright (c) 2018 Hefei And Technology Co.,Ltd
+ï»¿/** Copyright (c) 2018 Hefei And Technology Co.,Ltd
  *  Author: MrBaoquan
  *  CreateTime: 2018-5-16 10:44
  *  Email: mrma617@gmail.com
@@ -34,7 +34,7 @@ int AD_lMode = 0;
 
 IOUI_API int __stdcall OpenDevice(uint8 deviceIndex)
 {
-	// DLL ÑÓ³Ù¼ÓÔØ
+	// DLL ï¿½Ó³Ù¼ï¿½ï¿½ï¿½
 #ifdef WIN_64
 	std::string _path = DevelopHelper::Paths::Instance().GetModuleDir() + "Core\\DAM3000M_64.dll";
 #else
@@ -56,21 +56,21 @@ IOUI_API int __stdcall OpenDevice(uint8 deviceIndex)
 	if (bRet) {
 		PCIManager::Instance().AddDevice(deviceIndex, DeviceData(hDevice, devInfo));
 
-		// ¿ª¹ØÁ¿ÊäÈëÉèÖÃ
+		// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		for (int index = 0; index < 16; index++)
 		{
 			bRet = DAM3000M_SetModeDI(hDevice, lDeviceID, 0, 0, index);
 		}
 
-		// Ä£ÄâÁ¿ÊäÈëÉèÖÃ
+		// Ä£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		for (int lChannel = 0; lChannel < 8; lChannel++)
 		{
 
-			DAM3000M_SetModeAD(							// ÉèÖÃADÊäÈëÄ£Ê½ 
-				hDevice,					// Éè±¸¶ÔÏó¾ä±ú	
-				lDeviceID,					// Ä£¿éµØ
+			DAM3000M_SetModeAD(							// ï¿½ï¿½ï¿½ï¿½ADï¿½ï¿½ï¿½ï¿½Ä£Ê½ 
+				hDevice,					// ï¿½è±¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½	
+				lDeviceID,					// Ä£ï¿½ï¿½ï¿½
 				AD_lMode,						// ADÄ£Ê½ 
-				lChannel);				// Í¨µÀºÅ	
+				lChannel);				// Í¨ï¿½ï¿½ï¿½ï¿½	
 
 			Sleep(50);
 		}
@@ -138,7 +138,7 @@ IOUI_API int __stdcall GetDeviceDI(uint8 deviceIndex, BYTE* OutDIStatus)
 
 IOUI_API int __stdcall GetDeviceAD(uint8 deviceIndex, short* OutADStatus)
 {
-	static LONG    lADBuffer[8];          // ²É¼¯Êý¾Ý»º³åÇø
+	static LONG    lADBuffer[8];          // ï¿½É¼ï¿½ï¿½ï¿½ï¿½Ý»ï¿½ï¿½ï¿½ï¿½ï¿½
 	auto hDevice = PCIManager::Instance().GetHandle(deviceIndex);
 
 	if (DAM3000M_ReadDeviceAD(hDevice, lDeviceID, lADBuffer, 0, 7)) {

@@ -1,4 +1,4 @@
-/** Copyright (c) 2018 Hefei And Technology Co.,Ltd
+ï»¿/** Copyright (c) 2018 Hefei And Technology Co.,Ltd
  *  Author: MrBaoquan
  *  CreateTime: 2018-5-16 10:44
  *  Email: mrma617@gmail.com
@@ -36,11 +36,11 @@ IOUI_API int __stdcall OpenDevice(uint8 deviceIndex)
 		{
 
 			CNTPara[_index].lCNTMode = PCI2394_CNTMODE_1_PULSE;
-			CNTPara[_index].lResetMode = PCI2394_RESETMODE_ZERO; // ¼ÆÊýÆ÷¸´Î»µ½0x00000000
-			CNTPara[_index].bOverflowLock = FALSE; // ÉÏÒçËø¶¨
-			CNTPara[_index].bUnderflowLock = FALSE; // ÏÂÒçËø¶¨
-			CNTPara[_index].bDigitFilter = TRUE; // ²î·ÖÊäÈëÊÇ·ñ½øÐÐÊý×ÖÂË²¨(DF) TRUE=¹ýÂË
-			CNTPara[_index].lLatchMode = PCI2394_LATCHMODE_SOFT; // Èí¼þËø´æ¼ÆÊýÆ÷Êý¾Ý SoftWare
+			CNTPara[_index].lResetMode = PCI2394_RESETMODE_ZERO; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½0x00000000
+			CNTPara[_index].bOverflowLock = FALSE; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+			CNTPara[_index].bUnderflowLock = FALSE; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+			CNTPara[_index].bDigitFilter = TRUE; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ë²ï¿½(DF) TRUE=ï¿½ï¿½ï¿½ï¿½
+			CNTPara[_index].lLatchMode = PCI2394_LATCHMODE_SOFT; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ SoftWare
 
 			PCI2394_InitDeviceCNT(hHandle, &CNTPara[_index], _index);
 		}

@@ -1,4 +1,4 @@
-/*
+﻿/*
  TUIO C++ Library
  Copyright (c) 2005-2017 Martin Kaltenbrunner <martin@tuio.org>
  

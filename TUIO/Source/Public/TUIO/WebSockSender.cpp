@@ -1,4 +1,4 @@
-/*
+﻿/*
  TUIO C++ Library
  Copyright (c) 2009-2017 Martin Kaltenbrunner <martin@tuio.org>
  WebSockSender (c) 2015 Florian Echtler <floe@butterbrot.org>

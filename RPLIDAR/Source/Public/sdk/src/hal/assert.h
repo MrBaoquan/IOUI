@@ -1,4 +1,4 @@
-#ifndef _INFRA_HAL_ASSERT_H
+﻿#ifndef _INFRA_HAL_ASSERT_H
 #define _INFRA_HAL_ASSERT_H
 
 #ifdef WIN32

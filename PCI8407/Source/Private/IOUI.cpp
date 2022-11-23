@@ -1,4 +1,4 @@
-/** Copyright (c) 2018 Hefei And Technology Co.,Ltd
+ï»¿/** Copyright (c) 2018 Hefei And Technology Co.,Ltd
  *  Author: MrBaoquan
  *  CreateTime: 2018-5-30 9:17
  *  Email: mrma617@gmail.com
@@ -12,7 +12,7 @@
 #pragma comment(lib,"pci8407.lib")
 
 
- /** Éè±¸»ù±¾ÐÅÏ¢ */
+ /** ï¿½è±¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢ */
 DeviceInfo g_DeviceInfo;
 
 const uint8 ChannelCount = 32;
@@ -28,7 +28,7 @@ IOUI_API DeviceInfo* __stdcall Initialize()
 
 IOUI_API int __stdcall OpenDevice(uint8 deviceIndex)
 {
-    // DLL ÑÓ³Ù¼ÓÔØ
+    // DLL ï¿½Ó³Ù¼ï¿½ï¿½ï¿½
 #ifdef WIN_64
     std::string _path = DevelopHelper::Paths::Instance().GetModuleDir() + "Core\\pci8407.dll";
 #else

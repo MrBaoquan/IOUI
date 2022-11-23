@@ -1,6 +1,6 @@
-//{{NO_DEPENDENCIES}}
-// Microsoft Visual C++ иЗЁи╣д╟Э╨╛нд╪Ч║ё
-// си IOUIDebug.rc й╧сц
+О╩©//{{NO_DEPENDENCIES}}
+// Microsoft Visual C++ О©╫О©╫О©╫и╣д╟О©╫О©╫О©╫О©╫д╪О©╫О©╫О©╫
+// О©╫О©╫ IOUIDebug.rc й╧О©╫О©╫
 //
 #define IDR_MAINFRAME					128
 #define IDM_ABOUTBOX					0x0010
@@ -8,7 +8,7 @@
 #define IDS_ABOUTBOX					101
 #define IDD_IOUIDEBUG_DIALOG				102
 
-// пб╤тоС╣добр╩вИд╛хож╣
+// О©╫б╤О©╫О©╫О©╫О©╫О©╫О©╫р╩О©╫О©╫д╛О©╫О©╫ж╣
 //
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS

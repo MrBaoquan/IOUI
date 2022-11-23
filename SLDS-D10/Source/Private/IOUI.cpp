@@ -1,4 +1,4 @@
-/** Copyright (c) 2018 Hefei And Technology Co.,Ltd
+ï»¿/** Copyright (c) 2018 Hefei And Technology Co.,Ltd
  *  Author: MrBaoquan
  *  CreateTime: 2018-5-16 10:44
  *  Email: mrma617@gmail.com
@@ -16,9 +16,9 @@ namespace dh = DevelopHelper;
 
 DeviceInfo devInfo;
 
-// ´®¿ÚÊµÀýÖ¸Õë
+// ï¿½ï¿½ï¿½ï¿½Êµï¿½ï¿½Ö¸ï¿½ï¿½
 std::map<uint8, std::shared_ptr<Serial>> g_serialPorts;
-// µ¥È¦·Ö±æÂÊ
+// ï¿½ï¿½È¦ï¿½Ö±ï¿½ï¿½ï¿½
 std::map<uint8, int> g_sResolutions;
 
 IOUI_API DeviceInfo* __stdcall Initialize()
@@ -39,10 +39,10 @@ IOUI_API int __stdcall OpenDevice(uint8 deviceIndex)
 	try
 	{
 		auto _serialPort = new Serial("COM" + std::to_string(deviceIndex),_baudRate, TWOSTOPBITS);
-		// ÉÏµç²âÁ¿Ä£Ê½
+		// ï¿½Ïµï¿½ï¿½ï¿½ï¿½Ä£Ê½
 		const char _powerOn[8] = { 0x01,0x06,0x01,0x8C,0x00,0x01,0x88,0x1D };
 		_serialPort->write(_powerOn, sizeof(_powerOn));
-		// Á¬Ðø²âÁ¿Ä£Ê½
+		// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä£Ê½
 		const char _continueMesure[8]{ 0x01,0x06,0x01,0x90,0x00,0x02,0x09,0xDA };
 		_serialPort->write(_continueMesure, sizeof(_continueMesure));
 
