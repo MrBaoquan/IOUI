@@ -66,20 +66,17 @@ void CIOUIDebugDlg::DoDataExchange(CDataExchange* pDX)
 
 void CIOUIDebugDlg::OnSampleAxis(float InValue)
 {
-	/*OutputDebugStringA(std::to_string(InValue).data());
-	OutputDebugStringA("\r\n");*/
+	if (InValue != 0) {
+		OutputDebugStringA(std::to_string(InValue).data());
+		OutputDebugStringA("\r\n");
+	}
+	
 }
 
 void CIOUIDebugDlg::OnKeyDown(const dh::FKey InKey)
 {
 	OutputDebugStringA(InKey.GetName());
 	OutputDebugStringA("\n");
-
-	if (InKey.GetName() == std::string("B")) {
-		dh::IODeviceController::Instance().GetIODevice("ExternalDev_0").SetDO(dh::FKey("OAxis_00"), 1);
-		dh::IODeviceController::Instance().GetIODevice("ExternalDev_0").SetDO(dh::FKey("OAxis_01"), 1);
-		dh::IODeviceController::Instance().GetIODevice("ExternalDev_0").SetDO(dh::FKey("OAxis_02"), 1);
-	}
 	
 }
 

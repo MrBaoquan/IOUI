@@ -8,18 +8,15 @@
 <IORoot>
 
   <Device Name="Standard" Type="Standard"></Device>
-  <Device Name="ExternalDev_0" Type="External" DllName="TUIO" Index="0">
-    <Properties>
-      <Key Name="OAxis_01" Sensitivity="1.0"></Key>
-    </Properties>
+  <Device Name="ExternalDev_0" Type="External" DllName="ENCODER-BRT38M" Index="2">
+    
     <Action Name="KeyDown">
-        <Key Name="Button_00" />
-	    <Key Name="Button_01" />
+        <Key Name="AnyKey" />
     </Action>
 
     <!-- Axis mapping start -->
     <Axis Name="MoveLR">
-      <Key Name="Axis_128" Scale="1000"></Key>
+      <Key Name="Axis_01" Scale="1000"></Key>
     </Axis>
 
 	<OAction Name="DoAngle">
