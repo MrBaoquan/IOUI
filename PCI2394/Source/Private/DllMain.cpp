@@ -13,7 +13,7 @@ BOOL WINAPI DllMain(
     _In_ LPVOID    lpvReserved
 )
 {
-
+    DevelopHelper::Paths::Instance().SetModule(hinstDLL);
     switch (fdwReason)
     {
     case DLL_PROCESS_ATTACH:

@@ -13,18 +13,21 @@ BOOL WINAPI DllMain(
     _In_ LPVOID    lpvReserved
 )
 {
-    DevelopHelper::Paths::Instance().SetModule(hinstDLL);
+
     switch (fdwReason)
     {
     case DLL_PROCESS_ATTACH:
-        {
-            std::string dllPath = DevelopHelper::Paths::Instance().GetModuleDir() + "Core\\";
-            SetDllDirectoryA(dllPath.data());
-            OutputDebugStringA("============== Attched external dll for IODevice.dll ... ================ \n");
+        {   
+            DevelopHelper::Paths::Instance().SetModule(hinstDLL);
+			std::string dllPath = DevelopHelper::Paths::Instance().GetModuleDir() + "Core\\";
+			std::wstring _wdllPath(dllPath.begin(), dllPath.end());
+			SetDllDirectoryA(dllPath.data());
+			AddDllDirectory(_wdllPath.data());
+			OutputDebugStringA("============== Attched external dll IOUI for IOToolkit ... ================ \n");
         }        
         break;
     case DLL_PROCESS_DETACH:
-        OutputDebugStringA("============== Detached external dll for IODevice.dll ... ================ \n");
+        OutputDebugStringA("============== Detached external dll IOUI for IODevice.dll ... ================ \n");
         break;
     case DLL_THREAD_ATTACH:
         break;

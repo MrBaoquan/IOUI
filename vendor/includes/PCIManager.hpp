@@ -62,10 +62,14 @@ public:
 		return true;
 	}
 
+	void RemoveDevice(uint8 InDevIndex) {
+		DeviceDatas.erase(InDevIndex);
+	}
+
 	const DeviceData* const GetDeviceData(uint8 InDevIndex) const
 	{
 		if (DeviceDatas.count(InDevIndex)) {
-			return &DeviceDatas[InDevIndex];
+			return &DeviceDatas.at(InDevIndex);
 		}
 		return nullptr;
 	}

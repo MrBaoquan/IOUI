@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<AppConfig Port="8909">
+  <!--GAME Name(名字) ID(第几台电脑从1开始) BtnBasicID(按钮的起始位) 程序中从0开始-->
+  <GAME Name="太阳及太阳系的形成" ID="1" BtnBasicID="1" Data="ctx.txt"> 
+	<Comm ID="8" BaudRate="115200"/>
+  </GAME>
+</AppConfig>

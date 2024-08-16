@@ -40,14 +40,11 @@ LRESULT CALLBACK KeyboardProc(int code, WPARAM wParam, LPARAM lParam) {
 	if (g_terminalKey == szKeyName) {
 		g_cachedComboKeys.push_back(g_currentComboKey);
 		g_currentComboKey = "";
-		OutputDebugStringA("push--------------------------- \r\n");
 	}
 	else {
 		g_currentComboKey += g_currentComboKey != "" ? (std::string("|") + szKeyName) : szKeyName;
 	}
 
-	OutputDebugStringA(g_currentComboKey.data());
-	OutputDebugStringA("\r\n");
 	return CallNextHookEx(g_hHook, code, wParam, lParam);
 }
 
@@ -72,13 +69,34 @@ BOOL UninstallHook() {
 DeviceInfo devInfo;
 IOUI_API DeviceInfo* __stdcall Initialize()
 {
-	devInfo.InputCount = 32;
+	devInfo.InputCount = 255;
 	devInfo.OutputCount = 0;
 	devInfo.AxisCount = 0;
     return &devInfo;
 }
 
-std::map< std::string,int> g_comboKeysMap;
+std::map< std::string, int> g_comboKeysMap;
+mINI::INIFile* g_iniFIle = nullptr;
+mINI::INIStructure* g_iniStructure = nullptr;
+
+int AppendComboKeys(const std::string& comboKey) {
+	if (g_comboKeysMap.count(comboKey) > 0) return -1;
+
+	auto& ini = *g_iniStructure;
+	auto& file = *g_iniFIle;
+	for (int _idx=0;_idx<devInfo.InputCount;++_idx)
+	{
+		std::string _key = "k" + std::to_string(_idx);
+		if (!ini["ComboKeys"].has(_key)) {
+			ini["ComboKeys"][_key] = comboKey;
+			g_comboKeysMap.insert(std::pair<std::string, int>(comboKey, _idx));
+			file.write(ini);
+			return _idx;
+		}
+	}
+	return -1;
+}
+
 IOUI_API int __stdcall OpenDevice(uint8 deviceIndex)
 {
 	// 禁止创建多个设备, 没有意义
@@ -88,25 +106,31 @@ IOUI_API int __stdcall OpenDevice(uint8 deviceIndex)
 
 	std::string path = DevelopHelper::Paths::Instance().GetModuleDir();
 	std::string config_file_path = path + "Config\\COMBOKEYS\\config.ini";
-	mINI::INIFile _file(config_file_path);
-	mINI::INIStructure ini;
-	_file.read(ini);
+	g_iniFIle =new  mINI::INIFile(config_file_path);
+	g_iniStructure =new  mINI::INIStructure();
+	g_iniFIle->read(*g_iniStructure);
+	auto& ini = *g_iniStructure;
+
 	g_terminalKey = ini["ComboKeys"]["TerminalKey"];
-	std::string& _val = ini["ComboKeys"]["k1"];
-	int _idx = 0;
 	
-	while (true)
+	for (int _idx=0;_idx<devInfo.InputCount;++_idx)
 	{
-		std::string& _val = ini["ComboKeys"]["k" + std::to_string(_idx)];
-		if (_val == "") break;
-		g_comboKeysMap.insert(std::pair<std::string,int>( _val,_idx));
-		++_idx;
+		std::string _key = "k" + std::to_string(_idx);
+		std::string& _val = ini["ComboKeys"][_key];
+		if (_val == "") {
+			ini["ComboKeys"].remove (_key);
+			continue;
+		}
+		g_comboKeysMap.insert(std::pair<std::string, int>(_val, _idx));
 	}
+	
 	return InstallHook();
 }
 
 IOUI_API int __stdcall CloseDevice(uint8 deviceIndex)
 {
+	delete g_iniFIle;
+	delete g_iniStructure;
     return UninstallHook();
 }
 
@@ -125,6 +149,7 @@ IOUI_API int __stdcall GetDeviceDI(uint8 deviceIndex, BYTE* OutDIStatus)
 	ZeroMemory(OutDIStatus, sizeof(BYTE) * devInfo.InputCount);
 	for (const std::string& _comboKey :g_cachedComboKeys)
 	{
+		if (g_comboKeysMap.count(_comboKey) <= 0)AppendComboKeys(_comboKey);
 		if (g_comboKeysMap.count(_comboKey) <= 0) continue;
 		OutDIStatus[g_comboKeysMap[_comboKey]] = 1;
 	}

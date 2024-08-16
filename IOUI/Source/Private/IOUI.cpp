@@ -4,15 +4,18 @@
  *  Email: mrma617@gmail.com
  */
 #include <stdlib.h>
+#include <vector>
+#include <map>
 #include <algorithm>
+#include <string>
 #include "IOUI.h"
 
 DeviceInfo devInfo;
 IOUI_API DeviceInfo* __stdcall Initialize()
 {
-	devInfo.InputCount = 32;
-	devInfo.OutputCount = 32;
-	devInfo.AxisCount = 32;
+	devInfo.InputCount = 0;
+	devInfo.OutputCount = 8;
+	devInfo.AxisCount = 0;
     return &devInfo;
 }
 
@@ -33,24 +36,19 @@ IOUI_API int __stdcall SetDeviceDO(uint8 deviceIndex, short* InDOStatus)
 
 IOUI_API int __stdcall GetDeviceDO(uint8 deviceIndex, short* OutDOStatus)
 {
-    return 0;
+    return 1;
 }
 
 IOUI_API int __stdcall GetDeviceDI(uint8 deviceIndex, BYTE* OutDIStatus)
 {
-    return 0;
+    return 1;
 }
 
 IOUI_API int __stdcall GetDeviceAD(uint8 deviceIndex, short* OutADStatus)
 {
-    return 0;
+    return 1;
 }
 
-IOUI_API int __stdcall RefreshStreamingData(uint8 deviceIndex, BYTE* Data, unsigned int Size)
-{
-    BYTE data[3]{ 0x00,0x01,0x02 };
-    Data[0] = data[0];
-    Data[1] = data[1];
-    Data[2] = data[2];
-    return 1;
+IOUI_API int __stdcall RefreshStreamingData(uint8 deviceIndex, BYTE* Data, unsigned int Size) {
+	return 0;
 }

@@ -26,6 +26,7 @@ public:
 
     void OnSampleAxis(float InValue);
     void OnKeyDown(const dh::FKey InKey);
+	void OnKeyUp(const dh::FKey InKey);
 // ʵ��
 protected:
 	HICON m_hIcon;

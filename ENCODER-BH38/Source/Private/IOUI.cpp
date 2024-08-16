@@ -83,17 +83,17 @@ IOUI_API int __stdcall GetDeviceAD(uint8 deviceIndex, short* OutADStatus)
 	int _sResolution = g_sResolutions[deviceIndex];
 
 	static char _data[MAX_PATH];
-	DWORD _count = 0;
-	auto _recevCount = _serialPort->read(_data, MAX_PATH, false);
-	std::vector<uint8> _recvDatas(std::begin(_data), std::begin(_data) + _recevCount);
 
-	while (_recvDatas.size() >= 10) {
-		if (_recvDatas[0] != 0xAB || _recvDatas[1] != 0xCD) {
-			_recvDatas.erase(_recvDatas.begin());
+	auto _recevCount = _serialPort->read(_data, MAX_PATH, false);
+	std::vector<uint8> _stashDatas(std::begin(_data), std::begin(_data) + _recevCount);
+
+	while (_stashDatas.size() >= 10) {
+		if (_stashDatas[0] != 0xAB || _stashDatas[1] != 0xCD) {
+			_stashDatas.erase(_stashDatas.begin());
 			continue;
 		}
 
-		int _raw = _recvDatas[3] << 8 | _recvDatas[4];
+		int _raw = _stashDatas[3] << 8 | _stashDatas[4];
 		int _angle = _raw * 360 / _sResolution;
 
 		short& _lastAngle = g_lastAngles[deviceIndex];
@@ -109,9 +109,9 @@ IOUI_API int __stdcall GetDeviceAD(uint8 deviceIndex, short* OutADStatus)
 		OutADStatus[0] = _angle;
 		OutADStatus[1] = _deltaAngel;
 		_lastAngle = _angle;
-		
+		_stashDatas.clear();
 		break;
-		/*_recvDatas.erase(std::begin(_recvDatas), std::begin(_recvDatas) + 10);*/
+		
 	}
     return 1;
 }

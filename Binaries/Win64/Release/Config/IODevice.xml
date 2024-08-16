@@ -8,7 +8,7 @@
 <IORoot>
 
   <Device Name="Standard" Type="Standard"></Device>
-  <Device Name="ExternalDev_0" Type="External" DllName="RPLIDAR" Index="0">
+  <Device Name="ExternalDev_0" Type="External" DllName="MODBUS" Index="4">
     <Action Name="KeyDown">
       <Key Name="AnyKey"></Key>
     </Action>

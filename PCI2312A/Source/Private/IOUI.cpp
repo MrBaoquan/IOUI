@@ -40,6 +40,7 @@ IOUI_API int __stdcall OpenDevice(uint8 deviceIndex)
 IOUI_API int __stdcall CloseDevice(uint8 deviceIndex)
 {
     HANDLE hHandle = PCIManager::Instance().GetHandle(deviceIndex);
+    PCIManager::Instance().RemoveDevice(deviceIndex);
     return PCI2312A_ReleaseDevice(hHandle) ? 1 : 0;
 }
 

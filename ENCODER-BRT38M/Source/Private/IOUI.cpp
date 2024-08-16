@@ -22,9 +22,7 @@ std::map<uint8, std::shared_ptr<Serial>> g_serialPorts;
 // 分辨率
 std::map<uint8, int> g_sResolutions;
 std::map<uint8, short> g_cirlces;
-
 std::map<uint8, int> g_lastAngles;
-
 std::map<int, std::chrono::system_clock::time_point> g_lastSentTime;
 
 IOUI_API DeviceInfo* __stdcall Initialize()

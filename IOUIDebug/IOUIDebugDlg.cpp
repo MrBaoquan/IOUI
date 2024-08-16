@@ -66,18 +66,33 @@ void CIOUIDebugDlg::DoDataExchange(CDataExchange* pDX)
 
 void CIOUIDebugDlg::OnSampleAxis(float InValue)
 {
-	if (InValue != 0) {
-		OutputDebugStringA(std::to_string(InValue).data());
-		OutputDebugStringA("\r\n");
-	}
+	/*OutputDebugStringA(std::to_string(InValue).data());
+	OutputDebugStringA("\r\n");*/
 	
 }
 
 void CIOUIDebugDlg::OnKeyDown(const dh::FKey InKey)
 {
+	//dh::IODeviceController::Instance().Unload();
+	//dh::IODeviceController::Instance().Load();
+
+	//dh::IODeviceController::Instance().GetIODevice("ExternalDev_0").SetDO(dh::EKeys::OAxis_00, 6);
+	dh::IODeviceController::Instance().GetIODevice("ExternalDev_0").SetDO(dh::EKeys::OAxis_01, 1);
+	//dh::IODeviceController::Instance().GetIODevice("ExternalDev_0").SetDO(dh::EKeys::OAxis_02, 255);
+	//dh::IODeviceController::Instance().GetIODevice("ExternalDev_0").DOImmediate();
 	OutputDebugStringA(InKey.GetName());
+	OutputDebugStringA("  Pressed");
 	OutputDebugStringA("\n");
 	
+}
+
+void CIOUIDebugDlg::OnKeyUp(const dh::FKey InKey)
+{
+	/*dh::IODeviceController::Instance().GetIODevice("ExternalDev_0")
+		.SetDOOff("Lights");*/
+	OutputDebugStringA(InKey.GetName());
+	OutputDebugStringA("  Released");
+	OutputDebugStringA("\n");
 }
 
 BEGIN_MESSAGE_MAP(CIOUIDebugDlg, CDialogEx)
@@ -121,14 +136,20 @@ BOOL CIOUIDebugDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// 设置小图标
 
 	// TODO: 在此添加额外的初始化代码
+	
 	dh::IODeviceController::Instance().Load();
 
     //dh::IOSettings::Instance().SetIOConfigPath("./Config/IODevice.xml");
     dh::IODeviceController::Instance().GetIODevice("ExternalDev_0").
         BindAction("KeyDown", dh::IE_Pressed, this, &CIOUIDebugDlg::OnKeyDown);
 
+	dh::IODeviceController::Instance().GetIODevice("ExternalDev_0").
+		BindAction("KeyDown", dh::IE_Released, this, &CIOUIDebugDlg::OnKeyUp);
+
 	dh::IODeviceController::Instance().GetIODevice("ExternalDev_0")
-		.BindAxis("MoveLR", this, &CIOUIDebugDlg::OnSampleAxis);
+		.BindAxis("TestAxis", this, &CIOUIDebugDlg::OnSampleAxis);
+
+	
 
 	/*dh::IODeviceController::Instance().GetIODevice("ExternalDev_0")
 		.BindAction("KeyDown", dh::IE_Pressed, this, &CIOUIDebugDlg::OnKeyDown);*/

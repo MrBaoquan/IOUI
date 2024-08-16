@@ -26,7 +26,7 @@ std::map<uint8, std::shared_ptr<Serial>> g_serialPorts;
 IOUI_API DeviceInfo* __stdcall Initialize()
 {
 	devInfo.InputCount = 0;
-	devInfo.OutputCount = 0;
+	devInfo.OutputCount = 8;
 	devInfo.AxisCount = 8;
     return &devInfo;
 }
@@ -37,17 +37,14 @@ IOUI_API int __stdcall OpenDevice(uint8 deviceIndex)
 	std::string config_file_path = path + "Config\\ENCODER-BRT38\\config.ini";
 	const char* app = "/Settings";
 	DWORD _baudRate = GetPrivateProfileIntA(app, BuildDeviceAttribute("BaudRate",deviceIndex).data(), 9600, config_file_path.data());
-	//int _sResolution = GetPrivateProfileIntA(app, BuildDeviceAttribute("SR",deviceIndex).data(), 1024, config_file_path.data());
-	//g_sResolutions.insert(std::pair<uint8,int>(deviceIndex, _sResolution));
 	
 	try
 	{
 		auto _serialPort = new Serial("COM" + std::to_string(deviceIndex),_baudRate);
 		g_serialPorts.insert(std::pair<uint8, std::shared_ptr<Serial>>(deviceIndex, _serialPort));	
-		//g_lastAngles.insert(std::pair<uint8, short>(deviceIndex, SHORT_MAX));
 
-		static char _setZeroPoint[8]{ 0x01,0x06,0x00,0x08,0x00,0x01,0xc9,0xc8 };
-		_serialPort->write(_setZeroPoint, 8);
+		//static char _setZeroPoint[8]{ 0x01,0x06,0x00,0x08,0x00,0x01,0xc9,0xc8 };
+		//_serialPort->write(_setZeroPoint, 8);
 	}
 	catch (const char* _err)
 	{
@@ -83,7 +80,6 @@ IOUI_API int __stdcall GetDeviceDI(uint8 deviceIndex, BYTE* OutDIStatus)
 IOUI_API int __stdcall GetDeviceAD(uint8 deviceIndex, short* OutADStatus)
 {
 	auto _serialPort = g_serialPorts[deviceIndex];
-	//int _sResolution = g_sResolutions[deviceIndex];
 
 	static char _data[MAX_PATH];
 	DWORD _count = 0;
@@ -102,8 +98,8 @@ IOUI_API int __stdcall GetDeviceAD(uint8 deviceIndex, short* OutADStatus)
 	static std::vector<uint8> _stashDatas;
 	if (_recevCount > 0) {
 		_stashDatas.insert(_stashDatas.end(), _recvDatas.begin(), _recvDatas.end());
-		OutputDebugStringA(std::to_string(_recevCount).data());
-		OutputDebugStringA("\r\n");
+		//OutputDebugStringA(std::to_string(_recevCount).data());
+		//OutputDebugStringA("\r\n");
 	}
 	
 	
@@ -112,16 +108,22 @@ IOUI_API int __stdcall GetDeviceAD(uint8 deviceIndex, short* OutADStatus)
 			_stashDatas.erase(_stashDatas.begin());
 			continue;
 		}
-		// 疑问： 如何区分接收到的数据是圈数还是速度值
+		
 		int _raw = _stashDatas[3] << 8 | _stashDatas[4];
 		if (_flag == 0) {
 			OutADStatus[0] = _raw;
 			static char _readCircle[8]{ 0x01,0x03,0x00,0x03,0x00,0x01,0x74,0x0a };		// 开始读速度
 			_serialPort->write(_readCircle, 8);
 			_flag = 1;
-		}
+		}																   
 		else if (_flag == 1) {
 			OutADStatus[1] = _raw;
+			static char _readCircle[8]{ 0x01,0x03,0x00,0x00,0x00,0x01,0x84,0x0a }; // 开始读角度
+			_serialPort->write(_readCircle, 8);
+			_flag = 2;
+		}
+		else if (_flag == 2) {
+			OutADStatus[2] = _raw;
 			static char _readCircle[8]{ 0x01,0x03,0x00,0x02,0x00,0x01,0x25,0xca }; // 开始读圈数
 			_serialPort->write(_readCircle, 8);
 			_flag = 0;

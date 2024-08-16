@@ -22,3 +22,10 @@ if %PLATFORM% equ Win64 (
 ) else (
  copy %IOUI_SRC_CORE_PATH%PCI2394.dll %IOUI_DST_CORE_PATH%	/y
 )
+
+if %CONFIGURE% equ Debug (
+	xcopy %ProjectDir%Config\PCI2394 %IOUI_SRC_PATH%ExternalLibraries\Config\PCI2394\ /E /F /Y
+) else (
+	xcopy %ProjectDir%Config\PCI2394 %IOUI_DST_PATH%Config\PCI2394\ /E /F /Y
+)
+

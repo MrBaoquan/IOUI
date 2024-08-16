@@ -6,10 +6,13 @@
 
 <IORoot>
   <Device Name="Standard" Type="Standard"></Device>
-  <Device Name="ExternalDev_0" Type="External" DllName="EM9008" Index="0">
+  <Device Name="ExternalDev_0" Type="External" DllName="MODBUS" Index="2">
 	  <Action Name="KeyDown">
 		  <Key Name="AnyKey"/>
 	  </Action>
-  </Device>
 
+	  <Axis Name="TestAxis">
+		  <Key Name="Axis_00"/>
+	  </Axis>
+  </Device>
 </IORoot>

@@ -7,6 +7,7 @@
 #include "IOUI.h"
 #include <intsafe.h>
 #include <memory>
+#include <chrono>
 #include <map>
 #include "Paths.hpp"
 #include "Serial.hpp"
@@ -28,21 +29,21 @@ IOUI_API DeviceInfo* __stdcall Initialize()
 	devInfo.AxisCount = 8;
     return &devInfo;
 }
-
+std::map<int, std::chrono::system_clock::time_point> g_lastSentTime;
 IOUI_API int __stdcall OpenDevice(uint8 deviceIndex)
 {
 	std::string path = dh::Paths::Instance().GetModuleDir();
 	std::string config_file_path = path + "Config\\SLDS-D10\\config.ini";
 	const char* app = "/Settings";
 	DWORD _baudRate = GetPrivateProfileIntA(app, BuildDeviceAttribute("BaudRate",deviceIndex).data(), 19200, config_file_path.data());
-	
+	g_lastSentTime.insert(std::pair<uint8, std::chrono::system_clock::time_point>(deviceIndex, std::chrono::system_clock::now()));
 	try
 	{
 		auto _serialPort = new Serial("COM" + std::to_string(deviceIndex),_baudRate, TWOSTOPBITS);
-		// �ϵ����ģʽ
+		// 上电自启
 		const char _powerOn[8] = { 0x01,0x06,0x01,0x8C,0x00,0x01,0x88,0x1D };
 		_serialPort->write(_powerOn, sizeof(_powerOn));
-		// ��������ģʽ
+		// 连续测量
 		const char _continueMesure[8]{ 0x01,0x06,0x01,0x90,0x00,0x02,0x09,0xDA };
 		_serialPort->write(_continueMesure, sizeof(_continueMesure));
 
@@ -82,34 +83,39 @@ IOUI_API int __stdcall GetDeviceDI(uint8 deviceIndex, BYTE* OutDIStatus)
     return 0;
 }
 
+
 IOUI_API int __stdcall GetDeviceAD(uint8 deviceIndex, short* OutADStatus)
 {
 	static const char _readData[8]{0x01,0x03,0x00,0x94,0x00,0x02,0x85,0xE7};
 	auto _serialPort = g_serialPorts[deviceIndex];
-	int _sResolution = g_sResolutions[deviceIndex];
 
-	_serialPort->write(_readData, sizeof(_readData));
+	auto _now = std::chrono::system_clock::now();
+	std::chrono::duration<double, std::milli> _elapsed = (_now - g_lastSentTime[deviceIndex]);
+	if (_elapsed.count() >= 50) {
+		_serialPort->write(_readData, sizeof(_readData));
+	}
 
 	static char _data[MAX_PATH];
 	DWORD _count = 0;
+
 	auto _recevCount = _serialPort->read(_data, MAX_PATH, false);
 	std::vector<uint8> _recvDatas(std::begin(_data), std::begin(_data) + _recevCount);
 
-	while (_recvDatas.size() >= 9) {
-		if (_recvDatas[0] != 0x01 || _recvDatas[1] != 0x03) {
-			_recvDatas.erase(_recvDatas.begin());
+	static std::vector<uint8> _stashDatas;
+	if (_recevCount > 0) {
+		_stashDatas.insert(_stashDatas.end(), _recvDatas.begin(), _recvDatas.end());
+	}
+
+	while (_stashDatas.size() >= 9) {
+		if (_stashDatas[0] != 0x01 || _stashDatas[1] != 0x03) {
+			_stashDatas.erase(_stashDatas.begin());
 			continue;
 		}
-		/*	_recvDatas[3] = 0x00;
-			_recvDatas[4] = 0x00;
-			_recvDatas[5] = 0x0b;
-			_recvDatas[6] = 0x10;*/
-		unsigned int _raw =(_recvDatas[3]<<24)|(_recvDatas[4]<<16)|(_recvDatas[5]<<8)|(_recvDatas[6]);
-		OutADStatus[0] = _raw;
-		/*OutputDebugStringA(std::to_string(_raw).data());
-		OutputDebugStringA("\r\n");*/
+
+		unsigned int _raw =(_stashDatas[3]<<24)|(_stashDatas[4]<<16)|(_stashDatas[5]<<8)|(_stashDatas[6]);
+		OutADStatus[0] = _raw / 10;
+		_stashDatas.erase(_stashDatas.begin(), _stashDatas.begin() + 9);
 		break;
-		/*_recvDatas.erase(std::begin(_recvDatas), std::begin(_recvDatas) + 10);*/
 	}
     return 1;
 }
