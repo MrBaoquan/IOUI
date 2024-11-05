@@ -1,4 +1,4 @@
-﻿#include "RPLidarWrapper.h"
+#include "RPLidarWrapper.h"
 #include <math.h>
 #include <algorithm>
 
@@ -10,8 +10,8 @@
 #pragma comment(lib,"opencv_world440.lib")
 #endif // WIN_64
 
-#define DebugUI "调试窗口"
-#define PreviewUI "预览窗口"
+#define DebugUI "RPLidar Settings"
+#define PreviewUI "Debug Window"
 
 #define CV_SORT_EVERY_ROW    0
 #define CV_SORT_EVERY_COLUMN 1
@@ -530,6 +530,7 @@ short* RPLidarWrapper::getTouchPoints()
 
 void RPLidarWrapper::CloseLidar()
 {
+	EnableAll(false);
 	if (rpDriver) {
 		rpDriver->stop();
 		rpDriver->stopMotor();
@@ -544,7 +545,7 @@ void RPLidarWrapper::EnableDebugUI(bool bEnable)
 	bEnableDebugUI = bEnable;
 	if (bEnable) {
 		cv::imshow(DebugUI, this->screen);
-		createTrackbar("角度偏移", DebugUI, &this->angleOffset, 360, onChangeTrackBar, this);
+		createTrackbar("Angle Offfset", DebugUI, &this->angleOffset, 360, onChangeTrackBar, this);
 		setMouseCallback(DebugUI, MouseEventHandler, this);
 	}
 	else {

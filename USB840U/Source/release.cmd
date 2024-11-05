@@ -13,10 +13,10 @@ rem start execute command
 :start
 @rem	Note: Write your command below this line
 
-copy %IOUI_SRC_PATH%IOUI-%PLATFORM%-SERIALPORT.dll %IOUI_DST_PATH% /y
+copy %IOUI_SRC_PATH%IOUI-%PLATFORM%-USB840U.dll %IOUI_DST_PATH% /y
 
-if %CONFIGURE% equ Debug (
-	xcopy %ProjectDir%Config\SERIALPORT %IOUI_SRC_PATH%ExternalLibraries\Config\SERIALPORT\ /E /F /Y
+if %PLATFORM% equ Win64 (
+ copy %IOUI_SRC_CORE_PATH%USB840DLL64.dll %IOUI_DST_CORE_PATH% /y
 ) else (
-	xcopy %ProjectDir%Config\SERIALPORT %IOUI_DST_PATH%Config\SERIALPORT\ /E /F /Y
+ copy %IOUI_SRC_CORE_PATH%USB840DLL84.dll %IOUI_DST_CORE_PATH%	/y
 )

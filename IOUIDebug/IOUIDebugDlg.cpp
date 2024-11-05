@@ -66,19 +66,48 @@ void CIOUIDebugDlg::DoDataExchange(CDataExchange* pDX)
 
 void CIOUIDebugDlg::OnSampleAxis(float InValue)
 {
-	/*OutputDebugStringA(std::to_string(InValue).data());
-	OutputDebugStringA("\r\n");*/
+	OutputDebugStringA(std::to_string(InValue).data());
+	OutputDebugStringA("\r\n");
 	
 }
 
 void CIOUIDebugDlg::OnKeyDown(const dh::FKey InKey)
 {
-	//dh::IODeviceController::Instance().Unload();
-	//dh::IODeviceController::Instance().Load();
+	std::string _key = InKey.GetName();
+	if (_key == "A") {
+		/*dh::IODeviceController::Instance().Unload();
+		dh::IODeviceController::Instance().Load();*/
+		dh::IODeviceController::Instance().GetIODevice("ExternalDev_0").SetDO(dh::EKeys::OAxis_00, 2);
+		dh::IODeviceController::Instance().GetIODevice("ExternalDev_0").SetDO(dh::EKeys::OAxis_01, 6);
+		dh::IODeviceController::Instance().GetIODevice("ExternalDev_0").SetDO(dh::EKeys::OAxis_02, 1);
+		dh::IODeviceController::Instance().GetIODevice("ExternalDev_0").SetDO(dh::EKeys::OAxis_03, 1);
+	}
+	else if (_key == "B") {
+		dh::IODeviceController::Instance().GetIODevice("ExternalDev_0").SetDO(dh::EKeys::OAxis_00, 2);
+		dh::IODeviceController::Instance().GetIODevice("ExternalDev_0").SetDO(dh::EKeys::OAxis_01, 6);
+		dh::IODeviceController::Instance().GetIODevice("ExternalDev_0").SetDO(dh::EKeys::OAxis_02, 1);
+		dh::IODeviceController::Instance().GetIODevice("ExternalDev_0").SetDO(dh::EKeys::OAxis_03, 0);
+	}
+	else if (_key == "C") {
+		dh::IODeviceController::Instance().Unload();
+		dh::IODeviceController::Instance().Load();
 
-	//dh::IODeviceController::Instance().GetIODevice("ExternalDev_0").SetDO(dh::EKeys::OAxis_00, 6);
-	dh::IODeviceController::Instance().GetIODevice("ExternalDev_0").SetDO(dh::EKeys::OAxis_01, 1);
-	//dh::IODeviceController::Instance().GetIODevice("ExternalDev_0").SetDO(dh::EKeys::OAxis_02, 255);
+		//dh::IOSettings::Instance().SetIOConfigPath("./Config/IODevice.xml");
+		dh::IODeviceController::Instance().GetIODevice("ExternalDev_0").
+			BindAction("KeyDown", dh::IE_Pressed, this, &CIOUIDebugDlg::OnKeyDown);
+
+		dh::IODeviceController::Instance().GetIODevice("ExternalDev_0").
+			BindAction("KeyDown", dh::IE_Released, this, &CIOUIDebugDlg::OnKeyUp);
+
+		dh::IODeviceController::Instance().GetIODevice("ExternalDev_0")
+			.BindAxis("TestAxis", this, &CIOUIDebugDlg::OnSampleAxis);
+	}
+	
+	
+
+	/*dh::IODeviceController::Instance().GetIODevice("ExternalDev_0").SetDO(dh::EKeys::OAxis_00, 2);
+	dh::IODeviceController::Instance().GetIODevice("ExternalDev_0").SetDO(dh::EKeys::OAxis_01, 5);
+	dh::IODeviceController::Instance().GetIODevice("ExternalDev_0").SetDO(dh::EKeys::OAxis_02, 1);*/
 	//dh::IODeviceController::Instance().GetIODevice("ExternalDev_0").DOImmediate();
 	OutputDebugStringA(InKey.GetName());
 	OutputDebugStringA("  Pressed");
@@ -149,7 +178,7 @@ BOOL CIOUIDebugDlg::OnInitDialog()
 	dh::IODeviceController::Instance().GetIODevice("ExternalDev_0")
 		.BindAxis("TestAxis", this, &CIOUIDebugDlg::OnSampleAxis);
 
-	
+
 
 	/*dh::IODeviceController::Instance().GetIODevice("ExternalDev_0")
 		.BindAction("KeyDown", dh::IE_Pressed, this, &CIOUIDebugDlg::OnKeyDown);*/
@@ -214,6 +243,7 @@ void CIOUIDebugDlg::OnTimer(UINT_PTR nIDEvent)
 {
     // TODO: 在此添加消息处理程序代码和/或调用默认值
     dh::IODeviceController::Instance().Update();
+
 	BYTE _custom[1024];
 	dh::IODeviceController::Instance().GetIODevice("ExternalDev_0")
 		.RefreshStreamingData(_custom, 1024);

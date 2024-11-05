@@ -17,7 +17,8 @@
 #include "modbus/modbus.h"
 #include "mIni/mini/ini.h"
 #include "Util.hpp"
-#include "Debug.hpp"
+#include <queue>
+// #include "Debug.hpp"
 
 #pragma comment(lib,"modbus.lib")
 
@@ -29,12 +30,10 @@ public:
     int DIFuncCode;
     int DIReadAddr;
     int DIReadCount;
-    int DIAsyncRead;
 
     int AIFuncCode;
     int AIReadAddr;
     int AIReadCount;
-    int AIAsyncRead;
 
     int Divisor;
     int ParseMode;
@@ -46,7 +45,6 @@ public:
         DIReadCount = 2;
         Divisor = 1;
         ParseMode = 0;
-        DIAsyncRead = 0;
     }
 };
 
@@ -74,6 +72,20 @@ std::shared_ptr<mINI::INIStructure> g_iniStructure;
 // 读取线程相关
 std::map<uint8,std::atomic<int>> g_threadFinishers;
 
+struct WriteTask {
+	int writeType;   // 写操作类型 (5: 写线圈, 6: 写寄存器)
+	int writeAddr;   // 写操作的地址
+	int writeData;   // 要写入的数据
+};
+
+// 线程安全的队列和同步机制
+std::map<uint8,std::queue<WriteTask>> g_writeQueues;
+std::map<uint8,std::mutex>  g_queueMutexes;
+std::map<uint8, std::mutex> g_writeQueueMutexes;
+std::map<uint8,std::condition_variable> g_writeQueueConditions;
+std::map<uint8, std::condition_variable> g_readConditions;
+std::map<uint8,std::mutex> g_modbusOperationMutexes; 
+
 
 DeviceInfo devInfo;
 IOUI_API DeviceInfo* __stdcall Initialize()
@@ -84,15 +96,17 @@ IOUI_API DeviceInfo* __stdcall Initialize()
 	return &devInfo;
 }
 
-
 /// @brief 读取modbus寄存器
 /// @param deviceIndex 
 /// @param functionCode 
 /// @return 
 int queryModbusRegisters(uint8 deviceIndex, int functionCode){
+
+    std::lock_guard<std::mutex> lock(g_modbusOperationMutexes[deviceIndex]);  // 使用锁来保证对共享资源的安全访问
     auto& _ctx = g_ctxs[deviceIndex];
+    if (_ctx == nullptr) return 0;
+
     auto& _args = g_args[deviceIndex];
-    
     if (_args.DIReadAddr < 0) return 0;
 
     if(functionCode==0x01){ // 读取线圈
@@ -101,7 +115,6 @@ int queryModbusRegisters(uint8 deviceIndex, int functionCode){
         // 错误处理
         if (_readCount == -1) {
             auto _err = modbus_strerror(errno);
-            printf("%s", _err);
             return -1;
         }
         g_diReadCount[deviceIndex] = _readCount;
@@ -112,29 +125,27 @@ int queryModbusRegisters(uint8 deviceIndex, int functionCode){
         // 错误处理
         if (_readCount == -1) {
             auto _err = modbus_strerror(errno);
-            printf("%s", _err);
             return -1;
         }
+        g_readDIData[deviceIndex] = _readData;
         g_diReadCount[deviceIndex] = _readCount;
         return _readCount;
     }else if(functionCode==0x03){   // 读取保持寄存器
         auto _readData = g_readAIData[deviceIndex];
-        auto _readCount = modbus_read_registers(_ctx, _args.DIReadAddr, _args.AIReadCount, _readData);
+        auto _readCount = modbus_read_registers(_ctx, _args.AIReadAddr, _args.AIReadCount, _readData);
         // 错误处理
         if (_readCount == -1) {
             auto _err = modbus_strerror(errno);
-            printf("%s", _err);
             return -1;
         }
         g_aiReadCount[deviceIndex] = _readCount;
         return _readCount;
     }else if(functionCode==0x04){   // 读取输入寄存器
         auto _readData = g_readAIData[deviceIndex];
-        auto _readCount = modbus_read_input_registers(_ctx, _args.DIReadAddr, _args.DIReadCount, _readData);
+        auto _readCount = modbus_read_input_registers(_ctx, _args.AIReadAddr, _args.AIReadCount, _readData);
         // 错误处理
         if (_readCount == -1) {
             auto _err = modbus_strerror(errno);
-            printf("%s", _err);
             return -1;
         }
         g_aiReadCount[deviceIndex] = _readCount;
@@ -143,46 +154,73 @@ int queryModbusRegisters(uint8 deviceIndex, int functionCode){
     return -1;
 }
 
-void queryModbusRegistersThread(uint8 deviceIndex) {
 
+void queryModbusRegistersThread(uint8 deviceIndex) {
     auto _args = g_args[deviceIndex];
     std::thread _diThread([deviceIndex,_args](){
-        while (g_threadFinishers[deviceIndex].load()!=0)
+        while (g_threadFinishers[deviceIndex].load()>0)
         {
-            if(_args.DIAsyncRead == 1 && _args.DIReadCount > 0){
-                queryModbusRegisters(deviceIndex, _args.DIFuncCode); 
-            }
+            static std::map<uint8,std::mutex> _mutexes;
+            std::unique_lock<std::mutex> lock(_mutexes[deviceIndex]);
+            g_readConditions[deviceIndex].wait(lock, [deviceIndex] {return true; });
+            lock.unlock();
 
-			if (_args.AIAsyncRead == 1 && _args.AIReadCount > 0) {
-				queryModbusRegisters(deviceIndex, _args.AIFuncCode);
+            if(g_threadFinishers[deviceIndex].load()<=0) break;
+
+			if (_args.DIReadCount > 0) {
+				 queryModbusRegisters(deviceIndex, _args.DIFuncCode);
+                  std::this_thread::sleep_for(std::chrono::milliseconds(20));
+			}
+
+			if (_args.AIReadCount > 0) {
+		         queryModbusRegisters(deviceIndex, _args.AIFuncCode);
+                 std::this_thread::sleep_for(std::chrono::milliseconds(20));
+	        }            
+        }
+		auto _cur = g_threadFinishers[deviceIndex].load();
+		g_threadFinishers[deviceIndex].store(_cur - 1);
+    });
+
+    std::thread _aiThread([deviceIndex,_args](){
+        while (g_threadFinishers[deviceIndex].load()>0)
+        {
+             std::unique_lock<std::mutex> lock(g_queueMutexes[deviceIndex]);
+             g_writeQueueConditions[deviceIndex].wait(lock, [deviceIndex] {return !g_writeQueues[deviceIndex].empty() || g_threadFinishers[deviceIndex].load() <=0; });
+
+			// 如果标记停止，则退出
+			if (g_threadFinishers[deviceIndex].load()<=0) break;
+            auto& _writeQueue = g_writeQueues[deviceIndex];
+            if(_writeQueue.empty()) continue;
+
+            auto& _ctx = g_ctxs[deviceIndex];
+
+			// 从队列中取出任务
+			WriteTask task = _writeQueue.front();
+			_writeQueue.pop();
+			lock.unlock();
+
+			// 执行写操作
+			if (task.writeType == 5) {
+                std::lock_guard<std::mutex> _lock(g_modbusOperationMutexes[deviceIndex]);  // 使用锁来保证对共享资源的安全访问
+				int _bitValue = task.writeData == 0 ? 0 : 1;
+				modbus_write_bit(_ctx, task.writeAddr, _bitValue);
+			}
+			else if (task.writeType == 6) {
+                std::lock_guard<std::mutex> _lock(g_modbusOperationMutexes[deviceIndex]);  // 使用锁来保证对共享资源的安全访问
+				modbus_write_register(_ctx, task.writeAddr, task.writeData);
 			}
         }
-        g_threadFinishers[deviceIndex].store(2);
+        auto _cur = g_threadFinishers[deviceIndex].load();
+        g_threadFinishers[deviceIndex].store(_cur - 1);
     });
 
     _diThread.detach();
-
-    std::thread _aiThread([deviceIndex,_args](){
-        while (g_threadFinishers[deviceIndex].load()!=0)
-        {
-			/*	if (_args.AIAsyncRead == 1 && _args.AIReadCount > 0) {
-					queryModbusRegisters(deviceIndex, _args.AIFuncCode);
-				}*/
-        }
-        while (g_threadFinishers[deviceIndex].load() >= 0)
-        {
-            g_threadFinishers[deviceIndex].store(-1);
-        }
-    });
-
     _aiThread.detach();
 }
 
 
 IOUI_API int __stdcall OpenDevice(uint8 deviceIndex)
 {
-
-    // debugFunc(); return 0;
 	std::string _path = DevelopHelper::Paths::Instance().GetModuleDir() + "Core\\modbus.dll";
 	auto _module = LoadLibraryA(_path.data());
 
@@ -200,20 +238,17 @@ IOUI_API int __stdcall OpenDevice(uint8 deviceIndex)
 
     auto _diFuncCode = _iniStructure.has("di_func")? std::stoi(_iniStructure["di_func"],nullptr,16):0x02;
     auto _diReadAddr = _iniStructure.has("di_addr")?std::stoi(_iniStructure["di_addr"],nullptr,16):0x0000;
-    auto _diReadCount = _iniStructure.has("di_num")? std::stoi(_iniStructure["di_num"],nullptr,16):0x0020;
-    auto _diAsyncRead = _iniStructure.has("di_async_read") ? std::stoi(_iniStructure["di_async_read"]) : 0;
+    auto _diReadCount = _iniStructure.has("di_num")? std::stoi(_iniStructure["di_num"],nullptr,16):0x0000;
 
     auto _aiFuncCode = _iniStructure.has("ai_func")? std::stoi(_iniStructure["ai_func"],nullptr,16):0x03;
     auto _aiReadAddr = _iniStructure.has("ai_addr")?std::stoi(_iniStructure["ai_addr"],nullptr,16):0x0000;
-    auto _aiReadCount = _iniStructure.has("ai_num")? std::stoi(_iniStructure["ai_num"],nullptr,16):0x0002;
-    auto _aiAsyncRead = _iniStructure.has("ai_async_read") ? std::stoi(_iniStructure["ai_async_read"]) : 0;
+    auto _aiReadCount = _iniStructure.has("ai_num")? std::stoi(_iniStructure["ai_num"],nullptr,16):0x0000;
 
     auto _parseMode = _iniStructure.has("parse_mode") ? std::stoi(_iniStructure["parse_mode"]) : 0;
     auto _divisor = _iniStructure.has("divisor") ? std::stoi(_iniStructure["divisor"]) : 1;
+
     // 跳变阈值
     auto _jumpThreshold = _iniStructure.has("jump_threshold") ? std::stoi(_iniStructure["jump_threshold"]) : 500;
-
-    auto _writeTimeout = _iniStructure.has("write_timeout") ? std::stoi(_iniStructure["write_timeout"]) : 10;
 
 	if (!g_ctxs.count(deviceIndex)) {
         auto _modbusDriver = _iniStructure.has("driver") ? _iniStructure["driver"] : "modbus_rtu";
@@ -250,18 +285,15 @@ IOUI_API int __stdcall OpenDevice(uint8 deviceIndex)
     _args.DIFuncCode = _diFuncCode;
     _args.DIReadAddr = _diReadAddr;
     _args.DIReadCount = _diReadCount;
-    _args.DIAsyncRead = _diAsyncRead;
 
     _args.AIFuncCode = _aiFuncCode;
     _args.AIReadAddr = _aiReadAddr;
     _args.AIReadCount = _aiReadCount;
-    _args.AIAsyncRead = _aiAsyncRead;
 
     _args.ParseMode = _parseMode;
     _args.Divisor = _divisor;
     _args.JumpThreshold = _jumpThreshold;
    
-
     auto ctx = g_ctxs[deviceIndex];
     if (ctx == NULL) {
         return 0;
@@ -270,6 +302,8 @@ IOUI_API int __stdcall OpenDevice(uint8 deviceIndex)
     // 设置modbus从机地址
     auto _ret = modbus_set_slave(ctx, _args.SlaveAddr);
 
+
+    auto _writeTimeout = 100;
     // 设置写入超时时间
     modbus_set_response_timeout(ctx, _writeTimeout/1000,_writeTimeout%1000*1000);
 
@@ -277,47 +311,17 @@ IOUI_API int __stdcall OpenDevice(uint8 deviceIndex)
         modbus_free(ctx);
         return 0;
     }
-
-    // 写入单个保持寄存器的数据
-    int _writeID = 0;
-    while (_iniStructure.has("write_single_addr_" + std::to_string(_writeID)))
-    {
-        auto _writeAddr = std::stoi(_iniStructure["write_single_addr_" + std::to_string(_writeID)], nullptr, 16);
-        auto _writeData = std::stoi(_iniStructure["write_single_data_" + std::to_string(_writeID)], nullptr, 16);
-        modbus_write_register(ctx, _writeAddr, _writeData);
-        _writeID++;
-    }
-
-    // 写入多个保持寄存器的数据
-    _writeID = 0;
-    while (_iniStructure.has("write_multi_addr_" + std::to_string(_writeID)))
-    {
-        auto _writeAddr = std::stoi(_iniStructure["write_multi_addr_" + std::to_string(_writeID)], nullptr, 16);
-        auto _writeCount = std::stoi(_iniStructure["write_multi_num_" + std::to_string(_writeID)], nullptr, 16);
-        std::vector<uint16_t> _writeData;
-        for (int i = 0; i < _writeCount; i++)
-        {
-            _writeData.push_back(std::stoi(_iniStructure["write_multi_data_" + std::to_string(_writeID) + "_" + std::to_string(i)], nullptr, 16));
-        }
-        modbus_write_registers(ctx, _writeAddr, _writeCount, _writeData.data());
-        _writeID++;
-    }
     
     // 设置读取超时时间
-    auto _readTimeout = _iniStructure.has("read_timeout") ? std::stoi(_iniStructure["read_timeout"]) : 50;
+    auto _readTimeout = 100;
     modbus_set_response_timeout(ctx, _readTimeout/1000,_readTimeout%1000*1000);
 
-    g_threadFinishers.insert(std::make_pair(deviceIndex, 1));
-
-    if(_args.DIAsyncRead == 1){
-        std::thread th([deviceIndex](){
-            queryModbusRegistersThread(deviceIndex);
-        });
-        th.detach();
-    }
+    g_threadFinishers[deviceIndex].store(1);
     
-    EnableConsoleDebug();
-    
+    std::thread th([deviceIndex](){
+        queryModbusRegistersThread(deviceIndex);
+    });
+    th.detach();
     return 1;
 }
 
@@ -327,9 +331,11 @@ IOUI_API int __stdcall CloseDevice(uint8 deviceIndex)
     if (ctx == NULL) return 0;
 
     auto _args = g_args[deviceIndex];
-    if (_args.DIAsyncRead == 1) {
+    if ( _args.DIReadCount>0 || _args.AIReadCount > 0) {
+		
+        g_writeQueueConditions[deviceIndex].notify_all();
         g_threadFinishers[deviceIndex].store(0);
-        while(g_threadFinishers[deviceIndex].load() >= 0){
+        while(g_threadFinishers[deviceIndex].load() != -2){
             std::this_thread::sleep_for(std::chrono::milliseconds(10));
         }
     }
@@ -348,88 +354,86 @@ IOUI_API int __stdcall CloseDevice(uint8 deviceIndex)
     g_ctxs.erase(deviceIndex);
     g_args.erase(deviceIndex);
 
-    if(g_ctxs.size() == 0){
-        DisableConsoleDebug();
-    }
-  
     return 1;
 }
 
 IOUI_API int __stdcall SetDeviceDO(uint8 deviceIndex, short* InDOStatus)
 {
-    // 05 写单个线圈
-    // 06 写单个寄存器
-    auto _writeType = InDOStatus[0];
-    auto _writeAddr = InDOStatus[1];
-    auto _writeData = InDOStatus[2];
+	auto& _ctx = g_ctxs[deviceIndex];
+	if (_ctx == nullptr) return 0;
 
-    if (_writeType == 5) {
-        int _bitValue = _writeData == 0 ? 0 : 1;
-		modbus_write_bit(g_ctxs[deviceIndex], _writeAddr,_bitValue);
+	auto _funcCode = InDOStatus[0];
+	if (_funcCode == 0) return 0;
+
+	if (_funcCode == 1) {
+		// 设置从机地址，立即执行，无需加入队列
+		modbus_set_slave(_ctx, InDOStatus[1]);
 	}
-    else if (_writeType == 6) {
-		modbus_write_register(g_ctxs[deviceIndex], _writeAddr, _writeData);
+	else {
+		// 封装写任务
+		WriteTask task;
+		task.writeType = InDOStatus[1];
+		task.writeAddr = InDOStatus[2];
+		task.writeData = InDOStatus[3];
+
+		// 加入队列并通知工作线程
+		{
+			std::lock_guard<std::mutex> lock(g_queueMutexes[deviceIndex]);
+			g_writeQueues[deviceIndex].push(task);
+		}
+		g_writeQueueConditions[deviceIndex].notify_one();  // 通知线程有新任务
 	}
     return 1;
 }
 
 IOUI_API int __stdcall GetDeviceDO(uint8 deviceIndex, short* OutDOStatus)
 {
-    // zero memory
     std::fill(OutDOStatus, OutDOStatus + devInfo.OutputCount, 0);
     return 1;
 }
 
 IOUI_API int __stdcall GetDeviceDI(uint8 deviceIndex, BYTE* OutDIStatus)
 {
+	auto& _ctx = g_ctxs[deviceIndex];
+	if (_ctx == nullptr) return 0;
+
+    g_readConditions[deviceIndex].notify_one();
+
     auto _args = g_args[deviceIndex];
-	if (_args.DIAsyncRead == 0 && _args.DIReadCount > 0) {
-		queryModbusRegisters(deviceIndex, _args.DIFuncCode);
-	}
-    
     auto _recvCount = g_diReadCount[deviceIndex];
 	if (_recvCount <=0) {
 		return 0;
 	}
 
-    ClearConsole();
     auto& _readData = g_readDIData[deviceIndex];
 
     // 按位解析
     for(uint8 _idx=0; _idx< _recvCount;++_idx)
     {
         auto _byteValue = _readData[_idx];
-
         OutDIStatus[_idx] = _byteValue;
         if(_idx >= devInfo.InputCount) break;
     }
-    PrintDIData( OutDIStatus, min(_recvCount,devInfo.InputCount));
     
     g_diReadCount[deviceIndex] = -1;
     return 1;
 }
 
-
-
 IOUI_API int __stdcall GetDeviceAD(uint8 deviceIndex, short* OutADStatus)
 {
-    PrintLine();
+    // PrintLine();
     auto _args = g_args[deviceIndex];
-    if (_args.AIAsyncRead == 0 && _args.AIReadCount > 0) {
-        queryModbusRegisters(deviceIndex, _args.AIFuncCode);
-    }
-    
     auto _recvCount = g_aiReadCount[deviceIndex];
     if (_recvCount <= 0) {
         return 0;
     }
     
-    auto tab_reg = g_readAIData[deviceIndex];
+    auto& tab_reg = g_readAIData[deviceIndex];
 
     if (_args.ParseMode == 0) {
         for (uint8 _idx=0;_idx<_recvCount;++_idx)
         {
-            OutADStatus[_idx] = tab_reg[_idx];
+            OutADStatus[_idx] = tab_reg[_idx]/ _args.Divisor;
         }
     }
     else if (_args.ParseMode == 1) {
@@ -438,7 +442,7 @@ IOUI_API int __stdcall GetDeviceAD(uint8 deviceIndex, short* OutADStatus)
         uint32_t _value = 0;
         for (uint8 _idx = 0; _idx < _recvCount; ++_idx)
         {
-            _value = _value << 16;
+            _value = _value <<  16;
             _value |= tab_reg[_idx];
         }
         _value /= _args.Divisor;
@@ -452,8 +456,6 @@ IOUI_API int __stdcall GetDeviceAD(uint8 deviceIndex, short* OutADStatus)
         OutADStatus[0] = _value;
         OutADStatus[1] = _delta;
     }
-    PrintAIData(OutADStatus, 1);
-
     g_aiReadCount[deviceIndex] = -1;
     return 1;
 }

@@ -15,63 +15,16 @@
 #include <chrono>
 #include "Serial.hpp"
 #include "Util.hpp"
-
+#include <iomanip>  // 用于格式化输出
+#include <sstream>  // 用于字符串流
 
 namespace dh = DevelopHelper;
 
 extern HINSTANCE DLL_INSTANCE;
 HHOOK g_hHook = NULL;
-// 当前组合键记录
-std::string g_currentComboKey="";
 std::string g_terminalKey;
 // 当前缓存的待处理的组合键记录
 std::vector<std::string> g_cachedComboKeys;
-
-LRESULT CALLBACK KeyboardProc(int code, WPARAM wParam, LPARAM lParam) {
-	if (code < 0 || code == HC_NOREMOVE) {
-		// 如果代码小于零，则挂钩过程必须将消息传递给CallNextHookEx函数，而无需进一步处理，并且应返回CallNextHookEx返回的值。此参数可以是下列值之一。(来自官网手册)
-		return CallNextHookEx(g_hHook, code, wParam, lParam);
-	}
-	if (lParam & 0x40000000) {
-		// 【第30位的含义】键状态。如果在发送消息之前按下了键，则值为1。如果键被释放，则为0。(来自官网手册)
-		// 我们只考虑被按下后松开的状态
-		return CallNextHookEx(g_hHook, code, wParam, lParam);
-	}
-	char szKeyName[MAX_PATH];
-	// 【参数1】LPARAM类型，代表键状态
-	// 【参数2】缓冲区
-	// 【参数3】缓冲区大小
-	GetKeyNameTextA(lParam, szKeyName, MAX_PATH);
-	
-	if (g_terminalKey == szKeyName) {
-		g_cachedComboKeys.push_back(g_currentComboKey);
-		g_currentComboKey = "";
-	}
-	else {
-		g_currentComboKey += g_currentComboKey != "" ? (std::string("|") + szKeyName) : szKeyName;
-	}
-
-	return CallNextHookEx(g_hHook, code, wParam, lParam);
-}
-
-BOOL InstallHook() {
-	// 【参数1】钩子的类型，这里代表键盘钩子
-	// 【参数2】钩子处理的函数
-	// 【参数3】获取模块,PROJECT_NAME为DLL的项目名称
-	// 【参数4】线程的ID，如果是全局钩子的话，这里要填0，如果是某个线程的钩子，那就需要写线程的ID
-	g_hHook = SetWindowsHookEx(WH_KEYBOARD, KeyboardProc, DLL_INSTANCE, 0);
-	if (g_hHook == NULL) {
-		// 钩子安装失败
-		//MessageBox(NULL, L"全局钩子注册失败", L"信息", MB_OK);
-		return FALSE;
-	}
-	return TRUE;
-}
-
-BOOL UninstallHook() {
-	return UnhookWindowsHookEx(g_hHook);
-}
-
 
 // 串口实例指针
 std::map<uint8, std::shared_ptr<Serial>> g_serialPorts;
@@ -85,6 +38,61 @@ IOUI_API DeviceInfo* __stdcall Initialize()
     return &devInfo;
 }
 
+
+std::string convert_char(unsigned char ch, int mode) {
+	if (mode == 0) {
+		// mode 0: 返回ASCII字符
+		if (ch >= 32 && ch <= 126) {
+			return std::string(1, ch);  // 将字符转换为长度为1的std::string
+		}
+		else {
+			return ".";
+		}
+	}
+	else if (mode == 1) {
+		// mode 1: 返回16进制字符串
+		std::ostringstream oss;
+		oss << std::uppercase << std::hex << std::setw(2) << std::setfill('0') << static_cast<int>(ch);
+		return oss.str();  // 返回格式化的16进制字符串
+	}
+	else {
+		// 非法模式
+		return "";
+	}
+}
+
+// 将 unsigned char 数组转换为16进制字符串
+std::string to_hex_string(const unsigned char* data, size_t length) {
+    std::ostringstream oss;
+    for (size_t i = 0; i < length; ++i) {
+        oss << std::hex << std::setw(2) << std::setfill('0') << std::uppercase << static_cast<int>(data[i]);
+    }
+    return oss.str();
+}
+
+// 判断数组的16进制表示是否以指定的字符串开头
+bool starts_with_hex(const unsigned char* data, size_t length, const std::string& input) {
+    std::string hex_string = to_hex_string(data, length);
+    return hex_string.rfind(input, 0) == 0;  // 检查是否以input开头
+}
+
+// 将前count个字节转换为指定格式的字符串，并用 | 分隔
+std::string vector_to_hex_string(const std::vector<unsigned char>& data, size_t count = 11, int mode = 1) {
+    std::ostringstream oss;
+
+    // 取前count个字节（最多11个，如果vector长度不足则取实际长度）
+    size_t length = min(data.size(), count);
+    for (size_t i = 0; i < length; ++i) {
+        // 使用 convert_char 函数转换每个字节
+        oss << convert_char(data[i], mode);
+
+        if (i < length - 1) {
+            oss << " ";  // 添加 | 分隔符，最后一个元素后不加
+        }
+    }
+
+    return oss.str();
+}
 
 std::map<std::string, int> g_comboKeysMap;
 mINI::INIFile* g_iniFIle = nullptr;
@@ -110,6 +118,10 @@ int AppendComboKeys(const std::string& comboKey) {
 
 // 通道超时值 ms
 int g_timeout = 500;
+int g_comboMode = 1;
+int g_dataBits = 11;
+std::string g_startBits = "20";
+
 IOUI_API int __stdcall OpenDevice(uint8 deviceIndex)
 {
 	std::string path = dh::Paths::Instance().GetModuleDir();
@@ -123,7 +135,11 @@ IOUI_API int __stdcall OpenDevice(uint8 deviceIndex)
 	const char* app = "Serial";
 	auto& _baudRateString = ini["Serial"][BuildDeviceAttribute("BaudRate", deviceIndex)];
 	DWORD _baudRate = _baudRateString==""?9600: std::stoi(_baudRateString);
-	g_timeout = std::stoi(ini["Serial"]["Timeout"]);
+	g_timeout = std::stoi(ini["Serial"]["Timeout"]!=""? ini["Serial"]["Timeout"] : "500");
+
+	g_comboMode = std::stoi(ini["Serial"]["ComboMode"]!=""? ini["Serial"]["ComboMode"] : "1");
+	g_dataBits = std::stoi(ini["Serial"]["DataBits"]!=""? ini["Serial"]["DataBits"] : "11");
+	g_startBits = ini["Serial"]["StartBits"]!=""? ini["Serial"]["StartBits"] : "20";
 
 	try
 	{
@@ -195,20 +211,15 @@ IOUI_API int __stdcall GetDeviceDI(uint8 deviceIndex, BYTE* OutDIStatus)
 
 
 	auto& _diLastUpdateTime = _AllDILastUpdateTime.at(deviceIndex);
-	while (_devData.size()>=14)
+	while (_devData.size() >= g_dataBits)
 	{
-		if (_devData[0] != 0x02) {
+		if(!starts_with_hex(_devData.data(), _devData.size(), g_startBits)){
 			_devData.erase(_devData.begin());
 			continue;
 		}
-		for (int _idx = 1; _idx < 11; ++_idx) {
-			unsigned char _ch = _devData[_idx];
-			std::string szKeyName(reinterpret_cast<const char*>(&_ch), 1);
-			g_currentComboKey +=  g_currentComboKey != "" ? (std::string("|") + szKeyName) : szKeyName;
-		}
-		g_cachedComboKeys.push_back(g_currentComboKey);
-		g_currentComboKey = "";
-		_devData.erase(_devData.begin(), _devData.begin() + 14);
+
+		g_cachedComboKeys.push_back(vector_to_hex_string(_devData, g_dataBits,g_comboMode));
+		_devData.erase(_devData.begin(), _devData.begin() + g_dataBits);
 	}
 	
 	if (g_timeout <= 0) {
