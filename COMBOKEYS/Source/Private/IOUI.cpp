@@ -53,7 +53,7 @@ BOOL InstallHook() {
 	// 【参数2】钩子处理的函数
 	// 【参数3】获取模块,PROJECT_NAME为DLL的项目名称
 	// 【参数4】线程的ID，如果是全局钩子的话，这里要填0，如果是某个线程的钩子，那就需要写线程的ID
-	g_hHook = SetWindowsHookEx(WH_KEYBOARD, KeyboardProc, DLL_INSTANCE, 0);
+	g_hHook = SetWindowsHookEx(WH_KEYBOARD_LL, KeyboardProc, DLL_INSTANCE, 0);
 	if (g_hHook == NULL) {
 		// 钩子安装失败
 		//MessageBox(NULL, L"全局钩子注册失败", L"信息", MB_OK);

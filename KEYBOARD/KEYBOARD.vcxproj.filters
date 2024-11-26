@@ -21,24 +21,10 @@
     <ClCompile Include="Source\Private\IOUI.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Private\NetIO.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Private\Volume.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Source\Module.def">
       <Filter>源文件</Filter>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="Source\Public\NetIO.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Public\Volume.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
   </ItemGroup>
 </Project>

@@ -21,10 +21,7 @@
     <ClCompile Include="Source\Private\IOUI.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Private\NetIO.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\Private\Volume.cpp">
+    <ClCompile Include="Source\Private\snap7.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
@@ -34,10 +31,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Source\Public\NetIO.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Public\Volume.h">
+    <ClInclude Include="Source\Public\snap7.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

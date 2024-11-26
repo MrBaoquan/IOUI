@@ -76,22 +76,32 @@ void CIOUIDebugDlg::OnKeyDown(const dh::FKey InKey)
 	
 	std::string _key = InKey.GetName();
 	if (_key == "A") {
-		/*dh::IODeviceController::Instance().Unload();
-		dh::IODeviceController::Instance().Load();*/
+		dh::IODeviceController::Instance().Unload();
+		dh::IODeviceController::Instance().Load();
 
-		dh::IODeviceController::Instance().GetIODevice("ExternalDev_0").SetDO(dh::FKey("OAxis_241"), 127);
+		/*dh::IODeviceController::Instance().GetIODevice("ExternalDev_0").SetDO(dh::FKey("OAxis_241"), 127);
 		dh::IODeviceController::Instance().GetIODevice("ExternalDev_0").SetDO(dh::FKey("OAxis_242"), 0);
 		dh::IODeviceController::Instance().GetIODevice("ExternalDev_0").SetDO(dh::FKey("OAxis_243"), 0);
 		dh::IODeviceController::Instance().GetIODevice("ExternalDev_0").SetDO(dh::FKey("OAxis_244"), 1);
-		dh::IODeviceController::Instance().GetIODevice("ExternalDev_0").SetDO(dh::FKey("OAxis_245"), 20000);
+		dh::IODeviceController::Instance().GetIODevice("ExternalDev_0").SetDO(dh::FKey("OAxis_245"), 20000);*/
 
-		dh::IODeviceController::Instance().GetIODevice("ExternalDev_0").SetDO(dh::FKey("OAxis_240"), 1);
+		//dh::IODeviceController::Instance().GetIODevice("ExternalDev_0").SetDO(dh::FKey("OAxis_240"), 1);
 
 
 		dh::IODeviceController::Instance().GetIODevice("ExternalDev_0").SetDO(dh::FKey("OAxis_00"), 1);
+		dh::IODeviceController::Instance().GetIODevice("ExternalDev_0").SetDO(dh::FKey("OAxis_03"), 1);
+		dh::IODeviceController::Instance().GetIODevice("ExternalDev_0").SetDO(dh::FKey("OAxis_09"), 1);
+		dh::IODeviceController::Instance().GetIODevice("ExternalDev_0").SetDO(dh::FKey("OAxis_10"), 1);
+		// dh::IODeviceController::Instance().GetIODevice("ExternalDev_0").SetDO(dh::FKey("OAxis_248"), 1);
 	}
 	else if (_key == "B") {
-		dh::IODeviceController::Instance().GetIODevice("ExternalDev_0").SetDO(dh::EKeys::OAxis_00, 0);
+		dh::IODeviceController::Instance().GetIODevice("ExternalDev_0").SetDO(dh::FKey("OAxis_00"), 0);
+		dh::IODeviceController::Instance().GetIODevice("ExternalDev_0").SetDO(dh::FKey("OAxis_03"), 0);
+		dh::IODeviceController::Instance().GetIODevice("ExternalDev_0").SetDO(dh::FKey("OAxis_09"), 0);
+		dh::IODeviceController::Instance().GetIODevice("ExternalDev_0").SetDO(dh::FKey("OAxis_10"), 0);
+	/*	dh::IODeviceController::Instance().GetIODevice("ExternalDev_0").SetDO(dh::FKey("OAxis_246"), 1);
+		dh::IODeviceController::Instance().GetIODevice("ExternalDev_0").SetDO(dh::FKey("OAxis_247"), 1);
+		dh::IODeviceController::Instance().GetIODevice("ExternalDev_0").SetDO(dh::FKey("OAxis_248"), 0);*/
 	}
 	//else if (_key == "C") {
 	//	dh::IODeviceController::Instance().Unload();
@@ -174,19 +184,41 @@ BOOL CIOUIDebugDlg::OnInitDialog()
 	dh::IODeviceController::Instance().Load();
 
     //dh::IOSettings::Instance().SetIOConfigPath("./Config/IODevice.xml");
-    dh::IODeviceController::Instance().GetIODevice("ExternalDev_0").
+    /*dh::IODeviceController::Instance().GetIODevice("ExternalDev_0").
         BindAction("KeyDown", dh::IE_Pressed, this, &CIOUIDebugDlg::OnKeyDown);
 
 	dh::IODeviceController::Instance().GetIODevice("ExternalDev_0").
-		BindAction("KeyDown", dh::IE_Released, this, &CIOUIDebugDlg::OnKeyUp);
+		BindAction("KeyDown", dh::IE_Released, this, &CIOUIDebugDlg::OnKeyUp);*/
+
+	//dh::IODeviceController::Instance().GetIODevice("ExternalDev").
+	//	BindAction("KeyDown", dh::IE_Pressed, [](dh::FKey key) {
+	//		OutputDebugStringA("bbb Button_00 Pressed\n");
+	//	});
+
+	//dh::IODeviceController::Instance().GetIODevice("ExternalDev_0").
+	//	BindAction("KeyDown", dh::IE_Pressed, [](dh::FKey key) {
+	//		OutputDebugStringA("aaa Button_00 Pressed\n");
+	//	});
+
+	
 
 	//dh::IODeviceController::Instance().GetIODevice("ExternalDev_0")
 	//	.BindAxis("TestAxis", this, &CIOUIDebugDlg::OnSampleAxis);
 
+	//dh::IODeviceController::Instance().GetIODevice("ExternalDev").BindKey(dh::EKeys::Button_20, dh::IE_Pressed, [] {
+	//	OutputDebugStringA("aaa Button_00 Pressed\n");
+	//});
+	//dh::IODeviceController::Instance().GetIODevice("ExternalDev_0").BindKey(dh::EKeys::Button_20, dh::IE_Pressed, [] {
+	//	OutputDebugStringA("bbb Button_00 Pressed\n");
+	//});
 
 
-	/*dh::IODeviceController::Instance().GetIODevice("ExternalDev_0")
-		.BindAction("KeyDown", dh::IE_Pressed, this, &CIOUIDebugDlg::OnKeyDown);*/
+	dh::IODeviceController::Instance().GetIODevice("ExternalDev_0")
+		.BindAction("KeyDown", dh::IE_Pressed, this, &CIOUIDebugDlg::OnKeyDown);
+
+	dh::IODeviceController::Instance().GetIODevice("ExternalDev_0")
+		.BindAction("KeyDown", dh::IE_Released, this, &CIOUIDebugDlg::OnKeyUp);
+
 
     //struct __declspec(uuid("B372C9F6-1959-4650-960D-73F20CD479BB")) Interface{};
     //auto uid = __uuidof(Interface);

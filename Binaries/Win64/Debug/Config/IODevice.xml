@@ -1,10 +1,9 @@
 <IORoot xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<Device Name="Standard" Type="Standard" Index="0" />
-
-	<Device Name="ExternalDev_0" Type="External" DllName="NETIO" Index="1">
+	
+	<Device Name="ExternalDev_0" Type="External" DllName="SNAP7" Index="0">
 		<Action Name="KeyDown">
 			<Key Name="AnyKey" />
-			<Key Name="A" />
 			<Key Name="B" />
 			<Key Name="C" />
 		</Action>
