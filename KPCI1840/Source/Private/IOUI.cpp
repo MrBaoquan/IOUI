@@ -66,7 +66,6 @@ IOUI_API int __stdcall GetDeviceDO(uint8 deviceIndex, short* OutDOStatus)
 
 IOUI_API int __stdcall GetDeviceDI(uint8 deviceIndex, BYTE* OutDIStatus)
 {
-
     for (int _addr = 0; _addr <= 1; ++_addr) {
         unsigned char _val = ReadByte(deviceIndex, _addr);
         OutDIStatus[_addr * 8 + 0] = ((_val & (1 << 0)) >> 0);        // 高电平为0  低电平为1

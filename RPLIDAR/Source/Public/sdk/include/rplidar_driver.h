@@ -86,8 +86,6 @@ public:
     virtual void ReleaseRxTx() {return;}
 };
 
-
-
 class RPLIDAR_API RPlidarDriver {
 public:
     enum {

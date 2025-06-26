@@ -43,7 +43,7 @@ bool NetIO::createUDPService(const std::string& host, const std::string& port) {
 		socket_.bind(endpoint);
 		return true;
 	}
-	catch (std::exception& e) {
+	catch (std::exception&) {
 		// std::cerr << "Failed to create UDP service: " << e.what() << std::endl;
 		return false;
 	}
@@ -292,9 +292,28 @@ std::set<std::string> NetIO::getLocalIPAddresses() {
 	return ipAddresses;
 }
 
+std::string GbkToUtf8(const std::string& gbkStr)
+{
+	int len = MultiByteToWideChar(CP_ACP, 0, gbkStr.c_str(), -1, NULL, 0);
+	wchar_t* wstr = new wchar_t[len + 1];
+	memset(wstr, 0, len + 1);
+	MultiByteToWideChar(CP_ACP, 0, gbkStr.c_str(), -1, wstr, len);
+
+	len = WideCharToMultiByte(CP_UTF8, 0, wstr, -1, NULL, 0, NULL, NULL);
+	char* str = new char[len + 1];
+	memset(str, 0, len + 1);
+	WideCharToMultiByte(CP_UTF8, 0, wstr, -1, str, len, NULL, NULL);
+
+	std::string strTemp = str;
+	if (wstr) delete[] wstr;
+	if (str) delete[] str;
+
+	return strTemp;
+}
+
 // 获取当前进程名称（不包括路径和后缀名）
 std::string NetIO::getProcessName() {
-	char process_name[MAX_PATH];
+	wchar_t process_name[MAX_PATH];
 	DWORD process_id = GetCurrentProcessId(); // 获取当前进程 ID
 	HANDLE hProcess = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ, FALSE, process_id);
 
@@ -302,13 +321,17 @@ std::string NetIO::getProcessName() {
 		HMODULE hMod;
 		DWORD cbNeeded;
 		if (EnumProcessModules(hProcess, &hMod, sizeof(hMod), &cbNeeded)) {
-			GetModuleFileNameExA(hProcess, hMod, process_name, sizeof(process_name) / sizeof(char));
+			GetModuleFileNameExW(hProcess, hMod, process_name, sizeof(process_name) / sizeof(wchar_t));
 		}
 		CloseHandle(hProcess);
 	}
 
+	// 将宽字符转换为多字节字符
+	int bufferSize = WideCharToMultiByte(CP_UTF8, 0, process_name, -1, NULL, 0, NULL, NULL);
+	std::string full_process_name(bufferSize, 0);
+	WideCharToMultiByte(CP_UTF8, 0, process_name, -1, &full_process_name[0], bufferSize, NULL, NULL);
+
 	// 提取进程名，不包括路径和后缀
-	std::string full_process_name(process_name);
 	size_t last_slash_idx = full_process_name.find_last_of("\\/");
 	if (last_slash_idx != std::string::npos) {
 		full_process_name = full_process_name.substr(last_slash_idx + 1); // 去掉路径

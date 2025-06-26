@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+    <BaseOutputPath>$(SolutionDir)Binaries\Win64</BaseOutputPath>
+	 <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="ReactiveMarbles.ObservableEvents.SourceGenerator" Version="1.3.1" />
+    <PackageReference Include="ReactiveUI.WPF" Version="20.3.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="IODevice_CSharp_Wrapper">
+      <HintPath>..\Binaries\Win64\Debug\IODevice_CSharp_Wrapper.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>

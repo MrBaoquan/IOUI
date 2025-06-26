@@ -1,11 +1,21 @@
 <IORoot xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<Device Name="Standard" Type="Standard" Index="0" />
 	
-	<Device Name="ExternalDev_0" Type="External" DllName="SNAP7" Index="0">
+	<Device Name="extDev1" Type="External" DllName="Modbus" Index="1">
 		<Action Name="KeyDown">
-			<Key Name="AnyKey" />
+			<Key Name="A" />
 			<Key Name="B" />
+		</Action>
+
+		<Axis Name="MoveLR">
+			<Key Name="Axis_00" />
+		</Axis>
+	</Device>
+
+	<Device Name="extDev2" Type="External" DllName="Modbus" Index="2">
+		<Action Name="KeyDown">
 			<Key Name="C" />
+			<Key Name="D" />
 		</Action>
 
 		<Axis Name="MoveLR">

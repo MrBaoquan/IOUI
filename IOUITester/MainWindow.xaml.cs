@@ -1,0 +1,43 @@
+﻿using System.Text;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
+using ReactiveUI;
+using System.Reactive;
+using IOUITester.ViewModel;
+using System.Reactive.Linq;
+using IOToolkit;
+
+namespace IOUITester
+{
+    /// <summary>
+    /// Interaction logic for MainWindow.xaml
+    /// </summary>
+    public partial class MainWindow : ReactiveWindow<MainViewModel>
+    {
+        public MainWindow()
+        {
+            InitializeComponent();
+            ViewModel = new MainViewModel();
+            DataContext = ViewModel;
+
+            this.WhenActivated(disposables =>
+            {
+                //IODeviceController.Load();
+                //Observable.Interval(TimeSpan.FromMicroseconds(40))
+                //    .ObserveOn(RxApp.MainThreadScheduler)
+                //    .Subscribe(_ =>
+                //    {
+                //        IODeviceController.Update();
+                //    });
+
+            });
+        }
+    }
+}

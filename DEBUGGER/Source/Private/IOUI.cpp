@@ -400,8 +400,18 @@ int init(uint8 deviceIndex)
 					ImGui::AlignTextToFramePadding();
 					ImGui::Text(_label.c_str());ImGui::SameLine();
 					// strength slider to window width
-					ImGui::PushItemWidth(ImGui::GetWindowWidth() - ImGui::GetCursorPosX() - 36);
+					ImGui::PushItemWidth(ImGui::GetWindowWidth() - ImGui::GetCursorPosX() - 120);
 					ImGui::SliderInt((std::string("##")+_label).c_str(), &g_axisStatus[_idx], -1000, 1000,"%d");
+					ImGui::PopItemWidth();
+
+					// 在Slider后面同一行添加Reset按钮
+					ImGui::SameLine();
+
+					// 设置按钮宽度，调整为适合大小
+					float btn_width = 80.0f;
+					if (ImGui::Button((std::string("Reset##") + _label).c_str(), ImVec2(btn_width, 0))) {
+						g_axisStatus[_idx] = 0;  // 重置数值为0，您可根据需要设置默认值
+					}
 				}
 			}
 			

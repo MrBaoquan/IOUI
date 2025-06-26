@@ -4,6 +4,7 @@
         "*.wxss": "css",
         "*.wxs": "javascript",
         "*.mpx": "vue",
+        "*.ps1": "powershell",
         "algorithm": "cpp",
         "any": "cpp",
         "array": "cpp",
@@ -86,6 +87,14 @@
         "xstring": "cpp",
         "xtr1common": "cpp",
         "xtree": "cpp",
-        "xutility": "cpp"
+        "xutility": "cpp",
+        "coroutine": "cpp",
+        "csignal": "cpp",
+        "cstdarg": "cpp",
+        "resumable": "cpp",
+        "shared_mutex": "cpp",
+        "source_location": "cpp",
+        "stdfloat": "cpp",
+        "variant": "cpp"
     }
 }

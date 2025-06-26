@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "IOUITester": {
+      "commandName": "Project",
+      "nativeDebugging": true
+    }
+  }
+}
