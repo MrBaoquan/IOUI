@@ -1,25 +1,23 @@
 <IORoot xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<Device Name="Standard" Type="Standard" Index="0" />
 	
-	<Device Name="extDev1" Type="External" DllName="Modbus" Index="1">
-		<Action Name="KeyDown">
-			<Key Name="A" />
-			<Key Name="B" />
+	<Device Name="extDev1" Type="External" DllName="NETIO" Index="0">
+		<Action Name="PlayVideo_0">
+			<Key Name="Button_00" />
+		</Action>
+		<Action Name="PlayVideo_1">
+			<Key Name="Button_01" />
+		</Action>
+		<Action Name="PlayVideo_2">
+			<Key Name="Button_02" />
+		</Action>
+		<Action Name="PlayVideo_3">
+			<Key Name="Button_03" />
 		</Action>
 
 		<Axis Name="MoveLR">
 			<Key Name="Axis_00" />
 		</Axis>
 	</Device>
-
-	<Device Name="extDev2" Type="External" DllName="Modbus" Index="2">
-		<Action Name="KeyDown">
-			<Key Name="C" />
-			<Key Name="D" />
-		</Action>
-
-		<Axis Name="MoveLR">
-			<Key Name="Axis_00" />
-		</Axis>
-	</Device>
+	
 </IORoot>

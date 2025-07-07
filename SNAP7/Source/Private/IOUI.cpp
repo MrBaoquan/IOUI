@@ -8,6 +8,7 @@
 #include "snap7.h"
 #include "Paths.hpp"
 #include "mIni/mini/ini.h"
+#include "Util.hpp"
 
 #pragma comment(lib, "snap7.lib")
 
@@ -42,10 +43,21 @@ IOUI_API int __stdcall OpenDevice(uint8 deviceIndex) {
         g_iniStructure = std::make_shared<mINI::INIStructure>();
         g_iniFile->read(*g_iniStructure);
     }
-    
     auto& ini = *g_iniStructure;
-    std::string section = "snap7_" + std::to_string(deviceIndex);
-    auto& attrs = ini[section];
+    const std::string deviceSectionName = BuildDeviceAttribute("device", deviceIndex);
+
+    // 读取default节配置
+    auto& defaultSection = ini["default"];
+    std::map<std::string, std::string> mergedConfig;
+    for (auto& kv : defaultSection) {
+        mergedConfig[kv.first] = kv.second;
+    }
+
+    // 设备专属节覆盖default
+    auto& deviceSection = ini[deviceSectionName];
+    for (auto& kv : deviceSection) {
+        mergedConfig[kv.first] = kv.second;
+    }
 
     // 默认值
     std::string ip = "192.168.2.1"; // 默认 IP 地址
@@ -53,17 +65,9 @@ IOUI_API int __stdcall OpenDevice(uint8 deviceIndex) {
     int slot = 1;                   // 默认 SLOT
 
     // 检查配置文件并读取值
-    if (attrs.has("ip")) {
-        ip = attrs["ip"];
-    }
-
-    if (attrs.has("rack")) {
-        rack = std::stoi(attrs["rack"]);
-    }
-
-    if (attrs.has("slot")) {
-		slot = std::stoi(attrs["slot"]);
-	}
+    if (mergedConfig.count("ip")) ip = mergedConfig["ip"];
+    if (mergedConfig.count("rack")) rack = std::stoi(mergedConfig["rack"]);
+    if (mergedConfig.count("slot")) slot = std::stoi(mergedConfig["slot"]);
     
     // 尝试连接到 PLC
     if (client->ConnectTo(ip.c_str(), rack, slot) != 0) {

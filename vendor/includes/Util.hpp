@@ -110,5 +110,47 @@ void Float2Bytes(std::vector<BYTE>& Bytes, int Val) {
 	Bytes.push_back((Val) & 0xFF);
 }
 
+// 将配置的串口名或设备索引转为合法 Windows 串口名格式
+std::string NormalizePortName(const std::string& portNameInput, int deviceIndex = 0) {
+	// 如果传入的串口名非空，先尝试处理
+	if (!portNameInput.empty()) {
+		std::string portName = portNameInput;
+		// 转为大写统一处理（可选）
+		for (auto& ch : portName) {
+			ch = std::toupper(static_cast<unsigned char>(ch));
+		}
+
+		if (portName.size() > 3 && portName.substr(0, 3) == "COM") {
+			try {
+				int portNum = std::stoi(portName.substr(3));
+				if (portNum > 9) {
+					return "\\\\.\\" + portName;
+				}
+				else {
+					return portName;
+				}
+			}
+			catch (...) {
+				// 解析失败，继续用 deviceIndex 处理
+			}
+		}
+		else {
+			// 不是以 COM 开头的，直接返回输入
+			return portNameInput;
+		}
+	}
+
+	// portNameInput 为空或者无效，使用 deviceIndex 生成
+	if (deviceIndex <= 9 && deviceIndex > 0) {
+		return "COM" + std::to_string(deviceIndex);
+	}
+	else if (deviceIndex > 9) {
+		return "\\\\.\\COM" + std::to_string(deviceIndex);
+	}
+	else {
+		// deviceIndex 非法（如负数或0），返回空串表示无效
+		return "";
+	}
+}
 
 

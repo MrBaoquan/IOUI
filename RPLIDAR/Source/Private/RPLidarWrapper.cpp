@@ -2,7 +2,7 @@
 #include <math.h>
 #include <algorithm>
 
-#pragma  comment(lib,"rplidar_driver.lib")
+// #pragma  comment(lib,"rplidar_driver.lib")
 
 #ifdef _DEBUG
 #pragma comment(lib,"opencv_world440d.lib")
@@ -36,27 +36,49 @@ bool sortPointY_DESC(Point2f lhf, Point2f rhs) {
 bool RPLidarWrapper::OpenLidar()
 {
 	this->initialize();
-	rpDriver = RPlidarDriver::CreateDriver(DRIVER_TYPE_SERIALPORT);
+
+	rpDriver = *createLidarDriver();
 	if (!rpDriver) {
+		openSucceed = false;
+		delete rpDriver;
+		rpDriver = nullptr;
 		return false;
 	}
-	rplidar_response_device_info_t _deviceInfo;
-	if (IS_OK(rpDriver->connect(rpConfig.config.PortName.data(), rpConfig.config.BaudRate))) {
-		if (IS_OK(rpDriver->getDeviceInfo(_deviceInfo))) {
-			rpDriver->startMotor();
-			rpDriver->startScan(false, true);
-			return true;
-		}
-		else {
-			delete rpDriver;
-			rpDriver = nullptr;
-		}
+	
+	auto _config = RPConfigMgr::Instance().GetConfig(deviceID);
+	IChannel* _channel;
+
+	if (_config->Driver == "SERIALPORT") {
+		_channel = (*createSerialPortChannel(_config->PortName, _config->BaudRate));
+	}
+	else if (_config->Driver == "TCP") {
+		_channel = (*createTcpChannel(_config->IP, _config->Port));
+	}
+	else if (_config->Driver == "UDP") {
+		_channel = (*createUdpChannel(_config->IP, _config->Port));
 	}
 	else {
 		delete rpDriver;
 		rpDriver = nullptr;
-	};
-	return false;
+		return false;
+	}
+	
+	if (SL_IS_FAIL((rpDriver)->connect(_channel))) {
+		delete rpDriver;
+		rpDriver = nullptr;
+		return false;
+	}
+	
+	rplidar_response_device_info_t _deviceInfo;
+	if (SL_IS_FAIL(rpDriver->getDeviceInfo(_deviceInfo))) {
+		delete rpDriver;
+		rpDriver = nullptr;
+		return false;
+	}
+	rpDriver->setMotorSpeed();
+	rpDriver->startScan(false, true);
+	
+	return true;
 }
 
 void onChangeTrackBar(int poi, void* usrdata)
@@ -66,8 +88,11 @@ void onChangeTrackBar(int poi, void* usrdata)
 // 坐标系为 向右为正  向下为正
 void RPLidarWrapper::initialize()
 {
-	rpConfig.Read();
-	SetDebugMode(rpConfig.config.debugMode);
+	auto _config = RPConfigMgr::Instance().GetConfig(deviceID);
+	this->debugUIKey = "DebugUI-" + std::to_string(deviceID);
+	this->previewUIKey = "PreviewUI-" + std::to_string(deviceID);
+	
+	SetDebugMode(_config->debugMode);
 	loadConfig();
 	syncPreviewUISize();
 	syncCorners();
@@ -106,12 +131,12 @@ void RPLidarWrapper::Render()
 		// 雷达扫描点
 		renderScanPoints();
 		renderScreenCorners();
-		cv::imshow(DebugUI, this->screen);
+		cv::imshow(this->debugUIKey, this->screen);
 	}
 	if (bEnablePreviewUI) {
 		// 映射后的屏幕坐标点
 		renderTouchPoints();
-		cv::imshow(PreviewUI, this->preview);
+		cv::imshow(this->previewUIKey, this->preview);
 	}
 }
 
@@ -136,7 +161,8 @@ void RPLidarWrapper::buildTouchPoints()
 
 		// 最终的映射触摸点
 		std::vector<Point2f> _touchPoints(lidarScreenPoints.size());
-		auto _config = this->rpConfig;
+		
+		auto _config = RPConfigMgr::Instance().GetConfig(deviceID);
 		std::transform(_targets.begin(), _targets.end(), _touchPoints.begin(), [_rect](Point2f _value) {
 			_value.x = ((_value.x - _rect.x) / _rect.width);
 			_value.y = ((_value.y - _rect.y) / _rect.height);
@@ -164,8 +190,9 @@ void RPLidarWrapper::buildTouchPoints()
 
 void RPLidarWrapper::renderTouchPoints()
 {
-	auto _scale = rpConfig.config.DebugUIScale;
-	auto _screenSize = rpConfig.config.Screens[this->debugAreaIndex];
+	auto _config = RPConfigMgr::Instance().GetConfig(deviceID);
+	auto _scale = _config->DebugUIScale;
+	auto _screenSize = _config->Screens[this->debugAreaIndex];
 
 	auto _touchPoints = allTouchPoints[this->debugAreaIndex];
 	std::vector<Point2f> _previewTouchPoints(_touchPoints.size());
@@ -180,27 +207,27 @@ void RPLidarWrapper::renderTouchPoints()
 	for each (auto& _point in _previewTouchPoints)
 	{
 		auto _new = _point;
-		circle(this->preview, _new, _index == 0 ? 6 : 3, Scalar(0, 255, 0), -1);
+		cv::circle(this->preview, _new, _index == 0 ? 6 : 3, Scalar(0, 255, 0), -1);
 		_index++;
 	}
 	std::string _debugMode = "Area " + std::to_string(this->debugAreaIndex);
-	putText(this->preview, _debugMode, Point2f(10, 50), FONT_HERSHEY_SIMPLEX, 0.6f, Scalar(200, 200, 200));
+	cv::putText(this->preview, _debugMode, Point2f(10, 50), FONT_HERSHEY_SIMPLEX, 0.6f, Scalar(200, 200, 200));
 }
 
 void RPLidarWrapper::fetchScanPoints()
 {
 	if (rpDriver != nullptr) {
-		rplidar_response_measurement_node_t nodes[2048];
+		rplidar_response_measurement_node_hq_t nodes[2048];
 		size_t cnt = _countof(nodes);
-		auto _result = rpDriver->grabScanData(nodes, cnt, 0);
+		auto _result = rpDriver->grabScanDataHq(nodes, cnt, 0);
 		if (IS_OK(_result)) {
 			lidarScanPoints.clear();
 			lidarScreenPoints.clear();
 			rpDriver->ascendScanData(nodes, cnt);
 			for (int pos = 0; pos < (int)cnt; ++pos) {
-				float _angle = (nodes[pos].angle_q6_checkbit >> RPLIDAR_RESP_MEASUREMENT_ANGLE_SHIFT) / 64.0f;
-				float _length = nodes[pos].distance_q2 / 4000.0f;	// 
-				if (!nodes[pos].distance_q2) {
+				float _angle = (nodes[pos].angle_z_q14 * 90.f) / (1 << 14);
+				float _length = nodes[pos].dist_mm_q2 / 1000.f / (1 << 2);	// 
+				if (!nodes[pos].dist_mm_q2) {
 					continue;
 				}
 				LidarScanPoint p(_length, _angle);
@@ -221,10 +248,10 @@ void RPLidarWrapper::renderPlots()
 {
 	auto& mat = this->screen;
 	if (rpDriver) {
-		putText(this->screen, "Lidar Status: Opened", Point2f(10, 30), FONT_HERSHEY_SIMPLEX, 0.5f, Scalar(0, 255, 0));
+		cv::putText(this->screen, "Lidar Status: Opened", Point2f(10, 30), FONT_HERSHEY_SIMPLEX, 0.5f, Scalar(0, 255, 0));
 	}
 	else {
-		putText(this->screen, "Lidar Status: Not Open", Point2f(10, 30), FONT_HERSHEY_SIMPLEX, 0.5f, Scalar(0, 0, 255));
+		cv::putText(this->screen, "Lidar Status: Not Open", Point2f(10, 30), FONT_HERSHEY_SIMPLEX, 0.5f, Scalar(0, 0, 255));
 	}
 
 	line(mat, Point(0, DebugUISize.y / 2), Point(DebugUISize.x, DebugUISize.y / 2), Scalar(50, 50, 50), 1);
@@ -236,19 +263,22 @@ void RPLidarWrapper::renderPlots()
 	float _radius3 = (5 / debugRadius) * center.y;
 	float _radius4 = (7 / debugRadius) * center.y;
 	float _radius5 = (10 / debugRadius) * center.y;
-	circle(mat, center, _radius0, Scalar(100, 100, 100));
-	circle(mat, center, _radius1, Scalar(100, 100, 100));
-	circle(mat, center, _radius2, Scalar(100, 100, 100));
-	circle(mat, center, _radius3, Scalar(100, 100, 100));
-	circle(mat, center, _radius4, Scalar(100, 100, 100));
-	circle(mat, center, _radius5, Scalar(100, 100, 100));
+	float _radius6 = (15 / debugRadius) * center.y;
+	cv::circle(mat, center, _radius0, Scalar(100, 100, 100));
+	cv::circle(mat, center, _radius1, Scalar(100, 100, 100));
+	cv::circle(mat, center, _radius2, Scalar(100, 100, 100));
+	cv::circle(mat, center, _radius3, Scalar(100, 100, 100));
+	cv::circle(mat, center, _radius4, Scalar(100, 100, 100));
+	cv::circle(mat, center, _radius5, Scalar(100, 100, 100));
+	cv::circle(mat, center, _radius6, Scalar(100, 100, 100));
 
-	putText(this->screen, "0.5M", center + Point2f(-18, _radius0), FONT_HERSHEY_SIMPLEX, 0.5f, Scalar(150, 150, 150));
-	putText(this->screen, "1M", center + Point2f(-10, _radius1), FONT_HERSHEY_SIMPLEX, 0.5f, Scalar(150, 150, 150));
-	putText(this->screen, "3M", center + Point2f(-10, _radius2), FONT_HERSHEY_SIMPLEX, 0.5f, Scalar(150, 150, 150));
-	putText(this->screen, "5M", center + Point2f(-10, _radius3), FONT_HERSHEY_SIMPLEX, 0.5f, Scalar(150, 150, 150));
-	putText(this->screen, "7M", center + Point2f(-10, _radius4), FONT_HERSHEY_SIMPLEX, 0.5f, Scalar(150, 150, 150));
-	putText(this->screen, "10M", center + Point2f(-18, _radius5), FONT_HERSHEY_SIMPLEX, 0.5f, Scalar(150, 150, 150));
+	cv::putText(this->screen, "0.5M", center + Point2f(-18, _radius0), FONT_HERSHEY_SIMPLEX, 0.5f, Scalar(150, 150, 150));
+	cv::putText(this->screen, "1M", center + Point2f(-10, _radius1), FONT_HERSHEY_SIMPLEX, 0.5f, Scalar(150, 150, 150));
+	cv::putText(this->screen, "3M", center + Point2f(-10, _radius2), FONT_HERSHEY_SIMPLEX, 0.5f, Scalar(150, 150, 150));
+	cv::putText(this->screen, "5M", center + Point2f(-10, _radius3), FONT_HERSHEY_SIMPLEX, 0.5f, Scalar(150, 150, 150));
+	cv::putText(this->screen, "7M", center + Point2f(-10, _radius4), FONT_HERSHEY_SIMPLEX, 0.5f, Scalar(150, 150, 150));
+	cv::putText(this->screen, "10M", center + Point2f(-18, _radius5), FONT_HERSHEY_SIMPLEX, 0.5f, Scalar(150, 150, 150));
+	cv::putText(this->screen, "15M", center + Point2f(-18, _radius6), FONT_HERSHEY_SIMPLEX, 0.5f, Scalar(150, 150, 150));
 
 }
 
@@ -257,7 +287,7 @@ void RPLidarWrapper::renderScanPoints()
 	auto& mat = this->screen;
 	for each (auto& _point in this->lidarScreenPoints)
 	{
-		circle(mat, _point, 3, Scalar(0, 255, 255), -1);
+		cv::circle(mat, _point, 3, Scalar(0, 255, 255), -1);
 	}
 }
 
@@ -278,10 +308,10 @@ void RPLidarWrapper::renderScreenCorners()
 		auto _spts = this->SPs[_index];
 		Point2f SP1 = _spts[0], SP2 = _spts[1], SP3 = _spts[2], SP4 = _spts[3];
 		auto _circleColor = colors[_index];
-		circle(mat, SP1, 5, _circleColor, -1);
-		circle(mat, SP2, 5, _circleColor, -1);
-		circle(mat, SP3, 5, _circleColor, -1);
-		circle(mat, SP4, 5, _circleColor, -1);
+		cv::circle(mat, SP1, 5, _circleColor, -1);
+		cv::circle(mat, SP2, 5, _circleColor, -1);
+		cv::circle(mat, SP3, 5, _circleColor, -1);
+		cv::circle(mat, SP4, 5, _circleColor, -1);
 
 		line(this->screen, SP1, SP2, _circleColor);
 		line(this->screen, SP2, SP3, _circleColor);
@@ -289,14 +319,14 @@ void RPLidarWrapper::renderScreenCorners()
 		line(this->screen, SP4, SP1, _circleColor);
 		float _textOffset = 10;
 
-		putText(this->screen, "P1", SP1 + Point2f(_textOffset, -_textOffset), FONT_HERSHEY_SIMPLEX, 0.5f, _circleColor);
-		putText(this->screen, "P2", SP2 + Point2f(_textOffset, -_textOffset), FONT_HERSHEY_SIMPLEX, 0.5f, _circleColor);
-		putText(this->screen, "P3", SP3 + Point2f(_textOffset, -_textOffset), FONT_HERSHEY_SIMPLEX, 0.5f, _circleColor);
-		putText(this->screen, "P4", SP4 + Point2f(_textOffset, -_textOffset), FONT_HERSHEY_SIMPLEX, 0.5f, _circleColor);
+		cv::putText(this->screen, "P1", SP1 + Point2f(_textOffset, -_textOffset), FONT_HERSHEY_SIMPLEX, 0.5f, _circleColor);
+		cv::putText(this->screen, "P2", SP2 + Point2f(_textOffset, -_textOffset), FONT_HERSHEY_SIMPLEX, 0.5f, _circleColor);
+		cv::putText(this->screen, "P3", SP3 + Point2f(_textOffset, -_textOffset), FONT_HERSHEY_SIMPLEX, 0.5f, _circleColor);
+		cv::putText(this->screen, "P4", SP4 + Point2f(_textOffset, -_textOffset), FONT_HERSHEY_SIMPLEX, 0.5f, _circleColor);
 
 		std::string _screenText = "Area" + std::to_string(_index);
 		auto _rect = this->targetPerspectiveRect(_spts);
-		putText(this->screen, _screenText.data(),
+		cv::putText(this->screen, _screenText.data(),
 			Point(_rect.x + _rect.width / 2,
 				_rect.y + _rect.height / 2),
 			FONT_HERSHEY_SIMPLEX,
@@ -361,11 +391,11 @@ void RPLidarWrapper::MouseEventHandler(int evt, int x, int y, int flags, void* p
 	if (evt == cv::EVENT_MOUSEWHEEL) {
 		if (getMouseWheelDelta(flags) > 0) {
 			rpLidar->debugRadius -= 0.2f;
-			rpLidar->debugRadius = std::max(0.5f, std::min(rpLidar->debugRadius, 10.0f));
+			rpLidar->debugRadius = std::max(0.5f, std::min(rpLidar->debugRadius, 15.0f));
 		}
 		else {
 			rpLidar->debugRadius += 0.2f;
-			rpLidar->debugRadius = std::max(0.5f, std::min(rpLidar->debugRadius, 10.0f));
+			rpLidar->debugRadius = std::max(0.5f, std::min(rpLidar->debugRadius, 15.0f));
 		}
 
 	}
@@ -456,8 +486,9 @@ cv::Point2f RPLidarWrapper::mapScreenCenter2Physical(Point2f point)
 
 void RPLidarWrapper::syncPreviewUISize()
 {
-	float _scale = rpConfig.config.DebugUIScale;
-	auto _size = rpConfig.config.Screens[this->debugAreaIndex];
+	auto _config = RPConfigMgr::Instance().GetConfig(deviceID);
+	float _scale = _config->DebugUIScale;
+	auto _size = _config->Screens[this->debugAreaIndex];
 	this->preview = Mat(_size.y*_scale, _size.x*_scale, CV_8UC3);
 }
 
@@ -491,8 +522,9 @@ std::vector<Point2f> RPLidarWrapper::rect2Points(Rect rect)
 
 void RPLidarWrapper::AddMouseSimulate(Point2f position)
 {
-	auto _scale = rpConfig.config.DebugUIScale;
-	auto _screenSize = rpConfig.config.Screens[this->debugAreaIndex];
+	auto _config = RPConfigMgr::Instance().GetConfig(deviceID);
+	auto _scale = _config->DebugUIScale;
+	auto _screenSize = _config->Screens[this->debugAreaIndex];
 	simulatePoints.clear();
 	float _x = (position.x / (_screenSize.x*_scale));
 	float _y = (position.y / (_screenSize.y*_scale));
@@ -507,11 +539,12 @@ void RPLidarWrapper::ClearSimulate()
 
 short* RPLidarWrapper::getTouchPoints()
 {
+	auto _config_main = RPConfigMgr::Instance().GetConfig(0);
 	static std::vector<short> _cacheTouchPoints(64*6);
 	for (int _areaIndex = 0; _areaIndex < allTouchPoints.size(); ++_areaIndex) {
 		auto _touchPoints = allTouchPoints[_areaIndex];
 
-		RPPoint _config = rpConfig.config.Screens[_areaIndex];
+		RPPoint _config = _config_main->Screens[_areaIndex];
 		std::transform(_touchPoints.begin(), _touchPoints.end(), _touchPoints.begin(), [_config](Point2f point) {
 			point.x *= _config.x;
 			point.y *= _config.y;
@@ -533,8 +566,12 @@ void RPLidarWrapper::CloseLidar()
 	EnableAll(false);
 	if (rpDriver) {
 		rpDriver->stop();
-		rpDriver->stopMotor();
-		RPlidarDriver::DisposeDriver(rpDriver);
+		rpDriver->setMotorSpeed(0);
+		rpDriver->disconnect();
+		delete rpDriver;
+		rpDriver = nullptr;
+		// rpDriver->stopMotor();
+		// RPlidarDriver::DisposeDriver(rpDriver);
 	}
 }
 
@@ -544,14 +581,14 @@ void RPLidarWrapper::EnableDebugUI(bool bEnable)
 	if (bEnable == bEnableDebugUI) return;
 	bEnableDebugUI = bEnable;
 	if (bEnable) {
-		cv::imshow(DebugUI, this->screen);
-		createTrackbar("Angle Offfset", DebugUI, &this->angleOffset, 360, onChangeTrackBar, this);
-		setMouseCallback(DebugUI, MouseEventHandler, this);
+		cv::imshow(debugUIKey, this->screen);
+		createTrackbar("Angle Offfset", debugUIKey, &this->angleOffset, 360, onChangeTrackBar, this);
+		setMouseCallback(debugUIKey, MouseEventHandler, this);
 	}
 	else {
-		setMouseCallback(DebugUI, NULL, this);
+		setMouseCallback(debugUIKey, NULL, this);
 		waitKey(10);
-		destroyWindow(DebugUI);
+		destroyWindow(debugUIKey);
 	}
 }
 
@@ -561,12 +598,12 @@ void RPLidarWrapper::EnablePreviewUI(bool bEnable)
 	if (bEnable == bEnablePreviewUI) return;
 	bEnablePreviewUI = bEnable;
 	if (bEnable) {
-		cv::imshow(PreviewUI, this->preview);
-		setMouseCallback(PreviewUI, PreviewMouseEventHandler, this);
+		cv::imshow(previewUIKey, this->preview);
+		setMouseCallback(previewUIKey, PreviewMouseEventHandler, this);
 	}
 	else {
 		waitKey(10);
-		destroyWindow(PreviewUI);
+		destroyWindow(previewUIKey);
 	}
 }
 
@@ -587,9 +624,10 @@ void RPLidarWrapper::EnableAll(bool bEnable)
 
 void RPLidarWrapper::SetDebugMode(int mode)
 {
-	static int __mode = -1;
+	// static int __mode = -1;
 	if (__mode == mode) return;
-	rpConfig.config.debugMode = mode;
+	auto _config = RPConfigMgr::Instance().GetConfig(deviceID);
+	_config->debugMode = mode;
 	__mode = mode;
 	if (mode == 0) {
 		EnableAll(true);
@@ -689,11 +727,12 @@ void RPLidarWrapper::AdaptiveCorners(int areaIndex)
 // 加载配置
 void RPLidarWrapper::loadConfig()
 {
-	for (int _index = 0; _index < rpConfig.config.Areas.size(); ++_index) {
+	auto _config = RPConfigMgr::Instance().GetConfig(deviceID);
+	for (int _index = 0; _index < _config->Areas.size(); ++_index) {
 
 		allTouchPoints.push_back(std::vector<Point2f>());
 
-		auto _rawPoints = rpConfig.config.Areas[_index];
+		auto _rawPoints = _config->Areas[_index];
 		std::vector<Point2f> _points;
 		_points.push_back(Point2f(_rawPoints[0].x, _rawPoints[0].y));
 		_points.push_back(Point2f(_rawPoints[1].x, _rawPoints[1].y));
@@ -702,28 +741,26 @@ void RPLidarWrapper::loadConfig()
 		this->Ps.push_back(std::vector<Point2f>(_points.begin(),_points.end()));
 		this->SPs.push_back(std::vector<Point2f>(_points.begin(), _points.end()));
 	}
-	debugRadius = rpConfig.config.DebugRadius;
-	angleOffset = rpConfig.config.AngleOffset;
+	debugRadius = _config->DebugRadius;
+	angleOffset = _config->AngleOffset;
 }
 
 // 保存配置
 void RPLidarWrapper::saveConfig()
 {
-	rpConfig.config.DebugRadius = debugRadius;
-	rpConfig.config.AngleOffset = angleOffset;
+	auto _config = RPConfigMgr::Instance().GetConfig(deviceID);
+	_config->DebugRadius = debugRadius;
+	_config->AngleOffset = angleOffset;
 
 	for (int _index = 0; _index < this->Ps.size(); ++_index) {
 		auto _points = this->Ps[_index];
-		rpConfig.config.Areas[_index][0] = RPPoint(_points[0].x, _points[0].y);
-		rpConfig.config.Areas[_index][1] = RPPoint(_points[1].x, _points[1].y);
-		rpConfig.config.Areas[_index][2] = RPPoint(_points[2].x, _points[2].y);
-		rpConfig.config.Areas[_index][3] = RPPoint(_points[3].x, _points[3].y);
+		_config->Areas[_index][0] = RPPoint(_points[0].x, _points[0].y);
+		_config->Areas[_index][1] = RPPoint(_points[1].x, _points[1].y);
+		_config->Areas[_index][2] = RPPoint(_points[2].x, _points[2].y);
+		_config->Areas[_index][3] = RPPoint(_points[3].x, _points[3].y);
 	}
-	rpConfig.Save();
+	RPConfigMgr::Instance().Save();
 }
-
-
-
 
 RPLidarWrapper::~RPLidarWrapper()
 {

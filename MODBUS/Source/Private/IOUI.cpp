@@ -249,7 +249,7 @@ IOUI_API int __stdcall OpenDevice(uint8 deviceIndex)
     g_iniFile->read(*g_iniStructure);
     auto& ini = *g_iniStructure;
 
-    const auto& deviceSection = BuildDeviceAttribute("modbus", deviceIndex);
+    const auto& deviceSection = BuildDeviceAttribute("device", deviceIndex);
     auto& defaultSection = ini["default"];
 
     std::map<std::string, std::string> defaultConfig;

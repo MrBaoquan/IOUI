@@ -12,125 +12,186 @@
 #include "windows.h"
 #include "mIni/mini/ini.h"
 #include <map>
+#include <string>
+#include <sstream>
 
 extern HINSTANCE DLL_INSTANCE;
 HHOOK g_hHook = NULL;
 // 当前组合键记录
-std::string g_currentComboKey="";
+std::string g_currentComboKey = "";
 std::string g_terminalKey;
 // 当前缓存的待处理的组合键记录
 std::vector<std::string> g_cachedComboKeys;
 
-LRESULT CALLBACK KeyboardProc(int code, WPARAM wParam, LPARAM lParam) {
-	if (code < 0 || code == HC_NOREMOVE) {
-		// 如果代码小于零，则挂钩过程必须将消息传递给CallNextHookEx函数，而无需进一步处理，并且应返回CallNextHookEx返回的值。此参数可以是下列值之一。(来自官网手册)
-		return CallNextHookEx(g_hHook, code, wParam, lParam);
-	}
-	if (lParam & 0x40000000) {
-		// 【第30位的含义】键状态。如果在发送消息之前按下了键，则值为1。如果键被释放，则为0。(来自官网手册)
-		// 我们只考虑被按下后松开的状态
-		return CallNextHookEx(g_hHook, code, wParam, lParam);
-	}
-	char szKeyName[MAX_PATH];
-	// 【参数1】LPARAM类型，代表键状态
-	// 【参数2】缓冲区
-	// 【参数3】缓冲区大小
-	GetKeyNameTextA(lParam, szKeyName, MAX_PATH);
-	
-	if (g_terminalKey == szKeyName) {
-		g_cachedComboKeys.push_back(g_currentComboKey);
-		g_currentComboKey = "";
-	}
-	else {
-		g_currentComboKey += g_currentComboKey != "" ? (std::string("|") + szKeyName) : szKeyName;
-	}
+// 辅助函数：获取按键名称，基于KBDLLHOOKSTRUCT的scanCode和vkCode
+std::string GetKeyNameFromLParam(LPARAM lParam, WPARAM wParam)
+{
+    // 低级键盘钩子结构指针
+    KBDLLHOOKSTRUCT* kbStruct = reinterpret_cast<KBDLLHOOKSTRUCT*>(lParam);
+    if (!kbStruct) return "";
 
-	return CallNextHookEx(g_hHook, code, wParam, lParam);
+    // 获取扫描码
+    UINT scanCode = kbStruct->scanCode;
+    // 部分键异常处理，参考MSDN建议：
+    // 扩展键设置第24位
+    if ((kbStruct->flags & LLKHF_EXTENDED) != 0) {
+        scanCode |= 0x01000000;
+    }
+
+    // lParam对应GetKeyNameText要求的格式
+    // bits 16-23 = scan code
+    // bit 24 = extended key flag
+    LONG lParamKeyName = (scanCode << 16);
+
+    char keyName[128] = { 0 };
+    if (GetKeyNameTextA(lParamKeyName, keyName, sizeof(keyName)) == 0) {
+        // 若失败，尝试简单转换vkCode
+        std::ostringstream oss;
+        oss << "VK_" << kbStruct->vkCode;
+        return oss.str();
+    }
+    return std::string(keyName);
+}
+
+LRESULT CALLBACK KeyboardProc(int code, WPARAM wParam, LPARAM lParam) {
+    if (code < 0 || code == HC_NOREMOVE) {
+        // 继续调用下一个钩子
+        return CallNextHookEx(g_hHook, code, wParam, lParam);
+    }
+
+    // 我们只在键盘“按键释放”事件处理（注意：处理低级钩子消息WM_KEYUP）
+    if (wParam != WM_KEYUP && wParam != WM_SYSKEYUP) {
+        return CallNextHookEx(g_hHook, code, wParam, lParam);
+    }
+
+    std::string keyName = GetKeyNameFromLParam(lParam, wParam);
+
+#ifdef _DEBUG
+    std::ostringstream dbgStream;
+    dbgStream << "Key Released: " << keyName << " (lParam: " << lParam << ")\n";
+    OutputDebugStringA(dbgStream.str().c_str());
+#endif
+
+    if (g_terminalKey == keyName) {
+        if (!g_currentComboKey.empty()) {
+            g_cachedComboKeys.push_back(g_currentComboKey);
+            g_currentComboKey.clear();
+        }
+    }
+    else {
+        if (!g_currentComboKey.empty())
+            g_currentComboKey += "|" + keyName;
+        else
+            g_currentComboKey = keyName;
+    }
+
+    return CallNextHookEx(g_hHook, code, wParam, lParam);
 }
 
 BOOL InstallHook() {
-	// 【参数1】钩子的类型，这里代表键盘钩子
-	// 【参数2】钩子处理的函数
-	// 【参数3】获取模块,PROJECT_NAME为DLL的项目名称
-	// 【参数4】线程的ID，如果是全局钩子的话，这里要填0，如果是某个线程的钩子，那就需要写线程的ID
-	g_hHook = SetWindowsHookEx(WH_KEYBOARD_LL, KeyboardProc, DLL_INSTANCE, 0);
-	if (g_hHook == NULL) {
-		// 钩子安装失败
-		//MessageBox(NULL, L"全局钩子注册失败", L"信息", MB_OK);
-		return FALSE;
-	}
-	return TRUE;
+    // 安装低级键盘钩子，DLL_INSTANCE必须为有效模块句柄
+    g_hHook = SetWindowsHookEx(WH_KEYBOARD_LL, KeyboardProc, DLL_INSTANCE, 0);
+    if (g_hHook == NULL) {
+        DWORD err = GetLastError();
+        std::ostringstream oss;
+        oss << "SetWindowsHookEx failed, error code: " << err << "\n";
+        OutputDebugStringA(oss.str().c_str());
+        return FALSE;
+    }
+    return TRUE;
 }
 
 BOOL UninstallHook() {
-	return UnhookWindowsHookEx(g_hHook);
+    if (g_hHook) {
+        BOOL ret = UnhookWindowsHookEx(g_hHook);
+        g_hHook = NULL;
+        return ret;
+    }
+    return FALSE;
 }
 
 DeviceInfo devInfo;
 IOUI_API DeviceInfo* __stdcall Initialize()
 {
-	devInfo.InputCount = 255;
-	devInfo.OutputCount = 0;
-	devInfo.AxisCount = 0;
+    devInfo.InputCount = 255;
+    devInfo.OutputCount = 0;
+    devInfo.AxisCount = 0;
     return &devInfo;
 }
 
-std::map< std::string, int> g_comboKeysMap;
+std::map<std::string, int> g_comboKeysMap;
 mINI::INIFile* g_iniFIle = nullptr;
 mINI::INIStructure* g_iniStructure = nullptr;
 
 int AppendComboKeys(const std::string& comboKey) {
-	if (g_comboKeysMap.count(comboKey) > 0) return -1;
+    if (g_comboKeysMap.count(comboKey) > 0) return -1;
 
-	auto& ini = *g_iniStructure;
-	auto& file = *g_iniFIle;
-	for (int _idx=0;_idx<devInfo.InputCount;++_idx)
-	{
-		std::string _key = "k" + std::to_string(_idx);
-		if (!ini["ComboKeys"].has(_key)) {
-			ini["ComboKeys"][_key] = comboKey;
-			g_comboKeysMap.insert(std::pair<std::string, int>(comboKey, _idx));
-			file.write(ini);
-			return _idx;
-		}
-	}
-	return -1;
+    if (!g_iniFIle || !g_iniStructure)
+        return -1;
+
+    auto& ini = *g_iniStructure;
+    auto& file = *g_iniFIle;
+
+    try {
+        //if (!ini.has("ComboKeys")) {
+        //    ini["ComboKeys"] = mINI::Section();
+        //}
+
+        for (int idx = 0; idx < devInfo.InputCount; ++idx) {
+            std::string key = "k" + std::to_string(idx);
+            if (!ini["ComboKeys"].has(key)) {
+                ini["ComboKeys"][key] = comboKey;
+                g_comboKeysMap[comboKey] = idx;
+                file.write(ini);
+                return idx;
+            }
+        }
+    }
+    catch (...) {
+        return -1;
+    }
+
+    return -1;
 }
 
 IOUI_API int __stdcall OpenDevice(uint8 deviceIndex)
 {
-	// 禁止创建多个设备, 没有意义
-	static bool _created = false;
-	if (_created) return 0;
-	_created = true;
+    // 禁止创建多个设备, 没有意义
+    static bool _created = false;
+    if (_created) return 0;
+    _created = true;
 
-	std::string path = DevelopHelper::Paths::Instance().GetModuleDir();
-	std::string config_file_path = path + "Config\\COMBOKEYS\\config.ini";
-	g_iniFIle =new  mINI::INIFile(config_file_path);
-	g_iniStructure =new  mINI::INIStructure();
-	g_iniFIle->read(*g_iniStructure);
-	auto& ini = *g_iniStructure;
+    std::string path = DevelopHelper::Paths::Instance().GetModuleDir();
+    std::string config_file_path = path + "Config\\COMBOKEYS\\config.ini";
+    g_iniFIle = new mINI::INIFile(config_file_path);
+    g_iniStructure = new mINI::INIStructure();
+    g_iniFIle->read(*g_iniStructure);
+    auto& ini = *g_iniStructure;
 
-	g_terminalKey = ini["ComboKeys"]["TerminalKey"];
-	
-	for (int _idx=0;_idx<devInfo.InputCount;++_idx)
-	{
-		std::string _key = "k" + std::to_string(_idx);
-		std::string& _val = ini["ComboKeys"][_key];
-		if (_val == "") {
-			ini["ComboKeys"].remove (_key);
-			continue;
-		}
-		g_comboKeysMap.insert(std::pair<std::string, int>(_val, _idx));
-	}
-	
-	return InstallHook();
+    g_terminalKey = "Enter"; // 默认终端键
+    // 优先从default节读取terminal_key，默认值为Enter
+    if (ini.has("default") && ini["default"].has("terminal_key")) {
+        g_terminalKey = ini["default"]["terminal_key"];
+    }
+
+    for (int _idx = 0; _idx < devInfo.InputCount; ++_idx)
+    {
+        std::string _key = "k" + std::to_string(_idx);
+        std::string& _val = ini["ComboKeys"][_key];
+        if (_val == "") {
+            ini["ComboKeys"].remove(_key);
+            continue;
+        }
+        g_comboKeysMap.insert(std::pair<std::string, int>(_val, _idx));
+    }
+
+    return InstallHook();
 }
 
 IOUI_API int __stdcall CloseDevice(uint8 deviceIndex)
 {
-	delete g_iniFIle;
-	delete g_iniStructure;
+    delete g_iniFIle; g_iniFIle = nullptr;
+    delete g_iniStructure; g_iniStructure = nullptr;
     return UninstallHook();
 }
 
@@ -146,14 +207,14 @@ IOUI_API int __stdcall GetDeviceDO(uint8 deviceIndex, short* OutDOStatus)
 
 IOUI_API int __stdcall GetDeviceDI(uint8 deviceIndex, BYTE* OutDIStatus)
 {
-	ZeroMemory(OutDIStatus, sizeof(BYTE) * devInfo.InputCount);
-	for (const std::string& _comboKey :g_cachedComboKeys)
-	{
-		if (g_comboKeysMap.count(_comboKey) <= 0)AppendComboKeys(_comboKey);
-		if (g_comboKeysMap.count(_comboKey) <= 0) continue;
-		OutDIStatus[g_comboKeysMap[_comboKey]] = 1;
-	}
-	g_cachedComboKeys.clear();
+    ZeroMemory(OutDIStatus, sizeof(BYTE) * devInfo.InputCount);
+    for (const std::string& _comboKey : g_cachedComboKeys)
+    {
+        if (g_comboKeysMap.count(_comboKey) <= 0) AppendComboKeys(_comboKey);
+        if (g_comboKeysMap.count(_comboKey) <= 0) continue;
+        OutDIStatus[g_comboKeysMap[_comboKey]] = 1;
+    }
+    g_cachedComboKeys.clear();
     return 1;
 }
 

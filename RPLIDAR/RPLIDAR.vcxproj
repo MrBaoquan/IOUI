@@ -101,6 +101,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;RPLIDAR_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -117,14 +118,16 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>_DEBUG;_WINDOWS;_USRDLL;RPLIDAR_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;_DEBUG;_WINDOWS;_USRDLL;RPLIDAR_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <AdditionalIncludeDirectories>O:\DevModules\IODevice\IOUI\RPLIDAR\Source\Public\sdk\src;O:\DevModules\IODevice\IOUI\RPLIDAR\Source\Public\sdk\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SupportUnloadOfDelayLoadedDLL>true</SupportUnloadOfDelayLoadedDLL>
-      <DelayLoadDLLs>opencv_world440.dll;opencv_world440d.dll;rplidar_driver.dll;</DelayLoadDLLs>
+      <DelayLoadDLLs>opencv_world440.dll;opencv_world440d.dll</DelayLoadDLLs>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -137,6 +140,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;RPLIDAR_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -155,8 +159,10 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>NDEBUG;_WINDOWS;_USRDLL;RPLIDAR_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;RPLIDAR_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <AdditionalIncludeDirectories>O:\DevModules\IODevice\IOUI\RPLIDAR\Source\Public\sdk\src;O:\DevModules\IODevice\IOUI\RPLIDAR\Source\Public\sdk\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -164,7 +170,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SupportUnloadOfDelayLoadedDLL>true</SupportUnloadOfDelayLoadedDLL>
-      <DelayLoadDLLs>opencv_world440.dll;opencv_world440d.dll;rplidar_driver.dll;</DelayLoadDLLs>
+      <DelayLoadDLLs>opencv_world440.dll;opencv_world440d.dll</DelayLoadDLLs>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -172,10 +178,63 @@
     <ClCompile Include="Source\Private\IOUI.cpp" />
     <ClCompile Include="Source\Private\RPConfig.cpp" />
     <ClCompile Include="Source\Private\RPLidarWrapper.cpp" />
+    <ClCompile Include="Source\Public\sdk\src\arch\win32\net_serial.cpp" />
+    <ClCompile Include="Source\Public\sdk\src\arch\win32\net_socket.cpp" />
+    <ClCompile Include="Source\Public\sdk\src\arch\win32\timer.cpp" />
+    <ClCompile Include="Source\Public\sdk\src\dataunpacker\dataunpacker.cpp" />
+    <ClCompile Include="Source\Public\sdk\src\dataunpacker\unpacker\handler_capsules.cpp" />
+    <ClCompile Include="Source\Public\sdk\src\dataunpacker\unpacker\handler_hqnode.cpp" />
+    <ClCompile Include="Source\Public\sdk\src\dataunpacker\unpacker\handler_normalnode.cpp" />
+    <ClCompile Include="Source\Public\sdk\src\hal\thread.cpp" />
+    <ClCompile Include="Source\Public\sdk\src\rplidar_driver.cpp" />
+    <ClCompile Include="Source\Public\sdk\src\sl_async_transceiver.cpp" />
+    <ClCompile Include="Source\Public\sdk\src\sl_crc.cpp" />
+    <ClCompile Include="Source\Public\sdk\src\sl_lidarprotocol_codec.cpp" />
+    <ClCompile Include="Source\Public\sdk\src\sl_lidar_driver.cpp" />
+    <ClCompile Include="Source\Public\sdk\src\sl_serial_channel.cpp" />
+    <ClCompile Include="Source\Public\sdk\src\sl_tcp_channel.cpp" />
+    <ClCompile Include="Source\Public\sdk\src\sl_udp_channel.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Public\RPConfig.h" />
     <ClInclude Include="Source\Public\RPLidarWrapper.h" />
+    <ClInclude Include="Source\Public\sdk\include\rplidar.h" />
+    <ClInclude Include="Source\Public\sdk\include\rplidar_cmd.h" />
+    <ClInclude Include="Source\Public\sdk\include\rplidar_driver.h" />
+    <ClInclude Include="Source\Public\sdk\include\rplidar_protocol.h" />
+    <ClInclude Include="Source\Public\sdk\include\rptypes.h" />
+    <ClInclude Include="Source\Public\sdk\include\sl_crc.h" />
+    <ClInclude Include="Source\Public\sdk\include\sl_lidar.h" />
+    <ClInclude Include="Source\Public\sdk\include\sl_lidar_cmd.h" />
+    <ClInclude Include="Source\Public\sdk\include\sl_lidar_driver.h" />
+    <ClInclude Include="Source\Public\sdk\include\sl_lidar_driver_impl.h" />
+    <ClInclude Include="Source\Public\sdk\include\sl_lidar_protocol.h" />
+    <ClInclude Include="Source\Public\sdk\include\sl_types.h" />
+    <ClInclude Include="Source\Public\sdk\src\arch\win32\arch_win32.h" />
+    <ClInclude Include="Source\Public\sdk\src\arch\win32\net_serial.h" />
+    <ClInclude Include="Source\Public\sdk\src\arch\win32\timer.h" />
+    <ClInclude Include="Source\Public\sdk\src\arch\win32\winthread.hpp" />
+    <ClInclude Include="Source\Public\sdk\src\dataunpacker\dataunnpacker_commondef.h" />
+    <ClInclude Include="Source\Public\sdk\src\dataunpacker\dataunnpacker_internal.h" />
+    <ClInclude Include="Source\Public\sdk\src\dataunpacker\dataunpacker.h" />
+    <ClInclude Include="Source\Public\sdk\src\dataunpacker\dataupacker_namespace.h" />
+    <ClInclude Include="Source\Public\sdk\src\dataunpacker\unpacker\handler_capsules.h" />
+    <ClInclude Include="Source\Public\sdk\src\dataunpacker\unpacker\handler_hqnode.h" />
+    <ClInclude Include="Source\Public\sdk\src\dataunpacker\unpacker\handler_normalnode.h" />
+    <ClInclude Include="Source\Public\sdk\src\hal\abs_rxtx.h" />
+    <ClInclude Include="Source\Public\sdk\src\hal\assert.h" />
+    <ClInclude Include="Source\Public\sdk\src\hal\byteops.h" />
+    <ClInclude Include="Source\Public\sdk\src\hal\byteorder.h" />
+    <ClInclude Include="Source\Public\sdk\src\hal\event.h" />
+    <ClInclude Include="Source\Public\sdk\src\hal\locker.h" />
+    <ClInclude Include="Source\Public\sdk\src\hal\socket.h" />
+    <ClInclude Include="Source\Public\sdk\src\hal\thread.h" />
+    <ClInclude Include="Source\Public\sdk\src\hal\types.h" />
+    <ClInclude Include="Source\Public\sdk\src\hal\util.h" />
+    <ClInclude Include="Source\Public\sdk\src\hal\waiter.h" />
+    <ClInclude Include="Source\Public\sdk\src\sdkcommon.h" />
+    <ClInclude Include="Source\Public\sdk\src\sl_async_transceiver.h" />
+    <ClInclude Include="Source\Public\sdk\src\sl_lidarprotocol_codec.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Source\Module.def" />

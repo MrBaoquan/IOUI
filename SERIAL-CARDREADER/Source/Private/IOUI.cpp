@@ -17,48 +17,68 @@
 #include "Util.hpp"
 #include <iomanip>  // 用于格式化输出
 #include <sstream>  // 用于字符串流
+#include <memory>
+#include <mutex>
 
 namespace dh = DevelopHelper;
 
-extern HINSTANCE DLL_INSTANCE;
-HHOOK g_hHook = NULL;
-std::string g_terminalKey;
 // 当前缓存的待处理的组合键记录
 std::vector<std::string> g_cachedComboKeys;
 
-// 串口实例指针
-std::map<uint8, std::shared_ptr<Serial>> g_serialPorts;
+// 串口参数结构体，支持每设备独立配置和状态缓存
+struct DeviceContext
+{
+    std::shared_ptr<Serial> serialPort;
+
+    int timeout = 500;
+    int comboMode = 1;
+    int dataBits = 11;
+    std::string startBits = "20";
+
+    std::vector<uint8> recvBuffer;
+
+    std::map<uint8, std::chrono::system_clock::time_point> lastUpdateTime;
+};
 
 DeviceInfo devInfo;
+
+// map键为设备索引，值为设备上下文
+std::map<uint8, DeviceContext> g_deviceContexts;
+
+// 全局组合键映射（组合键字符串 -> 通道id），共用，也可根据需要每设备独立
+std::map<std::string, int> g_comboKeysMap;
+
+mINI::INIFile* g_iniFIle = nullptr;
+mINI::INIStructure* g_iniStructure = nullptr;
+
 IOUI_API DeviceInfo* __stdcall Initialize()
 {
-	devInfo.InputCount = 255;
-	devInfo.OutputCount = 0;
-	devInfo.AxisCount = 0;
+    devInfo.InputCount = 255;
+    devInfo.OutputCount = 0;
+    devInfo.AxisCount = 0;
     return &devInfo;
 }
 
-
 std::string convert_char(unsigned char ch, int mode) {
-	if (mode == 0) {
-		// mode 0: 返回ASCII字符
-		if (ch >= 32 && ch <= 126) {
-			return std::string(1, ch);  // 将字符转换为长度为1的std::string
-		}
-		else {
-			return ".";
-		}
-	}
-	else if (mode == 1) {
-		// mode 1: 返回16进制字符串
-		std::ostringstream oss;
-		oss << std::uppercase << std::hex << std::setw(2) << std::setfill('0') << static_cast<int>(ch);
-		return oss.str();  // 返回格式化的16进制字符串
-	}
-	else {
-		// 非法模式
-		return "";
-	}
+    if (mode == 0) {
+        // mode 0: 返回ASCII字符
+        if (ch >= 32 && ch <= 126) {
+            return std::string(1, ch);  // 将字符转换为长度为1的std::string
+        }
+        else {
+            return ".";
+        }
+    }
+    else if (mode == 1) {
+        // mode 1: 返回16进制字符串
+        std::ostringstream oss;
+        oss << std::uppercase << std::hex << std::setw(2) << std::setfill('0') << static_cast<int>(ch);
+        return oss.str();  // 返回格式化的16进制字符串
+    }
+    else {
+        // 非法模式
+        return "";
+    }
 }
 
 // 将 unsigned char 数组转换为16进制字符串
@@ -71,108 +91,151 @@ std::string to_hex_string(const unsigned char* data, size_t length) {
 }
 
 // 判断数组的16进制表示是否以指定的字符串开头
-bool starts_with_hex(const unsigned char* data, size_t length, const std::string& input) {
-    std::string hex_string = to_hex_string(data, length);
-    return hex_string.rfind(input, 0) == 0;  // 检查是否以input开头
-}
-
-// 将前count个字节转换为指定格式的字符串，并用 | 分隔
-std::string vector_to_hex_string(const std::vector<unsigned char>& data, size_t count = 11, int mode = 1) {
-    std::ostringstream oss;
-
-    // 取前count个字节（最多11个，如果vector长度不足则取实际长度）
-    size_t length = min(data.size(), count);
-    for (size_t i = 0; i < length; ++i) {
-        // 使用 convert_char 函数转换每个字节
-        oss << convert_char(data[i], mode);
-
-        if (i < length - 1) {
-            oss << " ";  // 添加 | 分隔符，最后一个元素后不加
+bool starts_with_hex(const unsigned char* data, size_t length, const std::string& startBitsHex)
+{
+    // 假设startBitsHex为"20"表示0x20
+    // 先把startBitsHex转字节
+    static std::vector<unsigned char> startBytes;
+    if (startBytes.empty()) {
+        for (size_t i = 0; i < startBitsHex.length(); i += 2) {
+            std::string byteString = startBitsHex.substr(i, 2);
+            unsigned char byte = static_cast<unsigned char>(std::stoi(byteString, nullptr, 16));
+            startBytes.push_back(byte);
         }
     }
+    if (length < startBytes.size()) return false;
+    return std::equal(startBytes.begin(), startBytes.end(), data);
+}
 
+// 将前count个字节转换为指定格式的字符串，并用空格分隔
+std::string vector_to_hex_string(const std::vector<unsigned char>& data, size_t count = 11, int mode = 1) {
+    std::ostringstream oss;
+    size_t length = std::min<size_t>(data.size(), count);
+    for (size_t i = 0; i < length; ++i) {
+        oss << convert_char(data[i], mode);
+        if (i < length - 1) {
+            oss << " ";
+        }
+    }
     return oss.str();
 }
 
-std::map<std::string, int> g_comboKeysMap;
-mINI::INIFile* g_iniFIle = nullptr;
-mINI::INIStructure* g_iniStructure = nullptr;
+int AppendComboKeys(const std::string& comboKey) 
+{
+    if (g_comboKeysMap.count(comboKey) > 0) return -1;
 
-int AppendComboKeys(const std::string& comboKey) {
-	if (g_comboKeysMap.count(comboKey) > 0) return -1;
+    if (!g_iniStructure || !g_iniFIle) return -1; // 防护，避免空指针操作
 
-	auto& ini = *g_iniStructure;
-	auto& file = *g_iniFIle;
-	for (int _idx=0;_idx<devInfo.InputCount;++_idx)
-	{
-		std::string _key = "k" + std::to_string(_idx);
-		if (!ini["ComboKeys"].has(_key)) {
-			ini["ComboKeys"][_key] = comboKey;
-			g_comboKeysMap.insert(std::pair<std::string, int>(comboKey, _idx));
-			file.write(ini);
-			return _idx;
-		}
-	}
-	return -1;
+    auto& ini = *g_iniStructure;
+    auto& file = *g_iniFIle;
+    for (int idx = 0; idx < devInfo.InputCount; ++idx) {
+        std::string key = "k" + std::to_string(idx);
+        if (!ini["ComboKeys"].has(key)) {
+            ini["ComboKeys"][key] = comboKey;
+            g_comboKeysMap.insert(std::pair<std::string, int>(comboKey, idx));
+            file.write(ini);
+            return idx;
+        }
+    }
+    return -1;
 }
-
-// 通道超时值 ms
-int g_timeout = 500;
-int g_comboMode = 1;
-int g_dataBits = 11;
-std::string g_startBits = "20";
 
 IOUI_API int __stdcall OpenDevice(uint8 deviceIndex)
 {
-	std::string path = dh::Paths::Instance().GetModuleDir();
-	std::string config_file_path = path + "Config\\SERIAL-CARDREADER\\config.ini";
+    std::string path = dh::Paths::Instance().GetModuleDir();
+    std::string config_file_path = path + "Config\\SERIAL-CARDREADER\\config.ini";
 
-	g_iniFIle = new  mINI::INIFile(config_file_path);
-	g_iniStructure = new  mINI::INIStructure();
-	g_iniFIle->read(*g_iniStructure);
-	auto& ini = *g_iniStructure;
+    try {
+        if (!g_iniFIle) g_iniFIle = new mINI::INIFile(config_file_path);
+        if (!g_iniStructure) g_iniStructure = new mINI::INIStructure();
+        g_iniFIle->read(*g_iniStructure);
+        auto& ini = *g_iniStructure;
 
-	const char* app = "Serial";
-	auto& _baudRateString = ini["Serial"][BuildDeviceAttribute("BaudRate", deviceIndex)];
-	DWORD _baudRate = _baudRateString==""?9600: std::stoi(_baudRateString);
-	g_timeout = std::stoi(ini["Serial"]["Timeout"]!=""? ini["Serial"]["Timeout"] : "500");
+        const std::string deviceSectionName = BuildDeviceAttribute("device", deviceIndex);
 
-	g_comboMode = std::stoi(ini["Serial"]["ComboMode"]!=""? ini["Serial"]["ComboMode"] : "1");
-	g_dataBits = std::stoi(ini["Serial"]["DataBits"]!=""? ini["Serial"]["DataBits"] : "11");
-	g_startBits = ini["Serial"]["StartBits"]!=""? ini["Serial"]["StartBits"] : "20";
+        // 读取default节配置
+        auto& defaultSection = ini["default"];
+        std::map<std::string, std::string> mergedConfig;
+        for (auto& kv : defaultSection) {
+            mergedConfig[kv.first] = kv.second;
+        }
 
-	try
-	{
-		auto _serialPort = new Serial("COM" + std::to_string(deviceIndex), _baudRate);
-		g_serialPorts.insert(std::pair<uint8, std::shared_ptr<Serial>>(deviceIndex, _serialPort));
+        // 设备专属节覆盖default
+        auto& deviceSection = ini[deviceSectionName];
+        for (auto& kv : deviceSection) {
+            mergedConfig[kv.first] = kv.second;
+        }
 
-		for (int _idx = 0; _idx < devInfo.InputCount; ++_idx)
-		{
-			std::string _key = "k" + std::to_string(_idx);
-			std::string& _val = ini["ComboKeys"][_key];
-			if (_val == "") {
-				ini["ComboKeys"].remove(_key);
-				continue;
-			}
-			g_comboKeysMap.insert(std::pair<std::string, int>(_val, _idx));
-		}
-	}
-	catch (const char*)
-	{
-		delete g_iniFIle;
-		delete g_iniStructure;
-		return 0;
-	}
+        // 读取配置参数，带默认值fallback
+        int baudRate = 9600;
+        int timeout = 500;
+        int comboMode = 1;
+        int dataBits = 11;
+        std::string startBits = "20";
+        std::string portName;
 
-	return 1;
+        if (mergedConfig.count("baud_rate")) baudRate = std::stoi(mergedConfig["baud_rate"]);
+        if (mergedConfig.count("timeout")) timeout = std::stoi(mergedConfig["timeout"]);
+        if (mergedConfig.count("combo_mode")) comboMode = std::stoi(mergedConfig["combo_mode"]);
+        if (mergedConfig.count("frame_length")) dataBits = std::stoi(mergedConfig["frame_length"]);
+        if (mergedConfig.count("start_bits")) startBits = mergedConfig["start_bits"];
+        if (mergedConfig.count("port_name")) portName = mergedConfig["port_name"];
+
+        // 如果portName为空，使用默认的COM加设备号
+        portName = NormalizePortName(portName, deviceIndex);
+
+        // 初始化设备上下文
+        DeviceContext ctx;
+        ctx.timeout = timeout;
+        ctx.comboMode = comboMode;
+        ctx.dataBits = dataBits;
+        ctx.startBits = startBits;
+
+        // 创建串口对象
+        auto serialPortPtr = std::make_shared<Serial>(portName, baudRate);
+        ctx.serialPort = serialPortPtr;
+
+        // 更新全局map
+        g_deviceContexts[deviceIndex] = std::move(ctx);
+
+        // 载入 ComboKeys 节，初始化映射（此处共用一个映射，非逐设备）
+        // 如果需要支持设备独立映射，则需改为每设备维护
+        g_comboKeysMap.clear();
+        auto& comboKeysSection = ini["ComboKeys"];
+        for (int idx = 0; idx < devInfo.InputCount; ++idx) {
+            std::string keyName = "k" + std::to_string(idx);
+            if (comboKeysSection.has(keyName)) {
+                std::string comboKey = comboKeysSection[keyName];
+                if (!comboKey.empty()) {
+                    g_comboKeysMap[comboKey] = idx;
+                }
+            }
+        }
+    }
+    catch (...) {
+        if (g_iniFIle) { delete g_iniFIle; g_iniFIle = nullptr; }
+        if (g_iniStructure) { delete g_iniStructure; g_iniStructure = nullptr; }
+        return 0;
+    }
+
+    return 1;
 }
 
 IOUI_API int __stdcall CloseDevice(uint8 deviceIndex)
 {
-	delete g_iniFIle;
-	delete g_iniStructure;
-	g_serialPorts[deviceIndex]->flush();
-	g_serialPorts.erase(deviceIndex);
+    if (g_deviceContexts.count(deviceIndex)) {
+        auto& ctx = g_deviceContexts[deviceIndex];
+        if (ctx.serialPort) {
+            ctx.serialPort->flush();
+            ctx.serialPort.reset();
+        }
+        g_deviceContexts.erase(deviceIndex);
+    }
+    delete g_iniFIle;
+    g_iniFIle = nullptr;
+    delete g_iniStructure;
+    g_iniStructure = nullptr;
+
     return 1;
 }
 
@@ -186,72 +249,85 @@ IOUI_API int __stdcall GetDeviceDO(uint8 deviceIndex, short* OutDOStatus)
     return 0;
 }
 
-
 IOUI_API int __stdcall GetDeviceDI(uint8 deviceIndex, BYTE* OutDIStatus)
 {
-	static std::map<uint8, std::map<uint8, std::chrono::system_clock::time_point>> _AllDILastUpdateTime;
-	static std::map<uint8, std::vector<uint8>> _allDevData;
-	if (_allDevData.count(deviceIndex) <= 0) {
-		_allDevData.insert(std::pair<uint8, std::vector<uint8>>(deviceIndex, std::vector<uint8>()));
-	}
-	if (_AllDILastUpdateTime.count(deviceIndex) <= 0) {
-		_AllDILastUpdateTime.insert(std::pair<uint8, std::map<uint8, std::chrono::system_clock::time_point>>(deviceIndex, std::map<uint8, std::chrono::system_clock::time_point>()));
-	}
+    if (g_deviceContexts.count(deviceIndex) == 0) {
+        // 设备未打开或不存在
+        ZeroMemory(OutDIStatus, sizeof(BYTE) * devInfo.InputCount);
+        return 0;
+    }
 
-	auto _serialPort = g_serialPorts[deviceIndex];
+    auto& ctx = g_deviceContexts[deviceIndex];
+    auto& serialPort = ctx.serialPort;
 
-	static char _tempRecv[MAX_PATH];
-	auto _recvCount = _serialPort->read(_tempRecv, MAX_PATH, false);
+    if (!serialPort) {
+        ZeroMemory(OutDIStatus, sizeof(BYTE) * devInfo.InputCount);
+        return 0;
+    }
 
-	auto& _devData = _allDevData.at(deviceIndex);
-	if (_recvCount > 0) {
-		std::vector<uint8> _tempRecvData(std::begin(_tempRecv), std::begin(_tempRecv) + _recvCount);
-		_devData.insert(_devData.end(), _tempRecvData.begin(), _tempRecvData.end());
-	}
+    static std::map<uint8, std::vector<uint8>> allDevData;
+    static std::map<uint8, std::map<uint8, std::chrono::system_clock::time_point>> allDiLastUpdateTime;
 
+    if (allDevData.count(deviceIndex) == 0) {
+        allDevData[deviceIndex] = std::vector<uint8>();
+    }
+    if (allDiLastUpdateTime.count(deviceIndex) == 0) {
+        allDiLastUpdateTime[deviceIndex] = std::map<uint8, std::chrono::system_clock::time_point>();
+    }
 
-	auto& _diLastUpdateTime = _AllDILastUpdateTime.at(deviceIndex);
-	while (_devData.size() >= g_dataBits)
-	{
-		if(!starts_with_hex(_devData.data(), _devData.size(), g_startBits)){
-			_devData.erase(_devData.begin());
-			continue;
-		}
+    // 串口读取缓冲
+    char tempRecv[256]; // 缓冲大小调整为合理值
+    const int bufferSize = sizeof(tempRecv);
+    int recvCount = serialPort->read(tempRecv, bufferSize, false);
+    auto& devData = allDevData[deviceIndex];
 
-		g_cachedComboKeys.push_back(vector_to_hex_string(_devData, g_dataBits,g_comboMode));
-		_devData.erase(_devData.begin(), _devData.begin() + g_dataBits);
-	}
-	
-	if (g_timeout <= 0) {
-		ZeroMemory(OutDIStatus, sizeof(BYTE) * devInfo.InputCount);
-	}
+    if (recvCount > 0) {
+        devData.insert(devData.end(), (uint8*)tempRecv, (uint8*)tempRecv + recvCount);
+    }
 
-	for (const std::string& _comboKey :g_cachedComboKeys)
-	{
-		if (g_comboKeysMap.count(_comboKey) <= 0)AppendComboKeys(_comboKey);
-		if (g_comboKeysMap.count(_comboKey) <= 0) continue;
-		auto _channel = g_comboKeysMap[_comboKey];
-		OutDIStatus[_channel] = 1;
-		if(g_timeout<=0) continue;
+    auto& diLastUpdateTime = allDiLastUpdateTime[deviceIndex];
 
-		if (_diLastUpdateTime.count(_channel) <= 0) {
-			_diLastUpdateTime.insert(std::pair<uint8, std::chrono::system_clock::time_point>(_channel, std::chrono::system_clock::now()));
-		}
-		_diLastUpdateTime[_channel] = std::chrono::system_clock::now();
-	}
-	if (g_timeout >= 50) {
-		auto _now = std::chrono::system_clock::now();
-		for (int _idx = 0; _idx < devInfo.InputCount; ++_idx)
-		{
-			if (OutDIStatus[_idx] > 0) {
-				std::chrono::duration<double, std::milli> _elapsed = (_now - _diLastUpdateTime[_idx]);
-				if (_elapsed.count() >= g_timeout) {
-					OutDIStatus[_idx] = 0;
-				}
-			}
-		}
-	}
-	g_cachedComboKeys.clear();
+    while (devData.size() >= (size_t)ctx.dataBits) {
+        if (!starts_with_hex(devData.data(), devData.size(), ctx.startBits)) {
+            devData.erase(devData.begin());
+            continue;
+        }
+        g_cachedComboKeys.push_back(vector_to_hex_string(devData, ctx.dataBits, ctx.comboMode));
+        devData.erase(devData.begin(), devData.begin() + ctx.dataBits);
+    }
+
+    if (ctx.timeout <= 0) {
+        ZeroMemory(OutDIStatus, sizeof(BYTE) * devInfo.InputCount);
+    }
+
+    for (const std::string& comboKey : g_cachedComboKeys) {
+        if (g_comboKeysMap.count(comboKey) <= 0)
+            AppendComboKeys(comboKey);
+        if (g_comboKeysMap.count(comboKey) <= 0) continue;
+        auto channel = g_comboKeysMap[comboKey];
+        OutDIStatus[channel] = 1;
+        if (ctx.timeout <= 0) continue;
+
+        if (diLastUpdateTime.count(channel) <= 0) {
+            diLastUpdateTime[channel] = std::chrono::system_clock::now();
+        }
+        diLastUpdateTime[channel] = std::chrono::system_clock::now();
+    }
+
+    if (ctx.timeout >= 50) {
+        auto now = std::chrono::system_clock::now();
+        for (int idx = 0; idx < devInfo.InputCount; ++idx) {
+            if (OutDIStatus[idx] > 0) {
+                if (diLastUpdateTime.count(idx) == 0) continue;
+                std::chrono::duration<double, std::milli> elapsed = now - diLastUpdateTime[idx];
+                if (elapsed.count() >= ctx.timeout) {
+                    OutDIStatus[idx] = 0;
+                }
+            }
+        }
+    }
+    g_cachedComboKeys.clear();
+
     return 1;
 }
 

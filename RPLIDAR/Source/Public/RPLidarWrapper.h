@@ -28,7 +28,11 @@ struct LidarScanPoint
 
 class RPLidarWrapper {
 public:
-	RPLidarWrapper(){}
+	int __mode = -1;
+	int deviceID;
+	RPLidarWrapper(int id){
+		deviceID = id;
+	}
 	~RPLidarWrapper();
 	bool OpenLidar();
 	void Update();
@@ -92,10 +96,15 @@ private:
 	void syncPreviewUISize();
 
 public:
-	RPConfigMgr rpConfig;
+	
 	float debugRadius = 3;	// 2M
 	int angleOffset = 0;
-	RPlidarDriver* rpDriver = nullptr;
+	ILidarDriver* rpDriver = nullptr;
+	bool openSucceed = false;
+
+	std::string debugUIKey = "DebugUI";
+	std::string previewUIKey = "PreviewUI";
+
 	Point DebugUISize = Point(800,800);
 	// 雷达扫描原始极坐标点
 	std::vector<LidarScanPoint> lidarScanPoints;

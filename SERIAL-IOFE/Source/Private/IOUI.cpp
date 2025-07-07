@@ -1,9 +1,4 @@
-﻿/** Copyright (c) 2018 Hefei And Technology Co.,Ltd
- *  Author: MrBaoquan
- *  CreateTime: 2018-5-16 10:44
- *  Email: mrma617@gmail.com
- */
-#define WIN32_LEAN_AND_MEAN
+﻿#define WIN32_LEAN_AND_MEAN
 #include <stdlib.h>
 #include "IOUI.h"
 #include "PCIManager.hpp"
@@ -16,121 +11,211 @@
 #include <queue>
 #include <map>
 #include <atomic>
+#include <memory>
+
+#include "Util.hpp"
+#include "mIni/mini/ini.h"
+
 namespace dh = DevelopHelper;
 
 DeviceInfo devInfo;
-Serial* g_serialPort = nullptr;
+
+// 多设备管理相关容器
+std::map<uint8, std::unique_ptr<Serial>> g_serialPorts;
+std::map<uint8, std::thread> g_deviceThreads;
+std::map<uint8, std::atomic<bool>> g_stopThreads;
+std::map<uint8, std::queue<std::map<int, short>>> g_dirtyQueues;
+std::map<uint8, std::mutex> g_queueMutexes;
+std::map<uint8, std::condition_variable> g_queueCVs;
+// 设备独立等待时间
+std::map<uint8, int> g_waitTimes;
+
+const size_t MAX_QUEUE_SIZE = 100;
+
 IOUI_API DeviceInfo* __stdcall Initialize()
 {
-	devInfo.InputCount = 128;
-	devInfo.OutputCount = 128;
-	devInfo.AxisCount = 128;
+    devInfo.InputCount = 128;
+    devInfo.OutputCount = 128;
+    devInfo.AxisCount = 128;
     return &devInfo;
 }
 
-// 线程相关变量
-std::queue<std::map<int, short>> dirtyQueue;
-std::mutex queueMutex;
-std::condition_variable queueCV;
-std::atomic<bool> stopThread(false);
+void processDirtyStatus(uint8 deviceIndex) {
+    while (!g_stopThreads[deviceIndex].load(std::memory_order_acquire)) {
+        std::map<int, short> _dirtyDOStatus;
+        {
+            std::unique_lock<std::mutex> lock(g_queueMutexes[deviceIndex]);
+            g_queueCVs[deviceIndex].wait(lock, [deviceIndex] {
+                return !g_dirtyQueues[deviceIndex].empty() || g_stopThreads[deviceIndex].load(std::memory_order_acquire);
+                });
 
-std::thread deviceThread;
-int g_wait = 60;
+            if (g_stopThreads[deviceIndex].load(std::memory_order_acquire) && g_dirtyQueues[deviceIndex].empty()) {
+                return; // 线程退出
+            }
 
-// 处理设备命令的线程
-void processDirtyStatus() {
-	while (!stopThread) {
-		std::map<int, short> _dirtyDOStatus;
-		{
-			std::unique_lock<std::mutex> lock(queueMutex);
-			queueCV.wait(lock, [] { return !dirtyQueue.empty() || stopThread; });
-			if (stopThread && dirtyQueue.empty()) {
-				return; // 退出线程
-			}
-			_dirtyDOStatus = dirtyQueue.front();
-			dirtyQueue.pop();
-		}
+            if (!g_dirtyQueues[deviceIndex].empty()) {
+                _dirtyDOStatus = std::move(g_dirtyQueues[deviceIndex].front());
+                g_dirtyQueues[deviceIndex].pop();
+            }
+        }
 
-		// 处理_dirtyDOStatus
-		for (auto& _doItem : _dirtyDOStatus) {
-			static char _data[4] = { };
-			_data[0] = 0xFE;
-			_data[1] = _doItem.first;
-			_data[2] = _doItem.second;
-			_data[3] = 0xFF;
-			g_serialPort->write(_data, 4);
-			if (g_wait > 0)
-				std::this_thread::sleep_for(std::chrono::milliseconds(g_wait));
-		}
-	}
+        if (_dirtyDOStatus.empty())
+            continue;
+
+        auto& serialPort = g_serialPorts[deviceIndex];
+        if (!serialPort)
+            continue;
+
+        int waitMs = 60;
+        if (g_waitTimes.count(deviceIndex))
+            waitMs = g_waitTimes[deviceIndex];
+
+        for (const auto& _doItem : _dirtyDOStatus) {
+            char _data[4] = { 0 };
+            _data[0] = 0xFE;
+            _data[1] = static_cast<char>(_doItem.first);
+            _data[2] = static_cast<char>(_doItem.second);
+            _data[3] = 0xFF;
+
+            try {
+                serialPort->write(_data, 4);
+            }
+            catch (...) {
+            }
+            if (waitMs > 0)
+                std::this_thread::sleep_for(std::chrono::milliseconds(waitMs));
+        }
+    }
 }
 
-//int channelIndex = 1;
-//int valueIndex = 2;
+std::shared_ptr<mINI::INIFile> g_iniFile = nullptr;
+std::shared_ptr<mINI::INIStructure> g_iniStructure = nullptr;
 
 IOUI_API int __stdcall OpenDevice(uint8 deviceIndex)
 {
-	std::string path = dh::Paths::Instance().GetModuleDir();
-	std::string config_file_path = path + "Config\\SERIAL-IOFE\\config.ini";
-	const char* app = "/PCISettings";
-	DWORD _baudRate = GetPrivateProfileIntA(app, "BaudRate", 115200, config_file_path.data());
-	g_wait = GetPrivateProfileIntA(app, "waitTimeMs", 0, config_file_path.data());
-	
+    try
+    {
+        if (g_serialPorts.count(deviceIndex) && g_serialPorts[deviceIndex]) {
+            g_stopThreads[deviceIndex] = true;
+            g_queueCVs[deviceIndex].notify_all();
+            if (g_deviceThreads[deviceIndex].joinable())
+                g_deviceThreads[deviceIndex].join();
+            g_serialPorts[deviceIndex]->flush();
+            g_serialPorts.erase(deviceIndex);
+            g_deviceThreads.erase(deviceIndex);
+            g_stopThreads.erase(deviceIndex);
+            {
+                std::lock_guard<std::mutex> lock(g_queueMutexes[deviceIndex]);
+                while (!g_dirtyQueues[deviceIndex].empty()) g_dirtyQueues[deviceIndex].pop();
+            }
+            g_dirtyQueues.erase(deviceIndex);
+            g_queueMutexes.erase(deviceIndex);
+            g_queueCVs.erase(deviceIndex);
+            g_waitTimes.erase(deviceIndex);
+        }
 
-	deviceThread = std::thread(processDirtyStatus);
+        std::string path = dh::Paths::Instance().GetModuleDir();
+        std::string config_file_path = path + "Config\\SERIAL-IOFE\\config.ini";
 
-	try
-	{
-		g_serialPort = new Serial("COM" + std::to_string(deviceIndex), _baudRate);
-	}
-	catch (const char* _err)
-	{
-		return 0;
-	}
-	
-	
+        if (!g_iniFile) g_iniFile = std::make_shared<mINI::INIFile>(config_file_path);
+        if (!g_iniStructure) g_iniStructure = std::make_shared<mINI::INIStructure>();
+        g_iniFile->read(*g_iniStructure);
+        auto& ini = *g_iniStructure;
+
+        auto deviceSectionName = BuildDeviceAttribute("device", deviceIndex);
+        auto& defaultSection = ini["default"];
+        std::map<std::string, std::string> mergedConfig;
+
+        for (const auto& kv : defaultSection)
+            mergedConfig[kv.first] = kv.second;
+        auto& deviceSectionMap = ini[deviceSectionName];
+        for (const auto& kv : deviceSectionMap)
+            mergedConfig[kv.first] = kv.second;
+
+        int baudRate = 57600;
+        int waitTimeMs = 60;
+        if (mergedConfig.count("baud_rate")) baudRate = std::stoi(mergedConfig["baud_rate"]);
+        if (mergedConfig.count("write_wait_ms")) waitTimeMs = std::stoi(mergedConfig["write_wait_ms"]);
+
+        g_waitTimes[deviceIndex] = waitTimeMs;
+
+        std::string portName;
+        if (mergedConfig.count("port_name")) portName = mergedConfig["port_name"];
+        portName = NormalizePortName(portName, deviceIndex);
+
+        g_serialPorts[deviceIndex] = std::make_unique<Serial>(portName, baudRate);
+
+        g_stopThreads[deviceIndex] = false;
+        {
+            std::lock_guard<std::mutex> lock(g_queueMutexes[deviceIndex]);
+            while (!g_dirtyQueues[deviceIndex].empty()) g_dirtyQueues[deviceIndex].pop();
+        }
+
+        g_deviceThreads[deviceIndex] = std::thread(processDirtyStatus, deviceIndex);
+    }
+    catch (...)
+    {
+        return 0;
+    }
     return 1;
 }
 
 IOUI_API int __stdcall CloseDevice(uint8 deviceIndex)
 {
-    {
-        std::lock_guard<std::mutex> lock(queueMutex);
-        stopThread = true;  // 设置标志，通知线程停止
+    if (g_serialPorts.count(deviceIndex) && g_serialPorts[deviceIndex]) {
+        g_stopThreads[deviceIndex] = true;
+        g_queueCVs[deviceIndex].notify_all();
+        if (g_deviceThreads[deviceIndex].joinable())
+            g_deviceThreads[deviceIndex].join();
+        g_serialPorts[deviceIndex]->flush();
+        g_serialPorts.erase(deviceIndex);
+        g_deviceThreads.erase(deviceIndex);
+        g_stopThreads.erase(deviceIndex);
+        {
+            std::lock_guard<std::mutex> lock(g_queueMutexes[deviceIndex]);
+            while (!g_dirtyQueues[deviceIndex].empty()) g_dirtyQueues[deviceIndex].pop();
+        }
+        g_dirtyQueues.erase(deviceIndex);
+        g_queueMutexes.erase(deviceIndex);
+        g_queueCVs.erase(deviceIndex);
+        g_waitTimes.erase(deviceIndex);
     }
-    queueCV.notify_one();  // 唤醒线程以便它能及时退出
-
-    // 检查线程是否有效且可join
-    if (deviceThread.joinable()) {
-        deviceThread.join();  // 等待线程结束
-    }
-
-	g_serialPort->flush();
-	delete g_serialPort;
     return 1;
 }
 
-IOUI_API int __stdcall SetDeviceDO(uint8 deviceIndex, short* InDOStatus)
-{	
-	static std::vector<short> _lastDOStatus(devInfo.OutputCount,0);
-	std::map<int,short> _dirtyDOStatus;
-	for (auto _idx = 0; _idx < _lastDOStatus.size();++_idx) {
-		if (_lastDOStatus[_idx] != InDOStatus[_idx]) {
-			_dirtyDOStatus.insert(std::pair<int,short> (_idx, InDOStatus[_idx]));
-			_lastDOStatus[_idx] = InDOStatus[_idx];
-		}
-	}
-
- 	if (!_dirtyDOStatus.empty()) {
-        // 将_dirtyDOStatus 插入线程安全队列
-        {
-            std::lock_guard<std::mutex> lock(queueMutex);
-            dirtyQueue.push(_dirtyDOStatus);
+void pushDirtyDOStatus(uint8 deviceIndex, const std::map<int, short>& dirtyData) {
+    std::lock_guard<std::mutex> lock(g_queueMutexes[deviceIndex]);
+    if (g_dirtyQueues[deviceIndex].size() >= MAX_QUEUE_SIZE) {
+        auto& last = g_dirtyQueues[deviceIndex].back();
+        for (const auto& kv : dirtyData) {
+            last[kv.first] = kv.second;
         }
-        queueCV.notify_one(); // 唤醒处理线程
     }
-	
-	return 1;
+    else {
+        g_dirtyQueues[deviceIndex].push(dirtyData);
+    }
+    g_queueCVs[deviceIndex].notify_one();
+}
+
+IOUI_API int __stdcall SetDeviceDO(uint8 deviceIndex, short* InDOStatus)
+{
+    static std::map<uint8, std::vector<short>> lastDOStatusMap;
+    if (!lastDOStatusMap.count(deviceIndex)) {
+        lastDOStatusMap[deviceIndex] = std::vector<short>(devInfo.OutputCount, 0);
+    }
+
+    std::vector<short>& _lastDOStatus = lastDOStatusMap[deviceIndex];
+    std::map<int, short> _dirtyDOStatus;
+    for (size_t _idx = 0; _idx < _lastDOStatus.size(); ++_idx) {
+        if (_lastDOStatus[_idx] != InDOStatus[_idx]) {
+            _dirtyDOStatus[_idx] = InDOStatus[_idx];
+            _lastDOStatus[_idx] = InDOStatus[_idx];
+        }
+    }
+    if (!_dirtyDOStatus.empty()) {
+        pushDirtyDOStatus(deviceIndex, _dirtyDOStatus);
+    }
+    return 1;
 }
 
 IOUI_API int __stdcall GetDeviceDO(uint8 deviceIndex, short* OutDOStatus)
@@ -138,32 +223,41 @@ IOUI_API int __stdcall GetDeviceDO(uint8 deviceIndex, short* OutDOStatus)
     return 0;
 }
 
-
 IOUI_API int __stdcall GetDeviceDI(uint8 deviceIndex, BYTE* OutDIStatus)
 {
-	static char _data[MAX_PATH];
-	static std::vector<uint8> _recvDatas;
-	DWORD _count=0;
-	auto _recevCount = g_serialPort->read(_data, MAX_PATH, false);
-	for (int _idx = 0;_idx < _recevCount;++_idx) {
-		_recvDatas.push_back(_data[_idx]);
-	}
-	while (_recvDatas.size()>=4) {
-		if (_recvDatas[0] != 0xFE) {
-			_recvDatas.erase(_recvDatas.begin());
-			continue;
-		}
-		std::vector<uint8> _content(_recvDatas.begin(), _recvDatas.begin() + 4);
-		uint8 _channel = _content[1];
-		uint8 _status = _content[2];
-		if (_status == 0x00) {
-			OutDIStatus[_channel] = 0;
-		}
-		else {
-			OutDIStatus[_channel] = 1;
-		}
-		_recvDatas.erase(_recvDatas.begin(), _recvDatas.begin() + 4);
-	}
+    static std::map<uint8, std::vector<uint8>> recvDatasMap;
+    char _data[256] = { 0 };
+    int recevCount = 0;
+
+    if (!g_serialPorts.count(deviceIndex) || !g_serialPorts[deviceIndex])
+        return 0;
+
+    try {
+        recevCount = g_serialPorts[deviceIndex]->read(_data, sizeof(_data), false);
+    }
+    catch (...) {
+        return 0;
+    }
+    auto& _recvDatas = recvDatasMap[deviceIndex];
+
+    for (int i = 0; i < recevCount; ++i) {
+        _recvDatas.push_back(static_cast<uint8>(_data[i]));
+    }
+    while (_recvDatas.size() >= 4) {
+        if (_recvDatas[0] != 0xFE) {
+            _recvDatas.erase(_recvDatas.begin());
+            continue;
+        }
+        std::vector<uint8> _content(_recvDatas.begin(), _recvDatas.begin() + 4);
+        uint8 channel = _content[1];
+        uint8 status = _content[2];
+        if (channel >= devInfo.InputCount) {
+            _recvDatas.erase(_recvDatas.begin(), _recvDatas.begin() + 4);
+            continue;
+        }
+        OutDIStatus[channel] = (status == 0x00) ? 0 : 1;
+        _recvDatas.erase(_recvDatas.begin(), _recvDatas.begin() + 4);
+    }
     return 1;
 }
 
@@ -172,7 +266,6 @@ IOUI_API int __stdcall GetDeviceAD(uint8 deviceIndex, short* OutADStatus)
     return 0;
 }
 
-
 IOUI_API int __stdcall RefreshStreamingData(uint8 deviceIndex, BYTE* Data, unsigned int Size) {
-	return 0;
+    return 0;
 }
