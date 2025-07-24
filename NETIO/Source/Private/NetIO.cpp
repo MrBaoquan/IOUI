@@ -9,8 +9,8 @@ std::atomic<int> Event::id_counter(0);
 std::string NetIO::process_name_ = NetIO::getProcessName();
 
 // 定义固定的广播端口和活动请求端口
-const std::string NetIO::BROADCAST_PORT = "21000";
-const std::string NetIO::ACTIVE_REQUEST_PORT = "22000";
+const std::string NetIO::BROADCAST_PORT = "21000";		// 广播端口
+const std::string NetIO::ACTIVE_REQUEST_PORT = "22000";	// 用于netio-admin 主动发出的探测心跳的端口
 
 // 构造函数，接受 host 和 port
 NetIO::NetIO(const std::string& host, const std::string& port)

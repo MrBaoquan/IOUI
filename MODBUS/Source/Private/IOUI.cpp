@@ -51,6 +51,7 @@ public:
     int JumpThreshold;
     int TimeoutMs;      // 新增：超时(ms)
     int RetryWaitMs;    // 新增：重试等待(ms)
+    int DoAddr;         // 新增：写线圈地址偏移
 
     ModbusArgs() {
         SlaveAddr = 1;
@@ -61,6 +62,7 @@ public:
         JumpThreshold = 500;
         TimeoutMs = 100;     // 默认100ms
         RetryWaitMs = 20;    // 默认20ms
+        DoAddr = 0;          // 默认偏移0
     }
 };
 
@@ -223,8 +225,9 @@ void queryModbusRegistersThread(uint8 deviceIndex) {
             for (const auto& task : tasks) {
                 if (task.writeType == 5) {
                     int _bitValue = task.writeData == 0 ? 0 : 1;
+                    int addrWithOffset = task.writeAddr + _args.DoAddr;
                     execModbusWithRetry([&]() {
-                        return modbus_write_bit(ctx, task.writeAddr, _bitValue);
+                        return modbus_write_bit(ctx, addrWithOffset, _bitValue);
                         }, 5, _args.RetryWaitMs);
                 }
                 else if (task.writeType == 6) {
@@ -346,6 +349,12 @@ IOUI_API int __stdcall OpenDevice(uint8 deviceIndex)
         _args.TimeoutMs = std::stoi(defaultConfig["timeout_ms"]);
     if (defaultConfig.count("retry_wait_ms"))
         _args.RetryWaitMs = std::stoi(defaultConfig["retry_wait_ms"]);
+
+    // 读取写线圈地址偏移配置
+    if (defaultConfig.count("do_addr"))
+        _args.DoAddr = std::stoi(defaultConfig["do_addr"], nullptr, 16);
+    else
+        _args.DoAddr = 0;
 
     // 设置modbus超时
     modbus_set_response_timeout(ctx, _args.TimeoutMs / 1000, (_args.TimeoutMs % 1000) * 1000);

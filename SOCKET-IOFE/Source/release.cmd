@@ -13,10 +13,10 @@ rem start execute command
 :start
 @rem	Note: Write your command below this line
 
-copy %IOUI_SRC_PATH%IOUI-%PLATFORM%-NETIO.dll %IOUI_DST_PATH% /y
+copy %IOUI_SRC_PATH%IOUI-%PLATFORM%-SOCKET-IOFE.dll %IOUI_DST_PATH% /y
 
 if %CONFIGURE% equ Debug (
-	xcopy %ProjectDir%Config\NETIO %IOUI_SRC_PATH%ExternalLibraries\Config\NETIO\ /E /F /Y
+	xcopy %ProjectDir%Config\SOCKET-IOFE %IOUI_SRC_PATH%ExternalLibraries\Config\SOCKET-IOFE\ /E /F /Y
 ) else (
-	xcopy %ProjectDir%Config\NETIO %IOUI_DST_PATH%Config\NETIO\ /E /F /Y
+	xcopy %ProjectDir%Config\SOCKET-IOFE %IOUI_DST_PATH%Config\SOCKET-IOFE\ /E /F /Y
 )

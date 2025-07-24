@@ -2,6 +2,7 @@
 #include <windows.h>
 #include <vector>
 #include <string>
+#include <psapi.h>   // 用于 EnumProcessModules 函数
 
 bool CopyTo(BYTE* Src, short* Dst, size_t Count) 
 {
@@ -154,3 +155,25 @@ std::string NormalizePortName(const std::string& portNameInput, int deviceIndex 
 }
 
 
+std::string getCurrentProcessFullPath()
+{
+	wchar_t path[MAX_PATH] = { 0 };
+	DWORD length = GetModuleFileNameW(NULL, path, MAX_PATH);
+	if (length == 0 || length == MAX_PATH)
+	{
+		// 读取失败或者路径长度超过MAX_PATH
+		return std::string();
+	}
+
+	// 计算转换后缓冲区大小（UTF-8）
+	int size_needed = WideCharToMultiByte(CP_UTF8, 0, path, -1, nullptr, 0, nullptr, nullptr);
+	if (size_needed == 0)
+	{
+		return std::string();
+	}
+
+	std::string utf8_path(size_needed - 1, 0); // 不包括结尾\0
+	WideCharToMultiByte(CP_UTF8, 0, path, -1, &utf8_path[0], size_needed, nullptr, nullptr);
+
+	return utf8_path;
+}

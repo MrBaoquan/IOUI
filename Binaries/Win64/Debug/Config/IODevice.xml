@@ -3,21 +3,26 @@
 	
 	<Device Name="extDev1" Type="External" DllName="NETIO" Index="0">
 		<Action Name="PlayVideo_0">
+			<Key Name="A" />
 			<Key Name="Button_00" />
 		</Action>
 		<Action Name="PlayVideo_1">
+			<Key Name="B" />
 			<Key Name="Button_01" />
 		</Action>
 		<Action Name="PlayVideo_2">
+			<Key Name="C" />
 			<Key Name="Button_02" />
 		</Action>
 		<Action Name="PlayVideo_3">
+			<Key Name="D" />
 			<Key Name="Button_03" />
 		</Action>
 
 		<Axis Name="MoveLR">
 			<Key Name="Axis_00" />
 		</Axis>
+		
 	</Device>
 	
 </IORoot>
