@@ -130,7 +130,7 @@ IOUI_API int __stdcall OpenDevice(uint8_t deviceIndex)
         // 读取串口名，默认按原规则处理
         std::string portName;
         if (mergedConfig.count("port_name")) portName = mergedConfig["port_name"];
-        portName = NormalizePortName(mergedConfig["port_name"], deviceIndex);
+        portName = NormalizePortName(portName, deviceIndex);
        
         // 7. 创建设备上下文
         DeviceContext* ctx = new DeviceContext;

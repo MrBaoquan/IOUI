@@ -52,6 +52,7 @@ public:
     int TimeoutMs;      // 新增：超时(ms)
     int RetryWaitMs;    // 新增：重试等待(ms)
     int DoAddr;         // 新增：写线圈地址偏移
+    int ReadWaitMs;     // 读取指令等待(ms)
 
     ModbusArgs() {
         SlaveAddr = 1;
@@ -62,6 +63,7 @@ public:
         JumpThreshold = 500;
         TimeoutMs = 100;     // 默认100ms
         RetryWaitMs = 20;    // 默认20ms
+        ReadWaitMs = 20;
         DoAddr = 0;          // 默认偏移0
     }
 };
@@ -183,12 +185,12 @@ void queryModbusRegistersThread(uint8 deviceIndex) {
 
             if (_args.DIReadCount > 0) {
                 queryModbusRegisters(deviceIndex, _args.DIFuncCode);
-                std::this_thread::sleep_for(std::chrono::milliseconds(20));
+                std::this_thread::sleep_for(std::chrono::milliseconds(_args.ReadWaitMs));
             }
 
             if (_args.AIReadCount > 0) {
                 queryModbusRegisters(deviceIndex, _args.AIFuncCode);
-                std::this_thread::sleep_for(std::chrono::milliseconds(20));
+                std::this_thread::sleep_for(std::chrono::milliseconds(_args.ReadWaitMs));
             }
         }
         });
@@ -349,6 +351,9 @@ IOUI_API int __stdcall OpenDevice(uint8 deviceIndex)
         _args.TimeoutMs = std::stoi(defaultConfig["timeout_ms"]);
     if (defaultConfig.count("retry_wait_ms"))
         _args.RetryWaitMs = std::stoi(defaultConfig["retry_wait_ms"]);
+
+    if (defaultConfig.count("read_wait_ms"))
+        _args.ReadWaitMs = std::stoi(defaultConfig["read_wait_ms"]);
 
     // 读取写线圈地址偏移配置
     if (defaultConfig.count("do_addr"))

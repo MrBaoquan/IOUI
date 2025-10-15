@@ -1,0 +1,134 @@
+#include "FrameProcessor.h"
+#include <iostream>
+#include <algorithm>
+
+namespace IOHub {
+
+FrameProcessor::FrameProcessor(const FrameConfig& config)
+    : config_(config)
+{
+    std::cout << "[FrameProcessor] Created with header=0x" << std::hex << (int)config_.header
+              << ", tail=0x" << (int)config_.tail
+              << ", length=" << std::dec << config_.length << std::endl;
+}
+
+void FrameProcessor::addReceivedData(const uint8_t* data, size_t size) {
+    for (size_t i = 0; i < size; ++i) {
+        recvBuffer_.push_back(data[i]);
+    }
+}
+
+bool FrameProcessor::extractFrame(std::vector<uint8_t>& outFrame) {
+    if (recvBuffer_.size() < config_.length) {
+        return false;
+    }
+    
+    // 查找帧头
+    auto headerIt = std::find(recvBuffer_.begin(), recvBuffer_.end(), config_.header);
+    
+    if (headerIt == recvBuffer_.end()) {
+        // 没找到帧头，清空缓冲区
+        recvBuffer_.clear();
+        return false;
+    }
+    
+    // 删除帧头之前的数据
+    if (headerIt != recvBuffer_.begin()) {
+        recvBuffer_.erase(recvBuffer_.begin(), headerIt);
+    }
+    
+    // 检查是否有足够的数据
+    if (recvBuffer_.size() < config_.length) {
+        return false;
+    }
+    
+    // 验证帧尾
+    if (recvBuffer_[config_.length - 1] != config_.tail) {
+        // 帧尾不匹配，删除当前帧头，继续查找
+        recvBuffer_.pop_front();
+        return extractFrame(outFrame); // 递归查找下一个
+    }
+    
+    // 提取完整帧
+    outFrame.clear();
+    outFrame.reserve(config_.length);
+    for (size_t i = 0; i < config_.length; ++i) {
+        outFrame.push_back(recvBuffer_[i]);
+    }
+    
+    // 从缓冲区删除已提取的帧
+    recvBuffer_.erase(recvBuffer_.begin(), recvBuffer_.begin() + config_.length);
+    
+    return true;
+}
+
+std::vector<uint8_t> FrameProcessor::buildFrame(uint8_t channel, uint8_t value) const {
+    std::vector<uint8_t> frame(config_.length, 0);
+    
+    frame[0] = config_.header;
+    frame[config_.length - 1] = config_.tail;
+    
+    if (config_.channelIndex < config_.length) {
+        frame[config_.channelIndex] = channel;
+    }
+    
+    if (config_.valueIndex < config_.length) {
+        frame[config_.valueIndex] = value;
+    }
+    
+    return frame;
+}
+
+bool FrameProcessor::parseFrame(const std::vector<uint8_t>& frame, uint8_t& outChannel, uint8_t& outValue) const {
+    if (frame.size() != config_.length) {
+        return false;
+    }
+    
+    if (frame[0] != config_.header || frame[config_.length - 1] != config_.tail) {
+        return false;
+    }
+    
+    if (config_.channelIndex < config_.length) {
+        outChannel = frame[config_.channelIndex];
+    }
+    
+    if (config_.valueIndex < config_.length) {
+        outValue = frame[config_.valueIndex];
+    }
+    
+    return true;
+}
+
+void FrameProcessor::clearBuffer() {
+    recvBuffer_.clear();
+}
+
+void FrameProcessor::updateChannelTimestamp(uint8_t channel) {
+    channelTimestamps_[channel] = std::chrono::steady_clock::now();
+}
+
+void FrameProcessor::checkTimeouts(std::vector<uint8_t>& diStatus) {
+    auto now = std::chrono::steady_clock::now();
+    std::vector<uint8_t> timedOutChannels;
+    
+    for (auto& kv : channelTimestamps_) {
+        uint8_t channel = kv.first;
+        auto& lastUpdate = kv.second;
+        
+        auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(now - lastUpdate).count();
+        
+        if (elapsed > config_.timeoutMs) {
+            if (channel < diStatus.size() && diStatus[channel] != 0) {
+                diStatus[channel] = 0;
+                timedOutChannels.push_back(channel);
+            }
+        }
+    }
+    
+    // 清理超时的时间戳
+    for (uint8_t channel : timedOutChannels) {
+        channelTimestamps_.erase(channel);
+    }
+}
+
+} // namespace IOHub
