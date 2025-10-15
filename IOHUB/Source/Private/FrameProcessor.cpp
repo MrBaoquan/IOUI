@@ -65,11 +65,17 @@ std::vector<uint8_t> FrameProcessor::buildFrame(uint8_t channel, uint8_t value) 
     frame[config_.length - 1] = config_.tail;
     
     if (config_.channelIndex < config_.length) {
-        frame[config_.channelIndex] = channel;
+        // 应用通道偏移量（例如淘达电子从1开始，偏移量为1）
+        frame[config_.channelIndex] = channel + config_.channelOffset;
     }
     
     if (config_.valueIndex < config_.length) {
-        frame[config_.valueIndex] = value;
+        // 应用输出值映射（例如淘达电子输出：0->0x02, 非0->0x01）
+        if (value == 0) {
+            frame[config_.valueIndex] = config_.outputValueOffCode;
+        } else {
+            frame[config_.valueIndex] = config_.outputValueOnCode;
+        }
     }
     
     return frame;
@@ -85,11 +91,26 @@ bool FrameProcessor::parseFrame(const std::vector<uint8_t>& frame, uint8_t& outC
     }
     
     if (config_.channelIndex < config_.length) {
-        outChannel = frame[config_.channelIndex];
+        // 减去通道偏移量，转换为从0开始的通道号
+        uint8_t rawChannel = frame[config_.channelIndex];
+        if (rawChannel >= config_.channelOffset) {
+            outChannel = rawChannel - config_.channelOffset;
+        } else {
+            return false;  // 无效的通道号
+        }
     }
     
     if (config_.valueIndex < config_.length) {
-        outValue = frame[config_.valueIndex];
+        // 应用输入值映射反向转换（例如淘达电子输入：0x00->0, 0x01->1）
+        uint8_t rawValue = frame[config_.valueIndex];
+        if (rawValue == config_.inputValueOffCode) {
+            outValue = 0;  // OFF/低电平
+        } else if (rawValue == config_.inputValueOnCode) {
+            outValue = 1;  // ON/高电平
+        } else {
+            // 对于其他值，保持原样（兼容模式）
+            outValue = rawValue;
+        }
     }
     
     return true;

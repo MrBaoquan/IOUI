@@ -188,6 +188,60 @@ bool ConfigLoader::loadFrameConfig(FrameConfig& frameConfig) {
         }
     }
     
+    if (config.count("channel_offset")) {
+        try {
+            frameConfig.channelOffset = std::stoi(config["channel_offset"]);
+        } catch (...) {
+            std::cout << "[ConfigLoader] Error parsing channel_offset" << std::endl;
+        }
+    }
+    
+    // 输出值编码配置
+    if (config.count("output_value_on_code")) {
+        try {
+            auto bytes = DataFormatter::hexToBytes(config["output_value_on_code"]);
+            if (!bytes.empty()) {
+                frameConfig.outputValueOnCode = bytes[0];
+            }
+        } catch (...) {
+            std::cout << "[ConfigLoader] Error parsing output_value_on_code" << std::endl;
+        }
+    }
+    
+    if (config.count("output_value_off_code")) {
+        try {
+            auto bytes = DataFormatter::hexToBytes(config["output_value_off_code"]);
+            if (!bytes.empty()) {
+                frameConfig.outputValueOffCode = bytes[0];
+            }
+        } catch (...) {
+            std::cout << "[ConfigLoader] Error parsing output_value_off_code" << std::endl;
+        }
+    }
+    
+    // 输入值编码配置
+    if (config.count("input_value_on_code")) {
+        try {
+            auto bytes = DataFormatter::hexToBytes(config["input_value_on_code"]);
+            if (!bytes.empty()) {
+                frameConfig.inputValueOnCode = bytes[0];
+            }
+        } catch (...) {
+            std::cout << "[ConfigLoader] Error parsing input_value_on_code" << std::endl;
+        }
+    }
+    
+    if (config.count("input_value_off_code")) {
+        try {
+            auto bytes = DataFormatter::hexToBytes(config["input_value_off_code"]);
+            if (!bytes.empty()) {
+                frameConfig.inputValueOffCode = bytes[0];
+            }
+        } catch (...) {
+            std::cout << "[ConfigLoader] Error parsing input_value_off_code" << std::endl;
+        }
+    }
+    
     std::cout << "[ConfigLoader] Frame config: header=0x" << std::hex << (int)frameConfig.header
               << ", tail=0x" << (int)frameConfig.tail
               << ", length=" << std::dec << frameConfig.length 
