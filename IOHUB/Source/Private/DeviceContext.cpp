@@ -224,8 +224,8 @@ void DeviceContext::processDirtyStatus(const std::map<int, short>& dirtyData) {
         if (mapping_.findOutputData(static_cast<uint8_t>(channel), item)) {
             sendData = item.data;
         }
-        // 如果是串口且有帧处理器，使用标准帧格式
-        else if (isSerialProtocol() && frameProcessor_) {
+        // 如果有帧处理器，使用标准帧格式（所有协议均支持）
+        else if (frameProcessor_) {
             sendData = frameProcessor_->buildFrame(static_cast<uint8_t>(channel), 
                                                    static_cast<uint8_t>(value));
         }
