@@ -58,7 +58,7 @@ private:
     // ✅ 输入状态（持久化）
     std::vector<uint8_t> diStatus_;
     std::vector<std::chrono::steady_clock::time_point> diTimestamps_;
-    int inputTimeoutMs_;
+    int inputHoldMs_;  // 输入保持时间（0=永久保持）
     std::mutex diMutex_;
     
     // 脏数据队列

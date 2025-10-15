@@ -13,7 +13,7 @@ DeviceContext::DeviceContext(uint8_t deviceIndex,
     , protocol_(std::move(protocol))
     , inputCount_(inputCount)
     , outputCount_(outputCount)
-    , inputTimeoutMs_(1000)  // 默认1秒超时
+    , inputHoldMs_(1000)  // 默认1秒（0=永久保持）
 {
     lastDOStatus_.resize(outputCount_, 0);
     diStatus_.resize(inputCount_, 0);
@@ -54,7 +54,7 @@ void DeviceContext::setFrameProcessor(std::unique_ptr<FrameProcessor> processor)
 }
 
 void DeviceContext::setInputTimeout(int timeoutMs) {
-    inputTimeoutMs_ = timeoutMs;
+    inputHoldMs_ = timeoutMs;
 }
 
 bool DeviceContext::isSerialProtocol() const {
@@ -112,15 +112,18 @@ bool DeviceContext::getDI(uint8_t* diStatus, size_t count) {
     
     std::lock_guard<std::mutex> lock(diMutex_);
     
-    // 检查超时并清零过期通道
     auto now = std::chrono::steady_clock::now();
-    for (size_t i = 0; i < inputCount_; ++i) {
-        if (diStatus_[i] != 0) {
-            auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(
-                now - diTimestamps_[i]).count();
-            
-            if (elapsed > inputTimeoutMs_) {
-                diStatus_[i] = 0;  // 超时，清零
+    
+    // 检查保持时间并清零过期通道（inputHoldMs_=0 时永久保持，不清零）
+    if (inputHoldMs_ > 0) {
+        for (size_t i = 0; i < inputCount_; ++i) {
+            if (diStatus_[i] != 0) {
+                auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(
+                    now - diTimestamps_[i]).count();
+                
+                if (elapsed > inputHoldMs_) {
+                    diStatus_[i] = 0;  // 超时，清零
+                }
             }
         }
     }

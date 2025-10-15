@@ -16,6 +16,15 @@ ConfigLoader::ConfigLoader(const std::string& configFilePath)
 
 void ConfigLoader::reload() {
     file_.read(ini_);
+    
+    // 加载全局 input_hold_ms 配置
+    if (ini_.has("default") && ini_["default"].has("input_hold_ms")) {
+        try {
+            inputHoldMs_ = std::stoi(ini_["default"]["input_hold_ms"]);
+        } catch (const std::exception& e) {
+            inputHoldMs_ = 1000; // 使用默认值
+        }
+    }
 }
 
 std::map<std::string, std::string> ConfigLoader::getMergedConfig(uint8_t deviceIndex) {
@@ -171,11 +180,11 @@ bool ConfigLoader::loadFrameConfig(FrameConfig& frameConfig) {
         }
     }
     
-    if (config.count("input_timeout_ms")) {
+    if (config.count("input_hold_ms")) {
         try {
-            frameConfig.timeoutMs = std::stoi(config["input_timeout_ms"]);
+            frameConfig.timeoutMs = std::stoi(config["input_hold_ms"]);
         } catch (...) {
-            std::cout << "[ConfigLoader] Error parsing input_timeout_ms" << std::endl;
+            std::cout << "[ConfigLoader] Error parsing input_hold_ms" << std::endl;
         }
     }
     

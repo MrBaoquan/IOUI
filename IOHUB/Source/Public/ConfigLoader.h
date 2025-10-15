@@ -25,7 +25,7 @@ public:
     // 加载帧配置（串口专用）
     bool loadFrameConfig(FrameConfig& config);
     
-    int getInputTimeout() const { return inputTimeoutMs_; }
+    int getInputHoldMs() const { return inputHoldMs_; }
     
     // 刷新配置文件
     void reload();
@@ -34,7 +34,7 @@ private:
     mINI::INIFile file_;
     mINI::INIStructure ini_;
     std::string configPath_;
-    int inputTimeoutMs_{1000};  // 默认1秒
+    int inputHoldMs_{1000};  // 默认1秒（0=永久保持）
 
     std::map<std::string, std::string> getMergedConfig(uint8_t deviceIndex);
 };

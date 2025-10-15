@@ -101,19 +101,9 @@ IOUI_API int __stdcall OpenDevice(uint8_t deviceIndex) {
         }
         
         // 确保网络协议的IO线程运行
-        bool needsIOThread = false;
-        switch (protocolConfig->type) {
-            case ProtocolType::UDP:
-            case ProtocolType::TCP:
-            case ProtocolType::TCP_SERVER:
-                needsIOThread = true;
-                break;
-            case ProtocolType::SERIAL:
-                needsIOThread = false;
-                break;
-        }
-
-        if (needsIOThread) {
+        if (protocolConfig->type == ProtocolType::UDP || 
+            protocolConfig->type == ProtocolType::TCP ||
+            protocolConfig->type == ProtocolType::TCP_SERVER) {
             ensureIOThread();
         }
         
@@ -130,6 +120,9 @@ IOUI_API int __stdcall OpenDevice(uint8_t deviceIndex) {
             g_devInfo.OutputCount);
         
         device->setWriteWaitMs(writeWaitMs);
+        
+        // 设置输入保持时间
+        device->setInputTimeout(configLoader.getInputHoldMs());
         
         // 加载通道映射
         DataFormat defaultFormat = DataFormat::AUTO;
