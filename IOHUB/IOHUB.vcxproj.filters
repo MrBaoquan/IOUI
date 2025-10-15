@@ -49,28 +49,28 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Source\Private\ChannelMapping.h">
+    <ClInclude Include="Source\Public\ChannelMapping.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Private\ConfigLoader.h">
+    <ClInclude Include="Source\Public\ConfigLoader.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Private\DataFormatter.h">
+    <ClInclude Include="Source\Public\DataFormatter.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Private\DeviceContext.h">
+    <ClInclude Include="Source\Public\DeviceContext.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Private\FrameProcessor.h">
+    <ClInclude Include="Source\Public\FrameProcessor.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Private\Protocol.h">
+    <ClInclude Include="Source\Public\Protocol.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Private\ProtocolFactory.h">
+    <ClInclude Include="Source\Public\ProtocolFactory.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Private\ProtocolUri.h">
+    <ClInclude Include="Source\Public\ProtocolUri.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

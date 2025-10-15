@@ -1,7 +1,6 @@
 #include "ProtocolFactory.h"
 #include <boost/asio.hpp>
 #include "Serial.hpp"
-#include <iostream>
 #include <thread>
 
 using boost::asio::ip::udp;
@@ -17,8 +16,6 @@ public:
         , remoteEndpoint_(boost::asio::ip::address::from_string(config.remoteIp), config.remotePort)
     {
         startReceive();
-        std::cout << "[UdpProtocol] Created: " << config.remoteIp << ":" << config.remotePort 
-                  << " (local:" << config.localPort << ")" << std::endl;
     }
     
     ~UdpProtocol() override {
@@ -109,8 +106,6 @@ public:
                 }
             }
         });
-        
-        std::cout << "[TcpProtocol] Created: " << config.remoteIp << ":" << config.remotePort << std::endl;
     }
     
     ~TcpProtocol() override {
@@ -180,13 +175,10 @@ private:
         socket_.close(ec);
         socket_ = tcp::socket(ioContext_);
         
-        std::cout << "[TcpProtocol] Connecting to " << remoteEndpoint_ << std::endl;
-        
         socket_.connect(remoteEndpoint_, ec);
         
         if (!ec) {
             connected_.store(true);
-            std::cout << "[TcpProtocol] Connected successfully" << std::endl;
             
             // 设置keepalive
             if (enableKeepalive_) {
@@ -197,7 +189,6 @@ private:
             startReceive();
         } else {
             connected_.store(false);
-            std::cout << "[TcpProtocol] Connection failed: " << ec.message() << std::endl;
         }
     }
     
@@ -215,7 +206,6 @@ private:
                     startReceive();
                 } else {
                     connected_.store(false);
-                    std::cout << "[TcpProtocol] Connection lost" << std::endl;
                 }
             });
     }
@@ -250,20 +240,14 @@ public:
             );
             
             isOpen_ = true;
-            
-            std::cout << "[SerialProtocol] Opened: " << config.portName 
-                      << " @ " << config.baudRate << std::endl;
         }
         catch (const char* errMsg) {
-            std::cout << "[SerialProtocol] Failed to open: " << errMsg << std::endl;
             throw std::runtime_error(std::string("Failed to open serial port: ") + errMsg);
         }
         catch (const std::exception& e) {
-            std::cout << "[SerialProtocol] Exception: " << e.what() << std::endl;
             throw;
         }
         catch (...) {
-            std::cout << "[SerialProtocol] Unknown error opening serial port" << std::endl;
             throw std::runtime_error("Unknown error opening serial port");
         }
     }
@@ -330,7 +314,6 @@ public:
             isOpen_ = false;
             // Serial的析构函数会自动关闭串口
             serialPort_.reset();
-            std::cout << "[SerialProtocol] Closed" << std::endl;
         }
     }
     
@@ -345,6 +328,187 @@ public:
 private:
     std::unique_ptr<Serial> serialPort_;
     bool isOpen_;
+};
+
+// TCP服务器协议实现（多客户端模式）
+class TcpServerProtocol : public IProtocol {
+public:
+    TcpServerProtocol(boost::asio::io_context& ioContext, const TcpServerConfig& config)
+        : ioContext_(ioContext)
+        , acceptor_(ioContext)
+        , config_(config)
+    {
+        OutputDebugStringA("[TCP-Server] Constructor called\n");
+        
+        tcp::endpoint endpoint(
+            boost::asio::ip::address::from_string(config.listenIp),
+            config.listenPort
+        );
+        
+        char msg[256];
+        sprintf_s(msg, "[TCP-Server] Binding to %s:%d\n", 
+                 config.listenIp.c_str(), config.listenPort);
+        OutputDebugStringA(msg);
+        
+        acceptor_.open(endpoint.protocol());
+        acceptor_.set_option(tcp::acceptor::reuse_address(true));
+        acceptor_.bind(endpoint);
+        acceptor_.listen();
+        
+        sprintf_s(msg, "[TCP-Server] Listening on port %d\n", config.listenPort);
+        OutputDebugStringA(msg);
+        
+        startAccept();
+        
+        OutputDebugStringA("[TCP-Server] Constructor finished\n");
+    }
+    
+    ~TcpServerProtocol() override {
+        stop();
+    }
+    
+    bool send(const uint8_t* data, size_t size) override {
+        std::lock_guard<std::mutex> lock(clientsMutex_);
+        
+        if (clients_.empty()) {
+            return false;
+        }
+        
+        bool anySuccess = false;
+        
+        // 向所有连接的客户端发送数据
+        for (auto it = clients_.begin(); it != clients_.end(); ) {
+            auto& client = *it;
+            
+            try {
+                boost::system::error_code ec;
+                boost::asio::write(*client, boost::asio::buffer(data, size), ec);
+                
+                if (ec) {
+                    // 发送失败，移除客户端
+                    it = clients_.erase(it);
+                } else {
+                    anySuccess = true;
+                    ++it;
+                }
+            }
+            catch (...) {
+                it = clients_.erase(it);
+            }
+        }
+        
+        return anySuccess;
+    }
+    
+    size_t receive(std::vector<uint8_t>& outData) override {
+        std::lock_guard<std::mutex> lock(recvMutex_);
+        if (recvQueue_.empty()) {
+            return 0;
+        }
+        
+        outData = std::move(recvQueue_.front());
+        recvQueue_.pop_front();
+        return outData.size();
+    }
+    
+    void flush() override {
+        std::lock_guard<std::mutex> lock(recvMutex_);
+        recvQueue_.clear();
+    }
+    
+    void stop() override {
+        boost::system::error_code ec;
+        
+        {
+            std::lock_guard<std::mutex> lock(clientsMutex_);
+            for (auto& client : clients_) {
+                if (client && client->is_open()) {
+                    client->shutdown(tcp::socket::shutdown_both, ec);
+                    client->close(ec);
+                }
+            }
+            clients_.clear();
+        }
+        
+        acceptor_.close(ec);
+    }
+    
+    bool isConnected() const override {
+        std::lock_guard<std::mutex> lock(clientsMutex_);
+        return !clients_.empty();
+    }
+    
+    ProtocolType getType() const override {
+        return ProtocolType::TCP_SERVER;
+    }
+    
+private:
+    void startAccept() {
+        auto newSocket = std::make_shared<tcp::socket>(ioContext_);
+        
+        acceptor_.async_accept(*newSocket, [this, newSocket](const boost::system::error_code& ec) {
+            if (!ec) {
+                // 配置 keepalive
+                if (config_.enableKeepalive) {
+                    boost::system::error_code optEc;
+                    newSocket->set_option(tcp::socket::keep_alive(true), optEc);
+                }
+                
+                {
+                    std::lock_guard<std::mutex> lock(clientsMutex_);
+                    clients_.push_back(newSocket);
+                }
+                
+                startReceive(newSocket);
+            }
+            
+            // 继续接受新连接
+            if (acceptor_.is_open()) {
+                startAccept();
+            }
+        });
+    }
+    
+    void startReceive(std::shared_ptr<tcp::socket> client) {
+        auto buffer = std::make_shared<std::array<uint8_t, 1024>>();
+        
+        client->async_read_some(
+            boost::asio::buffer(*buffer),
+            [this, client, buffer](const boost::system::error_code& ec, std::size_t bytes) {
+                if (!ec && bytes > 0) {
+                    std::vector<uint8_t> data(buffer->begin(), buffer->begin() + bytes);
+                    
+                    {
+                        std::lock_guard<std::mutex> lock(recvMutex_);
+                        recvQueue_.push_back(std::move(data));
+                    }
+                    
+                    // 继续接收
+                    startReceive(client);
+                }
+                else {
+                    // 客户端断开，移除
+                    std::lock_guard<std::mutex> lock(clientsMutex_);
+                    auto it = std::find(clients_.begin(), clients_.end(), client);
+                    if (it != clients_.end()) {
+                        boost::system::error_code closeEc;
+                        (*it)->close(closeEc);
+                        clients_.erase(it);
+                    }
+                }
+            }
+        );
+    }
+    
+    boost::asio::io_context& ioContext_;
+    tcp::acceptor acceptor_;
+    TcpServerConfig config_;
+    
+    mutable std::mutex clientsMutex_;
+    std::vector<std::shared_ptr<tcp::socket>> clients_;
+    
+    std::mutex recvMutex_;
+    std::deque<std::vector<uint8_t>> recvQueue_;
 };
 
 // 工厂方法实现
@@ -372,6 +536,14 @@ std::unique_ptr<IProtocol> ProtocolFactory::create(
         case ProtocolType::SERIAL: {
             const auto& serialConfig = static_cast<const SerialConfig&>(config);
             return std::make_unique<SerialProtocol>(serialConfig);
+        }
+        
+        case ProtocolType::TCP_SERVER: {
+            if (!ioContext) {
+                return nullptr;
+            }
+            const auto& tcpServerConfig = static_cast<const TcpServerConfig&>(config);
+            return std::make_unique<TcpServerProtocol>(*ioContext, tcpServerConfig);
         }
         
         default:

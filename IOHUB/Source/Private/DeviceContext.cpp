@@ -1,6 +1,5 @@
 #include "DeviceContext.h"
 #include "DataFormatter.h"
-#include <iostream>
 #include <chrono>
 #include <thread>
 
@@ -16,7 +15,6 @@ DeviceContext::DeviceContext(uint8_t deviceIndex,
     , outputCount_(outputCount)
 {
     lastDOStatus_.resize(outputCount_, 0);
-    std::cout << "[DeviceContext] Device " << (int)deviceIndex_ << " created" << std::endl;
 }
 
 DeviceContext::~DeviceContext() {
@@ -26,7 +24,6 @@ DeviceContext::~DeviceContext() {
 void DeviceContext::start() {
     stopFlag_.store(false);
     workerThread_ = std::thread(&DeviceContext::processOutputLoop, this);
-    std::cout << "[DeviceContext] Device " << (int)deviceIndex_ << " started" << std::endl;
 }
 
 void DeviceContext::stop() {
@@ -40,8 +37,6 @@ void DeviceContext::stop() {
         if (protocol_) {
             protocol_->stop();
         }
-        
-        std::cout << "[DeviceContext] Device " << (int)deviceIndex_ << " stopped" << std::endl;
     }
 }
 
@@ -123,7 +118,6 @@ bool DeviceContext::getDI(uint8_t* diStatus, size_t count) {
                     if (channel < inputCount_) {
                         diStatus[channel] = 1;
                         frameProcessor_->updateChannelTimestamp(channel);
-                        std::cout << "[DeviceContext] Frame matched to channel " << (int)channel << std::endl;
                     }
                 }
                 // 否则尝试解析标准帧
@@ -150,7 +144,6 @@ bool DeviceContext::getDI(uint8_t* diStatus, size_t count) {
             if (mapping_.findInputChannel(recvData, channel)) {
                 if (channel < inputCount_) {
                     diStatus[channel] = 1;
-                    std::cout << "[DeviceContext] Data matched to channel " << (int)channel << std::endl;
                 }
             }
         }
@@ -162,9 +155,6 @@ bool DeviceContext::getDI(uint8_t* diStatus, size_t count) {
 }
 
 void DeviceContext::processOutputLoop() {
-    std::cout << "[DeviceContext] Output processing thread started for device " 
-              << (int)deviceIndex_ << std::endl;
-    
     while (!stopFlag_.load()) {
         std::map<int, short> dirtyStatus;
         
@@ -188,14 +178,10 @@ void DeviceContext::processOutputLoop() {
             processDirtyStatus(dirtyStatus);
         }
     }
-    
-    std::cout << "[DeviceContext] Output processing thread stopped for device " 
-              << (int)deviceIndex_ << std::endl;
 }
 
 void DeviceContext::processDirtyStatus(const std::map<int, short>& dirtyData) {
     if (!protocol_ || !protocol_->isConnected()) {
-        std::cout << "[DeviceContext] Protocol not connected, skipping output" << std::endl;
         return;
     }
     
@@ -213,26 +199,18 @@ void DeviceContext::processDirtyStatus(const std::map<int, short>& dirtyData) {
         // 优先查找自定义映射
         if (mapping_.findOutputData(static_cast<uint8_t>(channel), item)) {
             sendData = item.data;
-            std::cout << "[DeviceContext] Channel " << channel << " -> " << item.displayStr << std::endl;
         }
         // 如果是串口且有帧处理器，使用标准帧格式
         else if (isSerialProtocol() && frameProcessor_) {
             sendData = frameProcessor_->buildFrame(static_cast<uint8_t>(channel), 
                                                    static_cast<uint8_t>(value));
-            std::cout << "[DeviceContext] Channel " << channel << " -> standard frame" << std::endl;
         }
         else {
-            std::cout << "[DeviceContext] No mapping for channel " << channel << std::endl;
             continue;
         }
         
         if (!sendData.empty()) {
-            bool success = protocol_->send(sendData.data(), sendData.size());
-            if (success) {
-                std::cout << "[DeviceContext] Sent " << sendData.size() << " bytes" << std::endl;
-            } else {
-                std::cout << "[DeviceContext] Failed to send data" << std::endl;
-            }
+            protocol_->send(sendData.data(), sendData.size());
             
             // 等待
             if (writeWaitMs_ > 0) {

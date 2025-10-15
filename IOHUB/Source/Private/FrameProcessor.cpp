@@ -1,5 +1,4 @@
 #include "FrameProcessor.h"
-#include <iostream>
 #include <algorithm>
 
 namespace IOHub {
@@ -7,9 +6,6 @@ namespace IOHub {
 FrameProcessor::FrameProcessor(const FrameConfig& config)
     : config_(config)
 {
-    std::cout << "[FrameProcessor] Created with header=0x" << std::hex << (int)config_.header
-              << ", tail=0x" << (int)config_.tail
-              << ", length=" << std::dec << config_.length << std::endl;
 }
 
 void FrameProcessor::addReceivedData(const uint8_t* data, size_t size) {

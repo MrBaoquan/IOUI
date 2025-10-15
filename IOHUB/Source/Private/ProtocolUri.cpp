@@ -1,5 +1,4 @@
 #include "ProtocolUri.h"
-#include <iostream>
 #include <algorithm>
 #include <cctype>
 #include <sstream>
@@ -115,7 +114,6 @@ bool ProtocolUri::parseSerial(const std::string& uri, std::unique_ptr<SerialConf
     }
     
     if (path.empty()) {
-        std::cout << "[ProtocolUri] Error: Serial port name is empty" << std::endl;
         return false;
     }
     
@@ -129,7 +127,7 @@ bool ProtocolUri::parseSerial(const std::string& uri, std::unique_ptr<SerialConf
         try {
             config->baudRate = std::stoi(params["baudrate"]);
         } catch (...) {
-            std::cout << "[ProtocolUri] Warning: Invalid baudrate, using default" << std::endl;
+            // Use default
         }
     }
     
@@ -148,9 +146,6 @@ bool ProtocolUri::parseSerial(const std::string& uri, std::unique_ptr<SerialConf
     if (params.count("parity")) {
         config->parity = params["parity"];
     }
-    
-    std::cout << "[ProtocolUri] Parsed Serial: " << config->portName 
-              << " @ " << config->baudRate << std::endl;
     
     return true;
 }
@@ -173,7 +168,6 @@ bool ProtocolUri::parseUdp(const std::string& uri, std::unique_ptr<UdpConfig>& c
     config = std::make_unique<UdpConfig>();
     
     if (!parseHostPort(hostPort, config->remoteIp, config->remotePort)) {
-        std::cout << "[ProtocolUri] Error: Invalid UDP host:port" << std::endl;
         return false;
     }
     
@@ -184,12 +178,9 @@ bool ProtocolUri::parseUdp(const std::string& uri, std::unique_ptr<UdpConfig>& c
         try {
             config->localPort = static_cast<uint16_t>(std::stoi(params["localport"]));
         } catch (...) {
-            std::cout << "[ProtocolUri] Warning: Invalid localport, using default" << std::endl;
+            // Use default
         }
     }
-    
-    std::cout << "[ProtocolUri] Parsed UDP: " << config->remoteIp << ":" << config->remotePort 
-              << " (local:" << config->localPort << ")" << std::endl;
     
     return true;
 }
@@ -212,7 +203,6 @@ bool ProtocolUri::parseTcp(const std::string& uri, std::unique_ptr<TcpConfig>& c
     config = std::make_unique<TcpConfig>();
     
     if (!parseHostPort(hostPort, config->remoteIp, config->remotePort)) {
-        std::cout << "[ProtocolUri] Error: Invalid TCP host:port" << std::endl;
         return false;
     }
     
@@ -230,8 +220,6 @@ bool ProtocolUri::parseTcp(const std::string& uri, std::unique_ptr<TcpConfig>& c
         std::transform(val.begin(), val.end(), val.begin(), ::tolower);
         config->enableKeepalive = (val == "true" || val == "1" || val == "yes");
     }
-    
-    std::cout << "[ProtocolUri] Parsed TCP: " << config->remoteIp << ":" << config->remotePort << std::endl;
     
     return true;
 }
@@ -254,7 +242,6 @@ bool ProtocolUri::parseTcpServer(const std::string& uri, std::unique_ptr<TcpServ
     config = std::make_unique<TcpServerConfig>();
     
     if (!parseHostPort(hostPort, config->listenIp, config->listenPort)) {
-        std::cout << "[ProtocolUri] Error: Invalid TCP Server host:port" << std::endl;
         return false;
     }
     
@@ -267,8 +254,6 @@ bool ProtocolUri::parseTcpServer(const std::string& uri, std::unique_ptr<TcpServ
         config->enableKeepalive = (val == "true" || val == "1" || val == "yes");
     }
     
-    std::cout << "[ProtocolUri] Parsed TCP Server: " << config->listenIp << ":" << config->listenPort << std::endl;
-    
     return true;
 }
 
@@ -276,7 +261,6 @@ bool ProtocolUri::parse(const std::string& uri, std::unique_ptr<ProtocolConfig>&
     std::string scheme = getScheme(uri);
     
     if (scheme.empty()) {
-        std::cout << "[ProtocolUri] Error: No scheme found in URI: " << uri << std::endl;
         return false;
     }
     
@@ -307,9 +291,6 @@ bool ProtocolUri::parse(const std::string& uri, std::unique_ptr<ProtocolConfig>&
             outConfig = std::move(config);
             return true;
         }
-    }
-    else {
-        std::cout << "[ProtocolUri] Error: Unknown scheme: " << scheme << std::endl;
     }
     
     return false;

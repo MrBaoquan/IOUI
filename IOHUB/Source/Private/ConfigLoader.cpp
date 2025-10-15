@@ -9,34 +9,29 @@ namespace IOHub {
 
 ConfigLoader::ConfigLoader(const std::string& configFilePath)
     : configPath_(configFilePath)
-    , ini_(std::make_shared<mINI::INIStructure>())
+    , file_(configFilePath)
 {
     reload();
 }
 
 void ConfigLoader::reload() {
-    mINI::INIFile file(configPath_);
-    if (!file.read(*ini_)) {
-        std::cout << "[ConfigLoader] Warning: Failed to read config file: " << configPath_ << std::endl;
-    } else {
-        std::cout << "[ConfigLoader] Config loaded from: " << configPath_ << std::endl;
-    }
+    file_.read(ini_);
 }
 
 std::map<std::string, std::string> ConfigLoader::getMergedConfig(uint8_t deviceIndex) {
     std::map<std::string, std::string> merged;
     
     // 先加载默认配置
-    if (ini_->has("default")) {
-        for (const auto& kv : (*ini_)["default"]) {
+    if (ini_.has("default")) {
+        for (const auto& kv : ini_["default"]) {
             merged[kv.first] = kv.second;
         }
     }
     
     // 再加载设备特定配置（覆盖默认值）
     std::string deviceSection = "device_" + std::to_string(deviceIndex);
-    if (ini_->has(deviceSection)) {
-        for (const auto& kv : (*ini_)[deviceSection]) {
+    if (ini_.has(deviceSection)) {
+        for (const auto& kv : ini_[deviceSection]) {
             merged[kv.first] = kv.second;
         }
     }
@@ -51,17 +46,12 @@ bool ConfigLoader::loadDeviceConfig(uint8_t deviceIndex,
     
     // 必须有 protocol 配置（可以从 default 继承）
     if (!config.count("protocol")) {
-        std::cout << "[ConfigLoader] Error: Device " << (int)deviceIndex 
-                  << " missing protocol configuration" << std::endl;
         return false;
     }
     
     std::string uri = config["protocol"];
-    std::cout << "[ConfigLoader] Device " << (int)deviceIndex 
-              << " protocol: " << uri << std::endl;
     
     if (!ProtocolUri::parse(uri, outProtocolConfig)) {
-        std::cout << "[ConfigLoader] Error: Failed to parse protocol URI: " << uri << std::endl;
         return false;
     }
     
@@ -71,26 +61,22 @@ bool ConfigLoader::loadDeviceConfig(uint8_t deviceIndex,
         try {
             outWriteWaitMs = std::stoi(config["write_wait_ms"]);
         } catch (const std::exception& e) {
-            std::cout << "[ConfigLoader] Warning: Invalid write_wait_ms, using default: " 
-                      << e.what() << std::endl;
+            // Use default value
         }
     }
-    
-    std::cout << "[ConfigLoader] Device " << (int)deviceIndex 
-              << " write_wait_ms: " << outWriteWaitMs << "ms" << std::endl;
     
     return true;
 }
 
-bool ConfigLoader::loadChannelMapping(ChannelMapping& mapping, DataFormat defaultFormat) {
+bool ConfigLoader::loadChannelMapping(ChannelMapping& mapping, DataFormat& defaultFormat) {
     mapping.clear();
     
     bool hasMapping = false;
     
     // 加载输入映射
-    if (ini_->has("InputMapping")) {
+    if (ini_.has("InputMapping")) {
         std::cout << "[ConfigLoader] Loading InputMapping..." << std::endl;
-        for (const auto& kv : (*ini_)["InputMapping"]) {
+        for (const auto& kv : ini_["InputMapping"]) {
             try {
                 uint8_t channel = static_cast<uint8_t>(std::stoi(kv.first));
                 auto data = DataFormatter::parseFromConfig(kv.second, defaultFormat);
@@ -108,9 +94,9 @@ bool ConfigLoader::loadChannelMapping(ChannelMapping& mapping, DataFormat defaul
     }
     
     // 加载输出映射
-    if (ini_->has("OutputMapping")) {
+    if (ini_.has("OutputMapping")) {
         std::cout << "[ConfigLoader] Loading OutputMapping..." << std::endl;
-        for (const auto& kv : (*ini_)["OutputMapping"]) {
+        for (const auto& kv : ini_["OutputMapping"]) {
             try {
                 uint8_t channel = static_cast<uint8_t>(std::stoi(kv.first));
                 auto data = DataFormatter::parseFromConfig(kv.second, defaultFormat);

@@ -1,7 +1,7 @@
 <IORoot xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<Device Name="Standard" Type="Standard" Index="0" />
 	
-	<Device Name="extDev1" Type="External" DllName="IOHUB" Index="0">
+	<Device Name="extDev1" Type="External" DllName="IOHUB" Index="3">
 		<Action Name="PlayVideo_0">
 			<Key Name="A" />
 			<Key Name="Button_00" />

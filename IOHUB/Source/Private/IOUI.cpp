@@ -28,6 +28,10 @@ boost::asio::io_context g_ioContext;
 std::thread g_ioThread;
 std::mutex g_ioMutex;
 
+// 全局保存 work_guard
+std::unique_ptr<boost::asio::executor_work_guard<
+    boost::asio::io_context::executor_type>> g_workGuard;
+
 IOUI_API DeviceInfo* __stdcall Initialize()
 {
     g_devInfo.InputCount = 255;
@@ -39,13 +43,18 @@ IOUI_API DeviceInfo* __stdcall Initialize()
 void ensureIOThread() {
     std::lock_guard<std::mutex> lock(g_ioMutex);
     if (!g_ioThread.joinable()) {
-        std::cout << "[IOHub] Starting IO thread..." << std::endl;
+        OutputDebugStringA("[IOHub] Starting IO thread...\n");
+        
         g_ioThread = std::thread([]() {
-            boost::asio::executor_work_guard<boost::asio::io_context::executor_type>
+            OutputDebugStringA("[IOHub] IO thread started\n");
+            
+            boost::asio::executor_work_guard<boost::asio::io_context::executor_type> 
                 workGuard(g_ioContext.get_executor());
-            std::cout << "[IOHub] IO thread started" << std::endl;
+            
+            OutputDebugStringA("[IOHub] Calling io_context.run()...\n");
             g_ioContext.run();
-            std::cout << "[IOHub] IO thread stopped" << std::endl;
+            
+            OutputDebugStringA("[IOHub] io_context.run() exited\n");
         });
     }
 }
@@ -53,25 +62,31 @@ void ensureIOThread() {
 void stopIOThread() {
     std::lock_guard<std::mutex> lock(g_ioMutex);
     if (g_ioThread.joinable()) {
-        std::cout << "[IOHub] Stopping IO thread..." << std::endl;
+        g_workGuard.reset(); // 释放 work guard
         g_ioContext.stop();
         g_ioThread.join();
         g_ioContext.restart();
     }
 }
 
-IOUI_API int __stdcall OpenDevice(uint8_t deviceIndex)
-{
+IOUI_API int __stdcall OpenDevice(uint8_t deviceIndex) {
     try {
-        std::cout << "[IOHub] Opening device " << (int)deviceIndex << std::endl;
-        
-        // 关闭已存在的设备
+        // 1. 先清理旧设备
         if (g_devices.count(deviceIndex)) {
-            std::cout << "[IOHub] Device " << (int)deviceIndex << " already exists, closing first" << std::endl;
-            g_devices[deviceIndex]->stop();
-            g_devices.erase(deviceIndex);
+            CloseDevice(deviceIndex); // 使用统一的关闭逻辑
         }
         
+        // 2. RAII 模式：失败自动回滚
+        auto cleanup = [&]() {
+            if (g_devices.count(deviceIndex)) {
+                g_devices.erase(deviceIndex);
+            }
+            if (g_devices.empty()) {
+                stopIOThread();
+            }
+        };
+        
+        // 3. 创建设备上下文
         // 加载配置
         std::string modulePath = dh::Paths::Instance().GetModuleDir();
         std::string configPath = modulePath + "Config\\IOHUB\\config.ini";
@@ -82,38 +97,32 @@ IOUI_API int __stdcall OpenDevice(uint8_t deviceIndex)
         std::unique_ptr<ProtocolConfig> protocolConfig;
         int writeWaitMs = 60;
         if (!configLoader.loadDeviceConfig(deviceIndex, protocolConfig, writeWaitMs)) {
-            std::cout << "[IOHub] Failed to load device config" << std::endl;
             return 0;
         }
         
         // 确保网络协议的IO线程运行
-        if (protocolConfig->type == ProtocolType::UDP || 
-            protocolConfig->type == ProtocolType::TCP) {
+        bool needsIOThread = false;
+        switch (protocolConfig->type) {
+            case ProtocolType::UDP:
+            case ProtocolType::TCP:
+            case ProtocolType::TCP_SERVER:
+                needsIOThread = true;
+                break;
+            case ProtocolType::SERIAL:
+                needsIOThread = false;
+                break;
+        }
+
+        if (needsIOThread) {
             ensureIOThread();
         }
         
         // 创建协议实例
         auto protocol = ProtocolFactory::create(*protocolConfig, &g_ioContext);
         if (!protocol) {
-            std::cout << "[IOHub] Failed to create protocol" << std::endl;
             return 0;
         }
         
-        std::cout << "[IOHub] Protocol created: ";
-        switch (protocolConfig->type) {
-            case ProtocolType::UDP:
-                std::cout << "UDP";
-                break;
-            case ProtocolType::TCP:
-                std::cout << "TCP";
-                break;
-            case ProtocolType::SERIAL:
-                std::cout << "SERIAL";
-                break;
-        }
-        std::cout << std::endl;
-        
-        // 创建设备上下文
         auto device = std::make_unique<DeviceContext>(
             deviceIndex, 
             std::move(protocol),
@@ -125,7 +134,7 @@ IOUI_API int __stdcall OpenDevice(uint8_t deviceIndex)
         // 加载通道映射
         DataFormat defaultFormat = DataFormat::AUTO;
         if (!configLoader.loadChannelMapping(device->getMapping(), defaultFormat)) {
-            std::cout << "[IOHub] Warning: No channel mapping loaded" << std::endl;
+            // No channel mapping loaded
         }
         
         // 如果是串口协议，加载帧配置
@@ -134,7 +143,6 @@ IOUI_API int __stdcall OpenDevice(uint8_t deviceIndex)
             if (configLoader.loadFrameConfig(frameConfig)) {
                 auto frameProcessor = std::make_unique<FrameProcessor>(frameConfig);
                 device->setFrameProcessor(std::move(frameProcessor));
-                std::cout << "[IOHub] Frame processor configured" << std::endl;
             }
         }
         
@@ -143,23 +151,18 @@ IOUI_API int __stdcall OpenDevice(uint8_t deviceIndex)
         
         g_devices[deviceIndex] = std::move(device);
         
-        std::cout << "[IOHub] Device " << (int)deviceIndex << " opened successfully" << std::endl;
         return 1;
     }
     catch (const std::exception& e) {
-        std::cout << "[IOHub] Exception in OpenDevice: " << e.what() << std::endl;
         return 0;
     }
     catch (...) {
-        std::cout << "[IOHub] Unknown exception in OpenDevice" << std::endl;
         return 0;
     }
 }
 
 IOUI_API int __stdcall CloseDevice(uint8_t deviceIndex)
 {
-    std::cout << "[IOHub] Closing device " << (int)deviceIndex << std::endl;
-    
     if (g_devices.count(deviceIndex)) {
         g_devices[deviceIndex]->stop();
         g_devices.erase(deviceIndex);
