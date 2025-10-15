@@ -16,7 +16,7 @@
 		</Action>
 		<Action Name="PlayVideo_3">
 			<Key Name="D" />
-			<Key Name="Button_03" />
+			<Key Name="Button_13" />
 		</Action>
 
 		<Axis Name="MoveLR">

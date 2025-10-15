@@ -130,13 +130,11 @@ IOUI_API int __stdcall OpenDevice(uint8_t deviceIndex) {
             // No channel mapping loaded
         }
         
-        // 如果是串口协议，加载帧配置
-        if (protocolConfig->type == ProtocolType::SERIAL) {
-            FrameConfig frameConfig;
-            if (configLoader.loadFrameConfig(frameConfig)) {
-                auto frameProcessor = std::make_unique<FrameProcessor>(frameConfig);
-                device->setFrameProcessor(std::move(frameProcessor));
-            }
+        // 加载帧配置（所有协议都支持）
+        FrameConfig frameConfig;
+        if (configLoader.loadFrameConfig(frameConfig)) {
+            auto frameProcessor = std::make_unique<FrameProcessor>(frameConfig);
+            device->setFrameProcessor(std::move(frameProcessor));
         }
         
         // 启动设备

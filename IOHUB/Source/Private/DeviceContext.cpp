@@ -131,8 +131,8 @@ bool DeviceContext::getDI(uint8_t* diStatus, size_t count) {
     // 处理所有接收到的数据
     std::vector<uint8_t> recvData;
     while (protocol_->receive(recvData) > 0) {
-        if (isSerialProtocol() && frameProcessor_) {
-            // 串口模式：使用帧处理器
+        if (frameProcessor_) {
+            // 帧处理模式：使用帧处理器解析数据
             frameProcessor_->addReceivedData(recvData.data(), recvData.size());
             
             std::vector<uint8_t> frame;
@@ -159,7 +159,7 @@ bool DeviceContext::getDI(uint8_t* diStatus, size_t count) {
             }
         }
         else {
-            // 网络模式：直接映射
+            // 直接映射模式：不使用帧格式，直接匹配数据
             uint8_t channel = 0;
             if (mapping_.findInputChannel(recvData, channel)) {
                 if (channel < inputCount_) {

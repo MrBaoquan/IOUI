@@ -48,7 +48,7 @@ namespace IOUITester.ViewModel
                                 ioDev1.SetDO(IOKeyCode.OAxis_250, 64);
                             }
 
-                                Debug.WriteLine("D1 " + _key + " Pressed");
+                            Debug.WriteLine("D1 " + _key + " Pressed");
                             ioDev1.SetDO(_key, 1);
                         });
 
