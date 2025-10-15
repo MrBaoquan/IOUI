@@ -13,8 +13,17 @@ DeviceContext::DeviceContext(uint8_t deviceIndex,
     , protocol_(std::move(protocol))
     , inputCount_(inputCount)
     , outputCount_(outputCount)
+    , inputTimeoutMs_(1000)  // 默认1秒超时
 {
     lastDOStatus_.resize(outputCount_, 0);
+    diStatus_.resize(inputCount_, 0);
+    diTimestamps_.resize(inputCount_);
+    
+    // 初始化所有通道时间戳为当前时间
+    auto now = std::chrono::steady_clock::now();
+    for (auto& ts : diTimestamps_) {
+        ts = now;
+    }
 }
 
 DeviceContext::~DeviceContext() {
@@ -42,6 +51,10 @@ void DeviceContext::stop() {
 
 void DeviceContext::setFrameProcessor(std::unique_ptr<FrameProcessor> processor) {
     frameProcessor_ = std::move(processor);
+}
+
+void DeviceContext::setInputTimeout(int timeoutMs) {
+    inputTimeoutMs_ = timeoutMs;
 }
 
 bool DeviceContext::isSerialProtocol() const {
@@ -92,20 +105,29 @@ bool DeviceContext::getDI(uint8_t* diStatus, size_t count) {
         return false;
     }
     
-    // 清零
-    std::fill_n(diStatus, count, 0);
-    
     if (!protocol_) {
+        std::fill_n(diStatus, count, 0);
         return false;
     }
     
-    std::vector<uint8_t> recvData;
-    int messageCount = 0;
+    std::lock_guard<std::mutex> lock(diMutex_);
+    
+    // 检查超时并清零过期通道
+    auto now = std::chrono::steady_clock::now();
+    for (size_t i = 0; i < inputCount_; ++i) {
+        if (diStatus_[i] != 0) {
+            auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(
+                now - diTimestamps_[i]).count();
+            
+            if (elapsed > inputTimeoutMs_) {
+                diStatus_[i] = 0;  // 超时，清零
+            }
+        }
+    }
     
     // 处理所有接收到的数据
+    std::vector<uint8_t> recvData;
     while (protocol_->receive(recvData) > 0) {
-        messageCount++;
-        
         if (isSerialProtocol() && frameProcessor_) {
             // 串口模式：使用帧处理器
             frameProcessor_->addReceivedData(recvData.data(), recvData.size());
@@ -116,8 +138,8 @@ bool DeviceContext::getDI(uint8_t* diStatus, size_t count) {
                 uint8_t channel = 0;
                 if (mapping_.findInputChannel(frame, channel)) {
                     if (channel < inputCount_) {
-                        diStatus[channel] = 1;
-                        frameProcessor_->updateChannelTimestamp(channel);
+                        diStatus_[channel] = 1;
+                        diTimestamps_[channel] = now;
                     }
                 }
                 // 否则尝试解析标准帧
@@ -126,30 +148,29 @@ bool DeviceContext::getDI(uint8_t* diStatus, size_t count) {
                     uint8_t frameValue = 0;
                     if (frameProcessor_->parseFrame(frame, frameChannel, frameValue)) {
                         if (frameChannel < inputCount_) {
-                            diStatus[frameChannel] = frameValue;
-                            frameProcessor_->updateChannelTimestamp(frameChannel);
+                            diStatus_[frameChannel] = frameValue;
+                            diTimestamps_[frameChannel] = now;
                         }
                     }
                 }
             }
-            
-            // 检查超时
-            std::vector<uint8_t> diStatusVec(diStatus, diStatus + count);
-            frameProcessor_->checkTimeouts(diStatusVec);
-            std::copy(diStatusVec.begin(), diStatusVec.end(), diStatus);
         }
         else {
             // 网络模式：直接映射
             uint8_t channel = 0;
             if (mapping_.findInputChannel(recvData, channel)) {
                 if (channel < inputCount_) {
-                    diStatus[channel] = 1;
+                    diStatus_[channel] = 1;
+                    diTimestamps_[channel] = now;
                 }
             }
         }
         
         recvData.clear();
     }
+    
+    // 复制当前状态到输出
+    std::copy(diStatus_.begin(), diStatus_.end(), diStatus);
     
     return true;
 }
