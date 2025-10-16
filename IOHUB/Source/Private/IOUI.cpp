@@ -132,7 +132,7 @@ IOUI_API int __stdcall OpenDevice(uint8_t deviceIndex) {
         
         // 加载帧配置（所有协议都支持）
         FrameConfig frameConfig;
-        if (configLoader.loadFrameConfig(frameConfig)) {
+        if (configLoader.loadFrameConfig(deviceIndex, frameConfig)) {
             auto frameProcessor = std::make_unique<FrameProcessor>(frameConfig);
             device->setFrameProcessor(std::move(frameProcessor));
         }

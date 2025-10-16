@@ -22,8 +22,8 @@ public:
     // 加载通道映射
     bool loadChannelMapping(ChannelMapping& mapping, DataFormat& defaultFormat);
     
-    // 加载帧配置（串口专用）
-    bool loadFrameConfig(FrameConfig& config);
+    // 加载帧配置（支持所有协议，按设备索引加载）
+    bool loadFrameConfig(uint8_t deviceIndex, FrameConfig& config);
     
     int getInputHoldMs() const { return inputHoldMs_; }
     

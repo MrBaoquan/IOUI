@@ -131,8 +131,8 @@ bool ConfigLoader::loadChannelMapping(ChannelMapping& mapping, DataFormat& defau
     return hasMapping;
 }
 
-bool ConfigLoader::loadFrameConfig(FrameConfig& frameConfig) {
-    auto config = getMergedConfig(0); // 帧配置使用default配置
+bool ConfigLoader::loadFrameConfig(uint8_t deviceIndex, FrameConfig& frameConfig) {
+    auto config = getMergedConfig(deviceIndex); // 使用设备索引加载配置
     
     if (config.count("frame_header")) {
         try {
