@@ -28,12 +28,16 @@ public:
     
     bool setDO(const short* doStatus, size_t count);
     bool getDI(uint8_t* diStatus, size_t count);
+    bool getDO(short* doStatus, size_t count);
+    void resetDO();  // 重置所有 DO 状态为 0
     
     void setFrameProcessor(std::unique_ptr<FrameProcessor> processor);
     
     void setWriteWaitMs(int ms) { writeWaitMs_ = ms; }
     
     void setInputTimeout(int timeoutMs);
+    void setOutputHold(bool hold) { outputHold_ = hold; }
+    bool getOutputHold() const { return outputHold_; }
     
     ChannelMapping& getMapping() { return mapping_; }
     
@@ -60,6 +64,9 @@ private:
     std::vector<std::chrono::steady_clock::time_point> diTimestamps_;
     int inputHoldMs_;  // 输入保持时间（0=永久保持）
     std::mutex diMutex_;
+    
+    // 输出保持配置
+    bool outputHold_{false};  // 输出状态是否保持（false=读取后重置）
     
     // 脏数据队列
     std::queue<std::map<int, short>> dirtyQueue_;

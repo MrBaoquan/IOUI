@@ -22,6 +22,7 @@ using namespace IOHub;
 
 DeviceInfo g_devInfo;
 std::map<uint8_t, std::unique_ptr<DeviceContext>> g_devices;
+ConfigLoader* g_configLoader = nullptr;
 
 // 全局io_context（UDP/TCP共享）
 boost::asio::io_context g_ioContext;
@@ -91,12 +92,15 @@ IOUI_API int __stdcall OpenDevice(uint8_t deviceIndex) {
         std::string modulePath = dh::Paths::Instance().GetModuleDir();
         std::string configPath = modulePath + "Config\\IOHUB\\config.ini";
         
-        ConfigLoader configLoader(configPath);
+        // 创建全局ConfigLoader（如果还未创建）
+        if (!g_configLoader) {
+            g_configLoader = new ConfigLoader(configPath);
+        }
         
         // 加载协议配置
         std::unique_ptr<ProtocolConfig> protocolConfig;
         int writeWaitMs = 60;
-        if (!configLoader.loadDeviceConfig(deviceIndex, protocolConfig, writeWaitMs)) {
+        if (!g_configLoader->loadDeviceConfig(deviceIndex, protocolConfig, writeWaitMs)) {
             return 0;
         }
         
@@ -121,18 +125,21 @@ IOUI_API int __stdcall OpenDevice(uint8_t deviceIndex) {
         
         device->setWriteWaitMs(writeWaitMs);
         
-        // 设置输入保持时间
-        device->setInputTimeout(configLoader.getInputHoldMs());
+        // 设置输入保持时间（支持设备级别覆盖）
+        device->setInputTimeout(g_configLoader->loadInputHoldMs(deviceIndex));
+        
+        // 设置输出保持配置（支持设备级别覆盖）
+        device->setOutputHold(g_configLoader->loadOutputHold(deviceIndex));
         
         // 加载通道映射
         DataFormat defaultFormat = DataFormat::AUTO;
-        if (!configLoader.loadChannelMapping(device->getMapping(), defaultFormat)) {
+        if (!g_configLoader->loadChannelMapping(device->getMapping(), defaultFormat)) {
             // No channel mapping loaded
         }
         
         // 加载帧配置（所有协议都支持）
         FrameConfig frameConfig;
-        if (configLoader.loadFrameConfig(deviceIndex, frameConfig)) {
+        if (g_configLoader->loadFrameConfig(deviceIndex, frameConfig)) {
             auto frameProcessor = std::make_unique<FrameProcessor>(frameConfig);
             device->setFrameProcessor(std::move(frameProcessor));
         }
@@ -188,10 +195,23 @@ IOUI_API int __stdcall GetDeviceDI(uint8_t deviceIndex, BYTE* OutDIStatus)
     return it->second->getDI(OutDIStatus, g_devInfo.InputCount) ? 1 : 0;
 }
 
-IOUI_API int __stdcall GetDeviceDO(uint8_t, short* OutDOStatus)
+IOUI_API int __stdcall GetDeviceDO(uint8_t deviceIndex, short* OutDOStatus)
 {
-    std::fill_n(OutDOStatus, g_devInfo.OutputCount, 0);
-    return 1;
+    auto it = g_devices.find(deviceIndex);
+    if (it == g_devices.end()) {
+        std::fill_n(OutDOStatus, g_devInfo.OutputCount, 0);
+        return 0;
+    }
+    
+    // 先获取当前状态
+    bool success = it->second->getDO(OutDOStatus, g_devInfo.OutputCount);
+    
+    // 如果该设备配置为不保持输出状态，获取后立即重置
+    if (!it->second->getOutputHold()) {
+        it->second->resetDO();
+    }
+    
+    return success ? 1 : 0;
 }
 
 IOUI_API int __stdcall GetDeviceAD(uint8_t, short*)

@@ -1,7 +1,7 @@
 <IORoot xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<Device Name="Standard" Type="Standard" Index="0" />
 	
-	<Device Name="extDev1" Type="External" DllName="IOHUB" Index="11">
+	<Device Name="extDev1" Type="External" DllName="MODBUS" Index="3">
 		<Action Name="PlayVideo_0">
 			<Key Name="A" />
 			<Key Name="Button_00" />
@@ -22,6 +22,12 @@
 		<Axis Name="MoveLR">
 			<Key Name="Axis_00" />
 		</Axis>
+
+		<OAction Name="Output">
+			<Key Name="OAxis_00" />
+			<Key Name="OAxis_01" />
+			<Key Name="OAxis_02" />
+		</OAction>
 		
 	</Device>
 	

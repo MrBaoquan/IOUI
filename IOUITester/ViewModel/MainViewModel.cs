@@ -49,20 +49,21 @@ namespace IOUITester.ViewModel
                             }
 
                             Debug.WriteLine("D1 " + _key + " Pressed");
-                            ioDev1.SetDO(_key, 1);
+                            ioDev1.SetDOOn("Output");
                         });
 
                         ioDev1.BindAction($"PlayVideo_{_idx}", InputEvent.IE_Released, _key =>
                         {
                             Debug.WriteLine("D1 " + _key + " Released");
-                            ioDev1.SetDO(_key, 0);
+                            
+                            ioDev1.SetDOOff("Output");
                         });
                     });
 
-                //ioDev1.BindAxisKey(IOKeyCode.Axis_00, _val =>
-                //{
-                //    Debug.WriteLine(_val);
-                //});
+                ioDev1.BindAxisKey(IOKeyCode.Axis_00, _val =>
+                {
+                    Debug.WriteLine(_val);
+                });
 
                 //Observable.Interval(TimeSpan.FromMilliseconds(500))
                 //    .ObserveOn(RxApp.MainThreadScheduler)

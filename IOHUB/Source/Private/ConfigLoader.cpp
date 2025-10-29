@@ -25,6 +25,13 @@ void ConfigLoader::reload() {
             inputHoldMs_ = 1000; // 使用默认值
         }
     }
+    
+    // 加载全局 output_hold 配置
+    if (ini_.has("default") && ini_["default"].has("output_hold")) {
+        std::string value = ini_["default"]["output_hold"];
+        std::transform(value.begin(), value.end(), value.begin(), ::tolower);
+        outputHold_ = (value == "true" || value == "1");
+    }
 }
 
 std::map<std::string, std::string> ConfigLoader::getMergedConfig(uint8_t deviceIndex) {
@@ -46,6 +53,34 @@ std::map<std::string, std::string> ConfigLoader::getMergedConfig(uint8_t deviceI
     }
     
     return merged;
+}
+
+bool ConfigLoader::loadOutputHold(uint8_t deviceIndex) {
+    auto config = getMergedConfig(deviceIndex);
+    
+    if (config.find("output_hold") != config.end()) {
+        std::string value = config["output_hold"];
+        std::transform(value.begin(), value.end(), value.begin(), ::tolower);
+        return (value == "true" || value == "1");
+    }
+    
+    // 如果设备配置中没有，返回全局默认值
+    return outputHold_;
+}
+
+int ConfigLoader::loadInputHoldMs(uint8_t deviceIndex) {
+    auto config = getMergedConfig(deviceIndex);
+    
+    if (config.find("input_hold_ms") != config.end()) {
+        try {
+            return std::stoi(config["input_hold_ms"]);
+        } catch (const std::exception& e) {
+            // 解析失败，返回全局默认值
+        }
+    }
+    
+    // 如果设备配置中没有，返回全局默认值
+    return inputHoldMs_;
 }
 
 bool ConfigLoader::loadDeviceConfig(uint8_t deviceIndex, 

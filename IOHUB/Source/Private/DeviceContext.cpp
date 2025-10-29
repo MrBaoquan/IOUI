@@ -100,6 +100,19 @@ bool DeviceContext::setDO(const short* doStatus, size_t count) {
     return true;
 }
 
+bool DeviceContext::getDO(short* doStatus, size_t count) {
+    if (count != outputCount_) {
+        return false;
+    }
+    
+    std::copy(lastDOStatus_.begin(), lastDOStatus_.end(), doStatus);
+    return true;
+}
+
+void DeviceContext::resetDO() {
+    std::fill(lastDOStatus_.begin(), lastDOStatus_.end(), 0);
+}
+
 bool DeviceContext::getDI(uint8_t* diStatus, size_t count) {
     if (count != inputCount_) {
         return false;
