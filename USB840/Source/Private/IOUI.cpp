@@ -102,6 +102,7 @@ IOUI_API int __stdcall OpenDevice(uint8 deviceIndex)
 
 IOUI_API int __stdcall CloseDevice(uint8 deviceIndex)
 {
+	if (!deviceOpend.size() || deviceIndex >= deviceOpend.size()) return 0;
 	if(!deviceOpend[deviceIndex]) return 0;
 	DisableConsoleDebug();
 	char write_buff_out[4];
@@ -111,12 +112,14 @@ IOUI_API int __stdcall CloseDevice(uint8 deviceIndex)
 	
 	write_buff_out[2] = 1;
 	write_buff_out[3] = 0x00;
-	usb_bulk_write(udev_vec[deviceIndex], 1, write_buff_out, 4, 500);
+	int ret1 = usb_bulk_write(udev_vec[deviceIndex], 1, write_buff_out, 4, 500);
+	if (ret1 < 0) return 0;
 	Sleep(10);
 
 	write_buff_out[2] = 2;
 	write_buff_out[3] = 0x00;
-	usb_bulk_write(udev_vec[deviceIndex], 1, write_buff_out, 4, 500);
+	int ret2 = usb_bulk_write(udev_vec[deviceIndex], 1, write_buff_out, 4, 500);
+	if (ret2 < 0) return 0;
 	Sleep(10);
 
 	usb_release_interface(udev_vec[deviceIndex], 0);
@@ -128,6 +131,8 @@ IOUI_API int __stdcall CloseDevice(uint8 deviceIndex)
 
 IOUI_API int __stdcall SetDeviceDO(uint8 deviceIndex, short* InDOStatus)
 {
+	if (!InDOStatus) return 0;
+	if (deviceIndex >= deviceOpend.size()) return 0;
 	if(!deviceOpend[deviceIndex]) return 0;
   	char write_buff_out[4];
 	write_buff_out[0] = 0x10;
@@ -144,7 +149,11 @@ IOUI_API int __stdcall SetDeviceDO(uint8 deviceIndex, short* InDOStatus)
 	}
 	write_buff_out[2] = 1;
 	write_buff_out[3] = do0;
-	usb_bulk_write(udev_vec[deviceIndex], 1, write_buff_out, 4, 500);
+	int ret1 = usb_bulk_write(udev_vec[deviceIndex], 1, write_buff_out, 4, 500);
+	if (ret1 < 0) {
+		// USB写入失败
+		return 0;
+	}
 	Sleep(10);
 
 	unsigned char do1 = 0x00;
@@ -156,7 +165,11 @@ IOUI_API int __stdcall SetDeviceDO(uint8 deviceIndex, short* InDOStatus)
 	}
 	write_buff_out[2] = 2;
 	write_buff_out[3] = do1;
-	usb_bulk_write(udev_vec[deviceIndex], 1, write_buff_out, 4, 500);
+	int ret2 = usb_bulk_write(udev_vec[deviceIndex], 1, write_buff_out, 4, 500);
+	if (ret2 < 0) {
+		// USB写入失败
+		return 0;
+	}
 	Sleep(10);
 
     return 1;
@@ -169,6 +182,8 @@ IOUI_API int __stdcall GetDeviceDO(uint8 deviceIndex, short* OutDOStatus)
 
 IOUI_API int __stdcall GetDeviceDI(uint8 deviceIndex, BYTE* OutDIStatus)
 {
+	if (!OutDIStatus) return 0;
+	if (deviceIndex >= deviceOpend.size()) return 0;
 	if(!deviceOpend[deviceIndex]) return 0;
 
 	char write_buff_in[2];
@@ -177,9 +192,20 @@ IOUI_API int __stdcall GetDeviceDI(uint8 deviceIndex, BYTE* OutDIStatus)
 	write_buff_in[0] = 0x2;
 	write_buff_in[1] = 0x2;
 
-	usb_bulk_write(udev_vec[deviceIndex], 1, write_buff_in, 2, 500);
+	// USB写入命令
+	int ret_write = usb_bulk_write(udev_vec[deviceIndex], 1, write_buff_in, 2, 500);
+	if (ret_write < 0) {
+		// USB写入失败
+		return 0;
+	}
 	Sleep(10);
-	usb_bulk_read(udev_vec[deviceIndex], 0x81, read_buff, 4, 500);
+	
+	// USB读取数据
+	int ret_read = usb_bulk_read(udev_vec[deviceIndex], 0x81, read_buff, 4, 500);
+	if (ret_read < 0) {
+		// USB读取失败
+		return 0;
+	}
 	Sleep(10);
 
 	unsigned char din0 = unsigned char(read_buff[2]);
@@ -192,7 +218,7 @@ IOUI_API int __stdcall GetDeviceDI(uint8 deviceIndex, BYTE* OutDIStatus)
 
 	for (int i = 0; i < 16; i++)
 	{
-		OutDIStatus[i] = data >> i & 1;
+		OutDIStatus[i] = (data >> i) & 1;
 	}
 	ClearConsole();
 	PrintDIData(OutDIStatus, 16);

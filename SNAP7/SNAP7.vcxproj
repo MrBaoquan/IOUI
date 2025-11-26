@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build"
+  xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -22,12 +23,15 @@
     <ClCompile Include="Source\Private\DllMain.cpp" />
     <ClCompile Include="Source\Private\IOUI.cpp" />
     <ClCompile Include="Source\Private\snap7.cpp" />
+    <ClCompile Include="..\vendor\includes\ExpressionParser\ExpressionParser.cpp" />
+    <ClCompile Include="..\vendor\includes\TinyExpr\tinyexpr.c" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Source\Module.def" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Public\snap7.h" />
+    <ClInclude Include="..\vendor\includes\ExpressionParser\ExpressionParser.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>

@@ -1,7 +1,6 @@
 #include "ConfigLoader.h"
 #include "DataFormatter.h"
 #include "ProtocolUri.h"
-#include <iostream>
 #include <algorithm>
 #include <cctype>
 
@@ -99,8 +98,8 @@ bool ConfigLoader::loadDeviceConfig(uint8_t deviceIndex,
         return false;
     }
     
-    // 获取写入等待时间
-    outWriteWaitMs = 60; // 默认值
+    // 获取写入等待时间（0=不等待，适用于现代硬件）
+    outWriteWaitMs = 0; // 默认不等待
     if (config.count("write_wait_ms")) {
         try {
             outWriteWaitMs = std::stoi(config["write_wait_ms"]);
@@ -119,7 +118,6 @@ bool ConfigLoader::loadChannelMapping(ChannelMapping& mapping, DataFormat& defau
     
     // 加载输入映射
     if (ini_.has("InputMapping")) {
-        std::cout << "[ConfigLoader] Loading InputMapping..." << std::endl;
         for (const auto& kv : ini_["InputMapping"]) {
             try {
                 uint8_t channel = static_cast<uint8_t>(std::stoi(kv.first));
@@ -131,15 +129,13 @@ bool ConfigLoader::loadChannelMapping(ChannelMapping& mapping, DataFormat& defau
                 mapping.addInputMapping(channel, item);
                 hasMapping = true;
             } catch (const std::exception& e) {
-                std::cout << "[ConfigLoader] Error parsing input mapping: " 
-                          << kv.first << "=" << kv.second << ", " << e.what() << std::endl;
+                // 忽略解析错误
             }
         }
     }
     
     // 加载输出映射
     if (ini_.has("OutputMapping")) {
-        std::cout << "[ConfigLoader] Loading OutputMapping..." << std::endl;
         for (const auto& kv : ini_["OutputMapping"]) {
             try {
                 uint8_t channel = static_cast<uint8_t>(std::stoi(kv.first));
@@ -151,16 +147,9 @@ bool ConfigLoader::loadChannelMapping(ChannelMapping& mapping, DataFormat& defau
                 mapping.addOutputMapping(channel, item);
                 hasMapping = true;
             } catch (const std::exception& e) {
-                std::cout << "[ConfigLoader] Error parsing output mapping: " 
-                          << kv.first << "=" << kv.second << ", " << e.what() << std::endl;
+                // 忽略解析错误
             }
         }
-    }
-    
-    if (hasMapping) {
-        std::cout << "[ConfigLoader] Channel mapping loaded successfully" << std::endl;
-    } else {
-        std::cout << "[ConfigLoader] No channel mapping configured" << std::endl;
     }
     
     return hasMapping;
@@ -169,33 +158,53 @@ bool ConfigLoader::loadChannelMapping(ChannelMapping& mapping, DataFormat& defau
 bool ConfigLoader::loadFrameConfig(uint8_t deviceIndex, FrameConfig& frameConfig) {
     auto config = getMergedConfig(deviceIndex); // 使用设备索引加载配置
     
+    // 判断是否真正配置了帧格式参数
+    bool hasFrameConfig = false;
+    
     if (config.count("frame_header")) {
-        try {
-            auto bytes = DataFormatter::hexToBytes(config["frame_header"]);
-            if (!bytes.empty()) {
-                frameConfig.header = bytes[0];
+        std::string headerStr = config["frame_header"];
+        // 忽略空字符串和特殊禁用值
+        if (!headerStr.empty() && headerStr != "none" && headerStr != "disabled") {
+            try {
+                auto bytes = DataFormatter::hexToBytes(headerStr);
+                if (!bytes.empty()) {
+                    frameConfig.header = bytes[0];
+                    hasFrameConfig = true;  // 标记为已配置帧格式
+                }
+            } catch (...) {
+                // 忽略解析错误
             }
-        } catch (...) {
-            std::cout << "[ConfigLoader] Error parsing frame_header" << std::endl;
         }
     }
     
     if (config.count("frame_tail")) {
-        try {
-            auto bytes = DataFormatter::hexToBytes(config["frame_tail"]);
-            if (!bytes.empty()) {
-                frameConfig.tail = bytes[0];
+        std::string tailStr = config["frame_tail"];
+        // 忽略空字符串和特殊禁用值
+        if (!tailStr.empty() && tailStr != "none" && tailStr != "disabled") {
+            try {
+                auto bytes = DataFormatter::hexToBytes(tailStr);
+                if (!bytes.empty()) {
+                    frameConfig.tail = bytes[0];
+                    hasFrameConfig = true;  // 标记为已配置帧格式
+                }
+            } catch (...) {
+                // 忽略解析错误
             }
-        } catch (...) {
-            std::cout << "[ConfigLoader] Error parsing frame_tail" << std::endl;
         }
     }
     
     if (config.count("frame_length")) {
-        try {
-            frameConfig.length = static_cast<size_t>(std::stoi(config["frame_length"]));
-        } catch (...) {
-            std::cout << "[ConfigLoader] Error parsing frame_length" << std::endl;
+        std::string lengthStr = config["frame_length"];
+        // 忽略空字符串和特殊禁用值
+        if (!lengthStr.empty() && lengthStr != "none" && lengthStr != "disabled") {
+            try {
+                frameConfig.length = static_cast<size_t>(std::stoi(lengthStr));
+                if (frameConfig.length > 0) {
+                    hasFrameConfig = true;  // 标记为已配置帧格式
+                }
+            } catch (...) {
+                // 忽略解析错误
+            }
         }
     }
     
@@ -203,7 +212,7 @@ bool ConfigLoader::loadFrameConfig(uint8_t deviceIndex, FrameConfig& frameConfig
         try {
             frameConfig.channelIndex = static_cast<uint8_t>(std::stoi(config["channel_index"]));
         } catch (...) {
-            std::cout << "[ConfigLoader] Error parsing channel_index" << std::endl;
+            // 忽略解析错误
         }
     }
     
@@ -211,7 +220,7 @@ bool ConfigLoader::loadFrameConfig(uint8_t deviceIndex, FrameConfig& frameConfig
         try {
             frameConfig.valueIndex = static_cast<uint8_t>(std::stoi(config["value_index"]));
         } catch (...) {
-            std::cout << "[ConfigLoader] Error parsing value_index" << std::endl;
+            // 忽略解析错误
         }
     }
     
@@ -219,7 +228,7 @@ bool ConfigLoader::loadFrameConfig(uint8_t deviceIndex, FrameConfig& frameConfig
         try {
             frameConfig.timeoutMs = std::stoi(config["input_hold_ms"]);
         } catch (...) {
-            std::cout << "[ConfigLoader] Error parsing input_hold_ms" << std::endl;
+            // 忽略解析错误
         }
     }
     
@@ -227,7 +236,7 @@ bool ConfigLoader::loadFrameConfig(uint8_t deviceIndex, FrameConfig& frameConfig
         try {
             frameConfig.channelOffset = std::stoi(config["channel_offset"]);
         } catch (...) {
-            std::cout << "[ConfigLoader] Error parsing channel_offset" << std::endl;
+            // 忽略解析错误
         }
     }
     
@@ -239,7 +248,7 @@ bool ConfigLoader::loadFrameConfig(uint8_t deviceIndex, FrameConfig& frameConfig
                 frameConfig.outputValueOnCode = bytes[0];
             }
         } catch (...) {
-            std::cout << "[ConfigLoader] Error parsing output_value_on_code" << std::endl;
+            // 忽略解析错误
         }
     }
     
@@ -250,7 +259,7 @@ bool ConfigLoader::loadFrameConfig(uint8_t deviceIndex, FrameConfig& frameConfig
                 frameConfig.outputValueOffCode = bytes[0];
             }
         } catch (...) {
-            std::cout << "[ConfigLoader] Error parsing output_value_off_code" << std::endl;
+            // 忽略解析错误
         }
     }
     
@@ -262,7 +271,7 @@ bool ConfigLoader::loadFrameConfig(uint8_t deviceIndex, FrameConfig& frameConfig
                 frameConfig.inputValueOnCode = bytes[0];
             }
         } catch (...) {
-            std::cout << "[ConfigLoader] Error parsing input_value_on_code" << std::endl;
+            // 忽略解析错误
         }
     }
     
@@ -273,16 +282,21 @@ bool ConfigLoader::loadFrameConfig(uint8_t deviceIndex, FrameConfig& frameConfig
                 frameConfig.inputValueOffCode = bytes[0];
             }
         } catch (...) {
-            std::cout << "[ConfigLoader] Error parsing input_value_off_code" << std::endl;
+            // 忽略解析错误
         }
     }
     
-    std::cout << "[ConfigLoader] Frame config: header=0x" << std::hex << (int)frameConfig.header
-              << ", tail=0x" << (int)frameConfig.tail
-              << ", length=" << std::dec << frameConfig.length 
-              << ", timeout=" << frameConfig.timeoutMs << "ms" << std::endl;
+    // 缓冲区大小配置
+    if (config.count("max_buffer_size")) {
+        try {
+            frameConfig.maxBufferSize = static_cast<size_t>(std::stoi(config["max_buffer_size"]));
+        } catch (...) {
+            // 忽略解析错误
+        }
+    }
     
-    return true;
+    // 只有真正配置了帧格式参数时才创建 FrameProcessor
+    return hasFrameConfig;
 }
 
 } // namespace IOHub

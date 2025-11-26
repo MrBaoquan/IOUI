@@ -9,53 +9,71 @@ FrameProcessor::FrameProcessor(const FrameConfig& config)
 }
 
 void FrameProcessor::addReceivedData(const uint8_t* data, size_t size) {
+    stats_.bytesReceived += size;
+    
     for (size_t i = 0; i < size; ++i) {
         recvBuffer_.push_back(data[i]);
+        
+        // 限制缓冲区大小，防止内存溢出
+        if (recvBuffer_.size() > config_.maxBufferSize) {
+            recvBuffer_.pop_front();
+            stats_.bufferOverflows++;
+        }
     }
 }
 
 bool FrameProcessor::extractFrame(std::vector<uint8_t>& outFrame) {
-    if (recvBuffer_.size() < config_.length) {
-        return false;
+    // 优化：使用循环代替递归，提高性能并避免栈溢出
+    while (recvBuffer_.size() >= config_.length) {
+        // 查找帧头
+        auto headerIt = std::find(recvBuffer_.begin(), recvBuffer_.end(), config_.header);
+        
+        if (headerIt == recvBuffer_.end()) {
+            // 没找到帧头，统计丢弃的字节数并清空缓冲区
+            stats_.bytesDiscarded += recvBuffer_.size();
+            recvBuffer_.clear();
+            return false;
+        }
+        
+        // 删除帧头之前的数据（垃圾数据）
+        if (headerIt != recvBuffer_.begin()) {
+            size_t discardCount = std::distance(recvBuffer_.begin(), headerIt);
+            stats_.bytesDiscarded += discardCount;
+            recvBuffer_.erase(recvBuffer_.begin(), headerIt);
+        }
+        
+        // 检查是否有足够的数据
+        if (recvBuffer_.size() < config_.length) {
+            return false;
+        }
+        
+        // 验证帧尾
+        if (recvBuffer_[config_.length - 1] != config_.tail) {
+            // 帧尾不匹配，这是一个无效帧
+            stats_.framingErrors++;
+            stats_.bytesDiscarded++;
+            
+            // 删除当前无效的帧头，继续查找下一个
+            recvBuffer_.pop_front();
+            continue;  // 继续循环，而不是递归调用
+        }
+        
+        // 找到一个有效帧，提取它
+        outFrame.clear();
+        outFrame.reserve(config_.length);
+        outFrame.assign(recvBuffer_.begin(), recvBuffer_.begin() + config_.length);
+        
+        // 从缓冲区删除已提取的帧
+        recvBuffer_.erase(recvBuffer_.begin(), recvBuffer_.begin() + config_.length);
+        
+        // 统计
+        stats_.framesReceived++;
+        
+        return true;
     }
     
-    // 查找帧头
-    auto headerIt = std::find(recvBuffer_.begin(), recvBuffer_.end(), config_.header);
-    
-    if (headerIt == recvBuffer_.end()) {
-        // 没找到帧头，清空缓冲区
-        recvBuffer_.clear();
-        return false;
-    }
-    
-    // 删除帧头之前的数据
-    if (headerIt != recvBuffer_.begin()) {
-        recvBuffer_.erase(recvBuffer_.begin(), headerIt);
-    }
-    
-    // 检查是否有足够的数据
-    if (recvBuffer_.size() < config_.length) {
-        return false;
-    }
-    
-    // 验证帧尾
-    if (recvBuffer_[config_.length - 1] != config_.tail) {
-        // 帧尾不匹配，删除当前帧头，继续查找
-        recvBuffer_.pop_front();
-        return extractFrame(outFrame); // 递归查找下一个
-    }
-    
-    // 提取完整帧
-    outFrame.clear();
-    outFrame.reserve(config_.length);
-    for (size_t i = 0; i < config_.length; ++i) {
-        outFrame.push_back(recvBuffer_[i]);
-    }
-    
-    // 从缓冲区删除已提取的帧
-    recvBuffer_.erase(recvBuffer_.begin(), recvBuffer_.begin() + config_.length);
-    
-    return true;
+    // 缓冲区数据不足以构成一个完整帧
+    return false;
 }
 
 std::vector<uint8_t> FrameProcessor::buildFrame(uint8_t channel, uint8_t value) const {
@@ -77,6 +95,9 @@ std::vector<uint8_t> FrameProcessor::buildFrame(uint8_t channel, uint8_t value) 
             frame[config_.valueIndex] = config_.outputValueOnCode;
         }
     }
+    
+    // 统计发送帧数
+    stats_.framesSent++;
     
     return frame;
 }

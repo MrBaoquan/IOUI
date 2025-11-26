@@ -12,12 +12,16 @@
 #include <mutex>
 
 extern HINSTANCE DLL_INSTANCE;
-HHOOK g_hHook = NULL;
+
+// Raw Input 相关变量
+HWND g_targetWindow = NULL;
+WNDPROC g_originalWndProc = NULL;
+bool g_rawInputRegistered = false;
 
 // 当前缓存的待处理的组合键记录
 std::vector<std::string> g_cachedComboKeys;
 
-std::set<int> keysPressed; // 存储已经按下的键
+std::set<int> keysPressed; // 存储已经按下的键（虚拟键码）
 
 // 定义消息结构
 struct KeyMessage {
@@ -30,59 +34,184 @@ std::map<uint8, std::queue<KeyMessage>> messageQueues;
 std::mutex queueMutex; // 互斥锁保护消息队列
 std::mutex keysMutex;  // 互斥锁保护已按下的键集合
 
-LRESULT CALLBACK KeyboardProc(int nCode, WPARAM wParam, LPARAM lParam) {
-    if (nCode == HC_ACTION) {
-        KBDLLHOOKSTRUCT* pKeyboard = reinterpret_cast<KBDLLHOOKSTRUCT*>(lParam);
-        int vkCode = pKeyboard->vkCode;
-
-        char keyName[256];
-        if (!GetKeyNameTextA((MapVirtualKey(vkCode, MAPVK_VK_TO_VSC) << 16) | (0x0000 & 0xFFFF), keyName, sizeof(keyName))) {
-            return CallNextHookEx(g_hHook, nCode, wParam, lParam);
-        }
-
-        std::string keyNameStr = std::string(keyName);
-
-        // 处理按键按下事件
-        if (wParam == WM_KEYDOWN || wParam == WM_SYSKEYDOWN) {
-            std::lock_guard<std::mutex> lock(keysMutex);
-            if (keysPressed.find(vkCode) == keysPressed.end()) {
-                keysPressed.insert(vkCode);
-
-                // 加锁并将按下事件加入所有设备的消息队列
-                std::lock_guard<std::mutex> lockQueue(queueMutex);
-                for (auto& pair : messageQueues) {
-                    pair.second.push(KeyMessage{ keyNameStr, true });
-                }
-            }
-        }
-        // 处理按键弹起事件
-        else if (wParam == WM_KEYUP || wParam == WM_SYSKEYUP) {
-            std::lock_guard<std::mutex> lock(keysMutex);
-            if (keysPressed.find(vkCode) != keysPressed.end()) {
-                keysPressed.erase(vkCode);
-
-                // 加锁并将弹起事件加入所有设备的消息队列
-                std::lock_guard<std::mutex> lockQueue(queueMutex);
-                for (auto& pair : messageQueues) {
-                    pair.second.push(KeyMessage{ keyNameStr, false });
-                }
-            }
-        }
+// 获取按键名称（从虚拟键码和扫描码）
+std::string GetKeyNameFromRawInput(USHORT vKey, USHORT scanCode, USHORT flags)
+{
+    // 构建 lParam 用于 GetKeyNameText
+    LONG lParam = (scanCode << 16);
+    
+    // 检查是否是扩展键
+    if (flags & RI_KEY_E0) {
+        lParam |= 0x01000000;  // 设置扩展键标志位
     }
-
-    return CallNextHookEx(g_hHook, nCode, wParam, lParam);
+    
+    char keyName[256] = { 0 };
+    if (GetKeyNameTextA(lParam, keyName, sizeof(keyName)) == 0) {
+        // 若失败，尝试简单转换vKey
+        return "VK_" + std::to_string(vKey);
+    }
+    return std::string(keyName);
 }
 
-BOOL InstallHook() {
-    g_hHook = SetWindowsHookEx(WH_KEYBOARD_LL, KeyboardProc, DLL_INSTANCE, 0);
-    if (g_hHook == NULL) {
+// 子类化的窗口过程，拦截 WM_INPUT 消息
+LRESULT CALLBACK SubclassWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
+{
+    if (msg == WM_INPUT)
+    {
+        UINT dwSize = 0;
+        GetRawInputData((HRAWINPUT)lParam, RID_INPUT, NULL, &dwSize, sizeof(RAWINPUTHEADER));
+        
+        if (dwSize > 0)
+        {
+            LPBYTE lpb = new BYTE[dwSize];
+            if (GetRawInputData((HRAWINPUT)lParam, RID_INPUT, lpb, &dwSize, sizeof(RAWINPUTHEADER)) == dwSize)
+            {
+                RAWINPUT* raw = (RAWINPUT*)lpb;
+                
+                if (raw->header.dwType == RIM_TYPEKEYBOARD)
+                {
+                    USHORT vKey = raw->data.keyboard.VKey;
+                    USHORT scanCode = raw->data.keyboard.MakeCode;
+                    USHORT flags = raw->data.keyboard.Flags;
+                    
+                    std::string keyName = GetKeyNameFromRawInput(vKey, scanCode, flags);
+                    
+                    // 处理按键按下事件
+                    if (!(flags & RI_KEY_BREAK))
+                    {
+                        std::lock_guard<std::mutex> lock(keysMutex);
+                        if (keysPressed.find(vKey) == keysPressed.end()) {
+                            keysPressed.insert(vKey);
+                            
+                            // 将按下事件加入所有设备的消息队列
+                            std::lock_guard<std::mutex> lockQueue(queueMutex);
+                            for (auto& pair : messageQueues) {
+                                pair.second.push(KeyMessage{ keyName, true });
+                            }
+                        }
+                    }
+                    // 处理按键弹起事件
+                    else
+                    {
+                        std::lock_guard<std::mutex> lock(keysMutex);
+                        if (keysPressed.find(vKey) != keysPressed.end()) {
+                            keysPressed.erase(vKey);
+                            
+                            // 将弹起事件加入所有设备的消息队列
+                            std::lock_guard<std::mutex> lockQueue(queueMutex);
+                            for (auto& pair : messageQueues) {
+                                pair.second.push(KeyMessage{ keyName, false });
+                            }
+                        }
+                    }
+                }
+            }
+            delete[] lpb;
+        }
+    }
+    
+    // 调用原始窗口过程
+    if (g_originalWndProc) {
+        return CallWindowProc(g_originalWndProc, hwnd, msg, wParam, lParam);
+    }
+    return DefWindowProc(hwnd, msg, wParam, lParam);
+}
+
+// 枚举窗口的回调函数
+BOOL CALLBACK EnumWindowsProc(HWND hwnd, LPARAM lParam)
+{
+    DWORD processId = 0;
+    GetWindowThreadProcessId(hwnd, &processId);
+    
+    // 检查是否是当前进程的窗口
+    if (processId == GetCurrentProcessId())
+    {
+        // 检查是否是可见的主窗口（通常是我们需要的）
+        if (IsWindowVisible(hwnd) && GetWindow(hwnd, GW_OWNER) == NULL)
+        {
+            HWND* pResult = (HWND*)lParam;
+            *pResult = hwnd;
+            return FALSE;  // 找到后停止枚举
+        }
+    }
+    return TRUE;  // 继续枚举
+}
+
+BOOL InstallRawInput()
+{
+    // 枚举当前进程的窗口，优先查找可见的主窗口
+    HWND foundWindow = NULL;
+    EnumWindows(EnumWindowsProc, (LPARAM)&foundWindow);
+    
+    if (foundWindow) {
+        g_targetWindow = foundWindow;
+    }
+    
+    // 如果没找到可见窗口，查找任意属于当前进程的窗口
+    if (!g_targetWindow) {
+        EnumWindows([](HWND hwnd, LPARAM lParam) -> BOOL {
+            DWORD processId = 0;
+            GetWindowThreadProcessId(hwnd, &processId);
+            
+            if (processId == GetCurrentProcessId()) {
+                HWND* pResult = (HWND*)lParam;
+                *pResult = hwnd;
+                return FALSE;  // 找到任意窗口就停止
+            }
+            return TRUE;
+        }, (LPARAM)&g_targetWindow);
+    }
+    
+    if (!g_targetWindow) {
         return FALSE;
     }
+    
+    // 子类化窗口，拦截消息
+    g_originalWndProc = (WNDPROC)SetWindowLongPtr(g_targetWindow, GWLP_WNDPROC, (LONG_PTR)SubclassWndProc);
+    if (!g_originalWndProc) {
+        return FALSE;
+    }
+    
+    // 注册 Raw Input 设备
+    RAWINPUTDEVICE rid;
+    rid.usUsagePage = 0x01;  // HID_USAGE_PAGE_GENERIC
+    rid.usUsage = 0x06;      // HID_USAGE_GENERIC_KEYBOARD
+    rid.dwFlags = RIDEV_INPUTSINK;  // 即使窗口无焦点也接收输入
+    rid.hwndTarget = g_targetWindow;
+    
+    if (!RegisterRawInputDevices(&rid, 1, sizeof(rid))) {
+        // 恢复原始窗口过程
+        SetWindowLongPtr(g_targetWindow, GWLP_WNDPROC, (LONG_PTR)g_originalWndProc);
+        g_originalWndProc = NULL;
+        return FALSE;
+    }
+    
+    g_rawInputRegistered = true;
     return TRUE;
 }
 
-BOOL UninstallHook() {
-    return UnhookWindowsHookEx(g_hHook);
+BOOL UninstallRawInput()
+{
+    if (g_rawInputRegistered) {
+        // 取消注册 Raw Input
+        RAWINPUTDEVICE rid;
+        rid.usUsagePage = 0x01;
+        rid.usUsage = 0x06;
+        rid.dwFlags = RIDEV_REMOVE;
+        rid.hwndTarget = NULL;
+        RegisterRawInputDevices(&rid, 1, sizeof(rid));
+        
+        g_rawInputRegistered = false;
+    }
+    
+    // 恢复原始窗口过程
+    if (g_targetWindow && g_originalWndProc) {
+        SetWindowLongPtr(g_targetWindow, GWLP_WNDPROC, (LONG_PTR)g_originalWndProc);
+        g_originalWndProc = NULL;
+    }
+    
+    g_targetWindow = NULL;
+    return TRUE;
 }
 
 DeviceInfo devInfo;
@@ -145,7 +274,7 @@ IOUI_API int __stdcall OpenDevice(uint8 deviceIndex) {
         g_comboKeysMap.insert(std::pair<std::string, int>(_val, _idx));
     }
 
-    return InstallHook();
+    return InstallRawInput();
 }
 
 IOUI_API int __stdcall CloseDevice(uint8 deviceIndex) {
@@ -158,7 +287,7 @@ IOUI_API int __stdcall CloseDevice(uint8 deviceIndex) {
 
     delete g_iniFIle;
     delete g_iniStructure;
-    return UninstallHook();
+    return UninstallRawInput();
 }
 
 IOUI_API int __stdcall SetDeviceDO(uint8 deviceIndex, short* InDOStatus) {

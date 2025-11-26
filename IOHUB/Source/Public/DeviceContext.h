@@ -65,6 +65,12 @@ private:
     int inputHoldMs_;  // 输入保持时间（0=永久保持）
     std::mutex diMutex_;
     
+    // 自定义映射接收缓冲区（用于处理分包接收）
+    std::vector<uint8_t> customMappingBuffer_;
+    std::chrono::steady_clock::time_point lastBufferUpdateTime_;
+    static constexpr size_t MAX_CUSTOM_BUFFER_SIZE = 1024;  // 最大1KB
+    static constexpr int CUSTOM_BUFFER_TIMEOUT_MS = 1000;   // 缓冲区超时1秒
+    
     // 输出保持配置
     bool outputHold_{false};  // 输出状态是否保持（false=读取后重置）
     
@@ -77,7 +83,7 @@ private:
     std::thread workerThread_;
     std::atomic<bool> stopFlag_{false};
     
-    int writeWaitMs_{60};
+    int writeWaitMs_{0};  // 写入等待时间（0=不等待）
 };
 
 } // namespace IOHub

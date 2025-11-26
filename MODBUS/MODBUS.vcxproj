@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build"
+  xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -21,6 +22,12 @@
   <ItemGroup>
     <ClCompile Include="Source\Private\DllMain.cpp" />
     <ClCompile Include="Source\Private\IOUI.cpp" />
+    <ClCompile Include="..\vendor\includes\ExpressionParser\ExpressionParser.cpp" />
+    <ClCompile Include="..\vendor\includes\TinyExpr\tinyexpr.c">
+      <CompileAs>CompileAsC</CompileAs>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <WarningLevel>Level1</WarningLevel>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Source\Module.def" />
@@ -33,6 +40,7 @@
     <ClInclude Include="Source\Public\modbus\modbus-tcp.h" />
     <ClInclude Include="Source\Public\modbus\modbus-version.h" />
     <ClInclude Include="Source\Public\modbus\modbus.h" />
+    <ClInclude Include="..\vendor\includes\ExpressionParser\ExpressionParser.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

@@ -24,6 +24,9 @@ DeviceContext::DeviceContext(uint8_t deviceIndex,
     for (auto& ts : diTimestamps_) {
         ts = now;
     }
+    
+    // 初始化自定义映射缓冲区时间戳
+    lastBufferUpdateTime_ = now;
 }
 
 DeviceContext::~DeviceContext() {
@@ -144,45 +147,102 @@ bool DeviceContext::getDI(uint8_t* diStatus, size_t count) {
     // 处理所有接收到的数据
     std::vector<uint8_t> recvData;
     while (protocol_->receive(recvData) > 0) {
+        bool dataHandled = false;  // 标记数据是否被成功处理
+        
+        // === 策略1: 优先尝试直接匹配（快速路径，适用于单次接收完整数据） ===
+        uint8_t channel = 0;
+        bool directMappingFound = mapping_.findInputChannel(recvData, channel);
+        
+        if (directMappingFound && channel < inputCount_) {
+            // 找到直接映射
+            diStatus_[channel] = 1;
+            diTimestamps_[channel] = now;
+            dataHandled = true;
+            
+            recvData.clear();
+            continue;  // 继续处理下一个数据包
+        }
+        
+        // === 策略2: 使用帧处理器（适用于标准帧格式） ===
         if (frameProcessor_) {
-            // 帧处理模式：使用帧处理器解析数据
             frameProcessor_->addReceivedData(recvData.data(), recvData.size());
             
             std::vector<uint8_t> frame;
             while (frameProcessor_->extractFrame(frame)) {
-                // 先尝试自定义映射
-                uint8_t channel = 0;
-                if (mapping_.findInputChannel(frame, channel)) {
-                    if (channel < inputCount_) {
-                        diStatus_[channel] = 1;
-                        diTimestamps_[channel] = now;
+                // 尝试在提取的帧中查找自定义映射
+                uint8_t frameChannel = 0;
+                if (mapping_.findInputChannel(frame, frameChannel)) {
+                    if (frameChannel < inputCount_) {
+                        diStatus_[frameChannel] = 1;
+                        diTimestamps_[frameChannel] = now;
+                        dataHandled = true;
                     }
                 }
-                // 否则尝试解析标准帧
+                // 否则尝试解析标准帧（通道号+值）
                 else {
-                    uint8_t frameChannel = 0;
-                    uint8_t frameValue = 0;
-                    if (frameProcessor_->parseFrame(frame, frameChannel, frameValue)) {
-                        if (frameChannel < inputCount_) {
-                            diStatus_[frameChannel] = frameValue;
-                            diTimestamps_[frameChannel] = now;
+                    uint8_t standardChannel = 0;
+                    uint8_t standardValue = 0;
+                    if (frameProcessor_->parseFrame(frame, standardChannel, standardValue)) {
+                        if (standardChannel < inputCount_) {
+                            diStatus_[standardChannel] = standardValue;
+                            diTimestamps_[standardChannel] = now;
+                            dataHandled = true;
                         }
                     }
                 }
             }
         }
-        else {
-            // 直接映射模式：不使用帧格式，直接匹配数据
-            uint8_t channel = 0;
-            if (mapping_.findInputChannel(recvData, channel)) {
-                if (channel < inputCount_) {
-                    diStatus_[channel] = 1;
-                    diTimestamps_[channel] = now;
+        
+        // === 策略3: 数据累积缓冲（适用于分包接收的自定义映射） ===
+        // 如果前两种策略都没有成功处理数据，使用缓冲区累积
+        if (!dataHandled) {
+            // 将新接收的数据追加到缓冲区
+            customMappingBuffer_.insert(
+                customMappingBuffer_.end(),
+                recvData.begin(),
+                recvData.end()
+            );
+            
+            // 更新缓冲区时间戳
+            lastBufferUpdateTime_ = now;
+            
+            // 限制缓冲区大小，防止内存溢出
+            if (customMappingBuffer_.size() > MAX_CUSTOM_BUFFER_SIZE) {
+                // 删除最旧的数据
+                size_t excess = customMappingBuffer_.size() - MAX_CUSTOM_BUFFER_SIZE;
+                customMappingBuffer_.erase(
+                    customMappingBuffer_.begin(),
+                    customMappingBuffer_.begin() + excess
+                );
+            }
+            
+            // 尝试在累积的缓冲区中查找映射
+            uint8_t bufferChannel = 0;
+            if (mapping_.findInputChannel(customMappingBuffer_, bufferChannel)) {
+                if (bufferChannel < inputCount_) {
+                    diStatus_[bufferChannel] = 1;
+                    diTimestamps_[bufferChannel] = now;
+                    
+                    // 找到映射后清空缓冲区，准备接收下一个命令
+                    customMappingBuffer_.clear();
                 }
             }
+            // 如果缓冲区中还没找到映射，继续累积（不清空）
+            // 等待更多数据到达后再次尝试匹配
         }
         
         recvData.clear();
+    }
+    
+    // 检查缓冲区是否超时，如果超时则清空（防止垃圾数据累积）
+    if (!customMappingBuffer_.empty()) {
+        auto bufferAge = std::chrono::duration_cast<std::chrono::milliseconds>(
+            now - lastBufferUpdateTime_).count();
+        
+        if (bufferAge > CUSTOM_BUFFER_TIMEOUT_MS) {
+            // 缓冲区超时，可能是垃圾数据，清空它
+            customMappingBuffer_.clear();
+        }
     }
     
     // 复制当前状态到输出
@@ -249,7 +309,7 @@ void DeviceContext::processDirtyStatus(const std::map<int, short>& dirtyData) {
         if (!sendData.empty()) {
             protocol_->send(sendData.data(), sendData.size());
             
-            // 等待
+            // 等待（避免粘包问题，0=不等待）
             if (writeWaitMs_ > 0) {
                 std::this_thread::sleep_for(std::chrono::milliseconds(writeWaitMs_));
             }

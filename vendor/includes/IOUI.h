@@ -6,6 +6,8 @@
 
 #pragma once
 
+#include <stdint.h>  // 添加此行，定义 int32_t 等标准整数类型
+
 #ifdef IOUI_EXPORTS
 #define IOUI_API __declspec(dllexport)
 #else
@@ -68,12 +70,12 @@ extern "C"
     IOUI_API int __stdcall GetDeviceDI(uint8 deviceIndex, BYTE* OutDIStatus);
 
     /**
-    * 设置 External 设备输出状态
+    * 获取 External 设备模拟量输入状态
     * @param deviceIndex : 设备索引
-    * @param OutADStatus : 输出模拟量状态 short[32] 取值范围限制在[-1000,1000]
+    * @param OutADStatus : 输出模拟量状态 int32_t[255] 支持更大范围的数据
     * @return 成功返回1 否则返回 0
     */
-    IOUI_API int __stdcall GetDeviceAD(uint8 deviceIndex, short* OutADStatus);
+    IOUI_API int __stdcall GetDeviceAD_INT(uint8 deviceIndex, int32_t* OutADStatus);
 
     /**
     * 刷新 External 设备数据流

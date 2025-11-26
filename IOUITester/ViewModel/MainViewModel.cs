@@ -18,46 +18,53 @@ namespace IOUITester.ViewModel
         public MainViewModel()
         {
             Activator = new ViewModelActivator();
-            
+
             this.WhenActivated(disposables =>
             {
                 IODeviceController.Load();
 
-                var ioDev1 = IODeviceController.GetIODevice($"extDev1");
+                var ioDev1 = IODeviceController.GetIODevice("extDev1");
 
-
-                Enumerable.Range(0, 4)
-                    .ToList().ForEach(_idx =>
+                Enumerable
+                    .Range(0, 4)
+                    .ToList()
+                    .ForEach(_idx =>
                     {
-                        ioDev1.BindAction($"PlayVideo_{_idx}", InputEvent.IE_Pressed, _key =>
-                        {
-                            if(_key == "A")
+                        ioDev1.BindAction(
+                            $"PlayVideo_{_idx}",
+                            InputEvent.IE_Pressed,
+                            _key =>
                             {
-                                ioDev1.SetDO(IOKeyCode.OAxis_00, 1);
-                                ioDev1.SetDO(IOKeyCode.OAxis_02, 2);
-                            }
-                            else if(_key == "B")
-                            {
-                                ioDev1.SetDO(IOKeyCode.OAxis_00, 0);
-                                ioDev1.SetDO(IOKeyCode.OAxis_240, 1);
-                                ioDev1.SetDO(IOKeyCode.OAxis_241, 1);
-                                ioDev1.SetDO(IOKeyCode.OAxis_242, 1);
-                            }
-                            else if(_key == "C")
-                            {
-                                ioDev1.SetDO(IOKeyCode.OAxis_250, 64);
-                            }
+                                if (_key == "A")
+                                {
+                                    ioDev1.SetDO(IOKeyCode.OAxis_00, 1);
+                                    ioDev1.SetDO(IOKeyCode.OAxis_02, 1);
+                                }
+                                else if (_key == "B")
+                                {
+                                    ioDev1.SetDO(IOKeyCode.OAxis_00, 0);
+                                    ioDev1.SetDO(IOKeyCode.OAxis_02, 0);
+                                }
+                                else if (_key == "C")
+                                {
+                                    ioDev1.SetDO(IOKeyCode.OAxis_250, 64);
+                                }
 
-                            Debug.WriteLine("D1 " + _key + " Pressed");
-                            ioDev1.SetDOOn("Output");
-                        });
+                                Debug.WriteLine("D1 " + _key + " Pressed");
+                                // ioDev1.SetDOOn("Output");
+                            }
+                        );
 
-                        ioDev1.BindAction($"PlayVideo_{_idx}", InputEvent.IE_Released, _key =>
-                        {
-                            Debug.WriteLine("D1 " + _key + " Released");
-                            
-                            ioDev1.SetDOOff("Output");
-                        });
+                        ioDev1.BindAction(
+                            $"PlayVideo_{_idx}",
+                            InputEvent.IE_Released,
+                            _key =>
+                            {
+                                Debug.WriteLine("D1 " + _key + " Released");
+
+                                // ioDev1.SetDOOff("Output");
+                            }
+                        );
                     });
 
                 ioDev1.BindAxisKey(IOKeyCode.Axis_00, _val =>
@@ -96,21 +103,23 @@ namespace IOUITester.ViewModel
                 //        }
                 //    }).DisposeWith(disposables);
 
-                Observable.Interval(TimeSpan.FromMilliseconds(50))
+                Observable
+                    .Interval(TimeSpan.FromMilliseconds(50))
                     .ObserveOn(RxApp.MainThreadScheduler)
                     .Subscribe(_ =>
                     {
                         //Debug.WriteLine("update -- .");
                         IODeviceController.Update();
-                    }).DisposeWith(disposables);
+                    })
+                    .DisposeWith(disposables);
 
                 Disposable
-                 .Create(() =>
-                 {
-                     IODeviceController.Unload();
-                     Debug.WriteLine("Disposed...");
-                 })
-                 .DisposeWith(disposables);
+                    .Create(() =>
+                    {
+                        IODeviceController.Unload();
+                        Debug.WriteLine("Disposed...");
+                    })
+                    .DisposeWith(disposables);
             });
         }
     }

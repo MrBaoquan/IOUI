@@ -96,5 +96,7 @@
         "source_location": "cpp",
         "stdfloat": "cpp",
         "variant": "cpp"
-    }
+    },
+    "python-envs.defaultEnvManager": "ms-python.python:pyenv",
+    "python-envs.pythonProjects": []
 }

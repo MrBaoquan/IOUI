@@ -24,11 +24,34 @@ struct FrameConfig {
     // 输入值编码（用于 parseFrame）
     uint8_t inputValueOnCode = 0x01;   // 输入高电平编码（默认0x01）
     uint8_t inputValueOffCode = 0x00;  // 输入低电平编码（默认0x00）
+    
+    // 缓冲区配置
+    size_t maxBufferSize = 4096;       // 最大缓冲区大小（默认4KB）
 };
 
 // 帧处理器（用于串口协议）
 class FrameProcessor {
 public:
+    // 统计信息
+    struct Statistics {
+        size_t framesReceived = 0;      // 成功接收的帧数
+        size_t framesSent = 0;          // 发送的帧数
+        size_t framingErrors = 0;       // 帧格式错误数（帧尾不匹配）
+        size_t bufferOverflows = 0;     // 缓冲区溢出次数
+        size_t bytesReceived = 0;       // 接收的总字节数
+        size_t bytesDiscarded = 0;      // 丢弃的字节数（帧头前的垃圾数据）
+        
+        // 重置统计信息
+        void reset() {
+            framesReceived = 0;
+            framesSent = 0;
+            framingErrors = 0;
+            bufferOverflows = 0;
+            bytesReceived = 0;
+            bytesDiscarded = 0;
+        }
+    };
+    
     explicit FrameProcessor(const FrameConfig& config);
     
     // 添加接收数据到缓冲区
@@ -52,10 +75,23 @@ public:
     // 检查并清除超时的通道状态
     void checkTimeouts(std::vector<uint8_t>& diStatus);
     
+    // 获取统计信息
+    const Statistics& getStatistics() const { return stats_; }
+    
+    // 重置统计信息
+    void resetStatistics() { stats_.reset(); }
+    
+    // 获取当前缓冲区大小
+    size_t getBufferSize() const { return recvBuffer_.size(); }
+    
+    // 获取最大缓冲区大小
+    size_t getMaxBufferSize() const { return config_.maxBufferSize; }
+    
 private:
     FrameConfig config_;
     std::deque<uint8_t> recvBuffer_;
     std::map<uint8_t, std::chrono::steady_clock::time_point> channelTimestamps_;
+    mutable Statistics stats_;  // mutable以便在const方法中也能统计
 };
 
 } // namespace IOHub

@@ -99,7 +99,7 @@ IOUI_API int __stdcall OpenDevice(uint8_t deviceIndex) {
         
         // 加载协议配置
         std::unique_ptr<ProtocolConfig> protocolConfig;
-        int writeWaitMs = 60;
+        int writeWaitMs = 0;
         if (!g_configLoader->loadDeviceConfig(deviceIndex, protocolConfig, writeWaitMs)) {
             return 0;
         }

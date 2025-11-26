@@ -23,6 +23,7 @@
 #include "modbus/modbus.h"
 #include "mIni/mini/ini.h"
 #include "Util.hpp"
+#include "ExpressionParser/ExpressionParser.h"
 
 #pragma comment(lib,"modbus.lib")
 
@@ -41,11 +42,13 @@ struct ChannelConfig {
     int address;           // 寄存器起始地址
     std::string dataType;  // 数据类型: uint16, int16, uint32, int32, float32
     std::string byteOrder; // 字节序: AB, BA
-    float scale;           // 缩放系数
     int funcCode;          // 功能码
     
+    // 预编译表达式（必需）
+    std::shared_ptr<CompiledExpression> compiledExpr;
+    
     ChannelConfig() 
-        : address(0), dataType("uint16"), byteOrder("AB"), scale(1.0f), funcCode(0x04) {}
+        : address(0), dataType("uint16"), byteOrder("AB"), funcCode(0x04) {}
 };
 
 struct ModbusArgs
@@ -117,6 +120,9 @@ std::mutex connectionMutex;
 std::shared_ptr<mINI::INIFile> g_iniFile = nullptr;
 std::shared_ptr<mINI::INIStructure> g_iniStructure = nullptr;
 
+// 全局表达式解析器
+ExpressionParser g_exprParser;
+
 template<typename Func>
 int execModbusWithRetry(Func func, int maxRetries, int retryDelayMs) {
     int ret = -1;
@@ -149,15 +155,14 @@ const int RECONNECT_FAST_RETRY_MS = 100;     // 断线后快速等待时间
 const int MAX_WRITE_RETRIES = 2;             // 写操作最大重试次数（降低阻塞时间）
 
 // 辅助函数：解析通道配置字符串
-// 格式: 地址, 数据类型[, 缩放系数][, 字节序][, 功能码]
-// 默认值: 缩放系数=1.0, 字节序=AB, 功能码=defaultFuncCode
+// 格式: 地址, 数据类型[, 表达式][, 字节序][, 功能码]
+// 默认值: 表达式=x (无缩放), 字节序=AB, 功能码=defaultFuncCode
 ChannelConfig parseChannelConfig(const std::string& configStr, int defaultFuncCode) {
     ChannelConfig config;
-    config.scale = 1.0f;           // 默认缩放系数
     config.byteOrder = "AB";       // 默认大端序
     config.funcCode = defaultFuncCode;  // 默认功能码
     
-    // 分割字符串: "0x0000, uint16" 或 "0x0000, uint16, 0.1" 或 "0x0000, uint16, 0.1, BA, 0x04"
+    // 分割字符串: "0x0000, uint16" 或 "0x0000, uint16, encoder_angle" 或 "0x0000, uint16, {x*360/1024}, BA, 0x04"
     std::vector<std::string> parts;
     std::stringstream ss(configStr);
     std::string item;
@@ -178,10 +183,35 @@ ChannelConfig parseChannelConfig(const std::string& configStr, int defaultFuncCo
         config.dataType = parts[1];
     }
     
-    // 可选参数
+    // 可选参数：表达式（如果未指定，默认为 "x"，即不缩放）
+    std::string exprStr = "x";
     if (parts.size() >= 3) {
-        config.scale = std::stof(parts[2]);  // 缩放系数
+        exprStr = parts[2];
     }
+    
+    // 编译表达式
+    auto expr = g_exprParser.parse(exprStr);
+    if (expr && expr->isCompiled()) {
+        config.compiledExpr = expr;
+    } else {
+        // 表达式编译失败，记录错误并使用默认表达式 "x"
+        std::string errMsg = expr ? expr->getError() : "parse() returned nullptr";
+        fprintf(stderr, "[MODBUS] Expression compile failed for '%s': %s\n", exprStr.c_str(), errMsg.c_str());
+        
+        // 尝试使用默认表达式 "x"
+        auto defaultExpr = g_exprParser.parse("x");
+        if (defaultExpr && defaultExpr->isCompiled()) {
+            config.compiledExpr = defaultExpr;
+        } else {
+            // 如果连默认表达式都失败，创建一个恒等表达式
+            config.compiledExpr = std::make_shared<CompiledExpression>();
+            if (!config.compiledExpr->compile("x")) {
+                // 这种情况理论上不应该发生，但为了安全起见
+                fprintf(stderr, "[MODBUS] CRITICAL: Cannot compile even default expression 'x'\n");
+            }
+        }
+    }
+    
     if (parts.size() >= 4) {
         config.byteOrder = parts[3];  // 字节序
     }
@@ -435,27 +465,30 @@ void queryModbusRegistersThread(uint8 deviceIndex) {
             }
             
             // 断线检测逻辑（改进：只有尝试了但全部失败才计数）
-            if (hasAnyAttempt && !hasAnySuccess) {
-                // 全部失败，增加失败计数
-                g_consecutiveFailures[deviceIndex]++;
-                if (g_consecutiveFailures[deviceIndex] >= _args.MaxConsecutiveFailures) {
-                    // 判定为断线
-                    g_connectionStates[deviceIndex] = ConnectionState::Disconnected;
-                    // 清空读取计数，避免应用层拿到旧数据
-                    {
-                        std::lock_guard<std::mutex> dataLock(g_dataMutexes[deviceIndex]);
-                        g_diReadCount[deviceIndex] = -1;
-                        g_aiReadCount[deviceIndex] = -1;
+            // 如果 MaxConsecutiveFailures 为 0，禁用断线检测和重连功能
+            if (_args.MaxConsecutiveFailures > 0) {
+                if (hasAnyAttempt && !hasAnySuccess) {
+                    // 全部失败，增加失败计数
+                    g_consecutiveFailures[deviceIndex]++;
+                    if (g_consecutiveFailures[deviceIndex] >= _args.MaxConsecutiveFailures) {
+                        // 判定为断线
+                        g_connectionStates[deviceIndex] = ConnectionState::Disconnected;
+                        // 清空读取计数，避免应用层拿到旧数据
+                        {
+                            std::lock_guard<std::mutex> dataLock(g_dataMutexes[deviceIndex]);
+                            g_diReadCount[deviceIndex] = -1;
+                            g_aiReadCount[deviceIndex] = -1;
+                        }
+                        // 下一轮循环会尝试重连，这里先快速等待
+                        std::this_thread::sleep_for(std::chrono::milliseconds(RECONNECT_FAST_RETRY_MS));
+                        continue;
                     }
-                    // 下一轮循环会尝试重连，这里先快速等待
-                    std::this_thread::sleep_for(std::chrono::milliseconds(RECONNECT_FAST_RETRY_MS));
-                    continue;
-                }
-            } else if (hasAnySuccess) {
-                // 只要有任意一次成功，就重置失败计数
-                g_consecutiveFailures[deviceIndex] = 0;
-                if (g_connectionStates[deviceIndex] != ConnectionState::Connected) {
-                    g_connectionStates[deviceIndex] = ConnectionState::Connected;
+                } else if (hasAnySuccess) {
+                    // 只要有任意一次成功，就重置失败计数
+                    g_consecutiveFailures[deviceIndex] = 0;
+                    if (g_connectionStates[deviceIndex] != ConnectionState::Connected) {
+                        g_connectionStates[deviceIndex] = ConnectionState::Connected;
+                    }
                 }
             }
             
@@ -528,17 +561,19 @@ void queryModbusRegistersThread(uint8 deviceIndex) {
                         }, MAX_WRITE_RETRIES, _args.RetryWaitMs);
                 }
                 
-                // 如果写入失败，增加失败计数
-                if (ret == -1) {
-                    g_consecutiveFailures[deviceIndex]++;
-                    if (g_consecutiveFailures[deviceIndex] >= _args.MaxConsecutiveFailures) {
-                        // 判定为断线
-                        g_connectionStates[deviceIndex] = ConnectionState::Disconnected;
-                        break;  // 停止处理剩余写任务
+                // 如果写入失败，增加失败计数（仅在启用断线检测时）
+                if (_args.MaxConsecutiveFailures > 0) {
+                    if (ret == -1) {
+                        g_consecutiveFailures[deviceIndex]++;
+                        if (g_consecutiveFailures[deviceIndex] >= _args.MaxConsecutiveFailures) {
+                            // 判定为断线
+                            g_connectionStates[deviceIndex] = ConnectionState::Disconnected;
+                            break;  // 停止处理剩余写任务
+                        }
+                    } else {
+                        // 写入成功，重置失败计数
+                        g_consecutiveFailures[deviceIndex] = 0;
                     }
-                } else {
-                    // 写入成功，重置失败计数
-                    g_consecutiveFailures[deviceIndex] = 0;
                 }
                 
                 std::this_thread::sleep_for(std::chrono::milliseconds(_args.RetryWaitMs));
@@ -558,6 +593,17 @@ IOUI_API int __stdcall OpenDevice(uint8 deviceIndex)
     if (!g_iniStructure) g_iniStructure = std::make_shared<mINI::INIStructure>();
     g_iniFile->read(*g_iniStructure);
     auto& ini = *g_iniStructure;
+
+    // 加载表达式配置（只加载一次）
+    static bool expressionsLoaded = false;
+    if (!expressionsLoaded && ini.has("expressions")) {
+        std::map<std::string, std::string> exprs;
+        for (const auto& kv : ini["expressions"]) {
+            exprs[kv.first] = kv.second;
+        }
+        g_exprParser.loadExpressions(exprs);
+        expressionsLoaded = true;
+    }
 
     const auto& deviceSection = BuildDeviceAttribute("device", deviceIndex);
     auto& defaultSection = ini["default"];
@@ -883,7 +929,7 @@ IOUI_API int __stdcall GetDeviceDI(uint8 deviceIndex, BYTE* OutDIStatus)
     return 1;
 }
 
-IOUI_API int __stdcall GetDeviceAD(uint8 deviceIndex, short* OutADStatus)
+IOUI_API int __stdcall GetDeviceAD_INT(uint8 deviceIndex, int32_t* OutADStatus)
 {
     auto _args = g_args[deviceIndex];
     
@@ -912,42 +958,57 @@ IOUI_API int __stdcall GetDeviceAD(uint8 deviceIndex, short* OutADStatus)
         // 获取该通道的数据缓冲区
         uint16_t* channelBuffer = tab_reg + channelIndex * 2;
         
-        // 根据数据类型解析并缩放
-        float scaledValue;
+        // 根据数据类型解析原始值
+        double rawValue;
         
         if (config.dataType == "fixed16_16") {
-            // Q16.16 固定点数格式（特殊处理，不使用 parseRegisterValue）
-            float rawValue = parseFixed16_16(channelBuffer, config.byteOrder);
-            scaledValue = rawValue * config.scale;
+            // Q16.16 固定点数格式（特殊处理）
+            rawValue = static_cast<double>(parseFixed16_16(channelBuffer, config.byteOrder));
         }
         else {
             // 其他数据类型使用通用解析
             uint32_t rawBits = parseRegisterValue(channelBuffer, config.dataType, config.byteOrder);
             
             if (config.dataType == "uint16") {
-                scaledValue = static_cast<float>(static_cast<uint16_t>(rawBits)) * config.scale;
+                rawValue = static_cast<double>(static_cast<uint16_t>(rawBits));
             }
             else if (config.dataType == "int16") {
-                scaledValue = static_cast<float>(static_cast<int16_t>(rawBits)) * config.scale;
+                rawValue = static_cast<double>(static_cast<int16_t>(rawBits));
             }
             else if (config.dataType == "uint32") {
-                // uint32: 0 ~ 4,294,967,295，需要特别处理大数值
-                scaledValue = static_cast<float>(rawBits) * config.scale;
+                rawValue = static_cast<double>(rawBits);
             }
             else if (config.dataType == "int32") {
-                scaledValue = static_cast<float>(static_cast<int32_t>(rawBits)) * config.scale;
+                rawValue = static_cast<double>(static_cast<int32_t>(rawBits));
             }
             else if (config.dataType == "float32") {
                 float* fptr = reinterpret_cast<float*>(&rawBits);
-                scaledValue = (*fptr) * config.scale;
+                rawValue = static_cast<double>(*fptr);
             }
             else {
-                scaledValue = 0.0f;
+                rawValue = 0.0;
             }
         }
         
-        // 限制到short范围并输出
-        OutADStatus[channelIndex] = clampToShort(scaledValue);
+        // 使用预编译表达式计算最终值
+        double scaledValue = 0.0;
+        if (config.compiledExpr) {
+            scaledValue = config.compiledExpr->eval(rawValue);
+        } else {
+            // 如果表达式为空，直接使用原始值
+            scaledValue = rawValue;
+        }
+        
+        // 安全转换为int32_t：限制到 int32_t 范围，避免未定义行为
+        if (scaledValue > 2147483647.0) {
+            OutADStatus[channelIndex] = 2147483647;  // int32_t 最大值
+        }
+        else if (scaledValue < -2147483648.0) {
+            OutADStatus[channelIndex] = -2147483648;  // int32_t 最小值
+        }
+        else {
+            OutADStatus[channelIndex] = static_cast<int32_t>(scaledValue);
+        }
     }
     
     {

@@ -109,6 +109,7 @@ output_hold=true
 | `channel_offset` | Int | 0 | 通道号偏移（0=从0开始，1=从1开始） |
 | `input_hold_ms` | Int | 1000 | 输入保持时间（毫秒，0=永久保持） |
 | `output_hold` | Bool | false | 输出状态保持（false=自动重置，true=保持状态） |
+| `write_wait_ms` | Int | 0 | 写入等待时间（毫秒，0=不等待，>0=延迟避免粘包） |
 
 ### 值编码配置
 
@@ -273,6 +274,11 @@ output_value_off_code=02
 ; 输入值编码（标准）
 input_value_on_code=01
 input_value_off_code=00
+
+; 老旧硬件需要延迟避免粘包
+write_wait_ms=50
+```
+input_value_off_code=00
 ```
 
 **协议特点：**
@@ -310,7 +316,6 @@ input_value_off_code=00
 [default]
 protocol=tcp://192.168.1.100:8080
 data_format=ascii
-write_wait_ms=60
 
 [InputMapping]
 0=CMD_START
@@ -375,7 +380,6 @@ input_hold_ms=1000
 ```ini
 [default]
 protocol=udp://127.0.0.1:9000?localport=5000
-write_wait_ms=60
 input_hold_ms=1000
 
 [device_0]
@@ -427,7 +431,36 @@ t=1000ms: 超时，通道5 自动 = 0（如果 input_hold_ms=1000）
 - `input_hold_ms=1000`: 按键检测、脉冲信号
 - `input_hold_ms=0`: 开关状态、永久信号
 
-### 2. 通道号偏移
+### 2. 写入等待控制
+
+用于避免粘包问题（部分老旧硬件需要）：
+
+```ini
+write_wait_ms=0   ; 不等待（默认，适用于现代硬件）
+write_wait_ms=50  ; 每次发送后等待 50ms
+write_wait_ms=100 ; 每次发送后等待 100ms
+```
+
+**工作流程：**
+```
+write_wait_ms=0（现代硬件）:
+  SetDeviceDO(0, 1) → 立即发送
+  SetDeviceDO(1, 1) → 立即发送
+  SetDeviceDO(2, 1) → 立即发送
+  总耗时: ~0ms
+
+write_wait_ms=50（老旧硬件）:
+  SetDeviceDO(0, 1) → 发送 → 等待 50ms
+  SetDeviceDO(1, 1) → 发送 → 等待 50ms
+  SetDeviceDO(2, 1) → 发送 → 等待 50ms
+  总耗时: 150ms（避免粘包）
+```
+
+**应用场景：**
+- `write_wait_ms=0`: 现代硬件，支持高速通信
+- `write_wait_ms=50-100`: 老旧设备，处理速度慢，容易粘包
+
+### 3. 通道号偏移
 
 适用于通道编号不从 0 开始的协议：
 
@@ -447,7 +480,7 @@ channel_offset=10 ; 通道从 10 开始（自定义）
   接收: AA 06 01 55  → API通道5        (硬件通道6 → API通道5)
 ```
 
-### 3. 值编码映射
+### 4. 值编码映射
 
 支持输入输出使用不同的值编码：
 
@@ -476,7 +509,7 @@ input_value_off_code=00   ; 标准
   帧值 == input_value_on_code  → API值 1
 ```
 
-### 4. 配置继承
+### 5. 配置继承
 
 设备配置会继承 `[default]` 的设置：
 
@@ -499,7 +532,7 @@ frame_tail=55    ; 覆盖
 output_value_off_code=02  ; 覆盖
 ```
 
-### 5. 数据格式
+### 6. 数据格式
 
 支持多种数据格式：
 
@@ -522,7 +555,7 @@ data_format=hex   ; HEX 字节序列
 12=FE 03 CC FF
 ```
 
-### 6. 输出状态保持控制
+### 7. 输出状态保持控制
 
 控制 `GetDeviceDO` 函数的返回行为和状态保持：
 
